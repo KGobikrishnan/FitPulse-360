@@ -2,19 +2,14 @@ spring:
   application:
     name: gym-management-api
 
-  # Default: In-memory H2 database for seamless zero-config local development & testing
   datasource:
-    url: jdbc:h2:mem:fitpulse_gym;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: 
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/fitpulse_gym
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
 
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
     show-sql: true
