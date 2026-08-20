@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: gym-management-api
+
+  # Default: In-memory H2 database for seamless zero-config local development & testing
+  datasource:
+    url: jdbc:h2:mem:fitpulse_gym;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+# Swagger UI & OpenAPI Docs
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+
+# Security JWT
+jwt:
+  secret: 9a6747f3b97b8d123456789abcdef0123456789abcdef0123456789abcdef012345
+  expiration-ms: 86400000 # 24 Hours
+
+server:
+  port: 8080

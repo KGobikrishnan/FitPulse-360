@@ -1,0 +1,52 @@
+services:
+  postgres-db:
+    image: postgres:16-alpine
+    container_name: fitpulse-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: fitpulse_gym
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - fitpulse-net
+
+  backend-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: fitpulse-backend
+    restart: always
+    depends_on:
+      - postgres-db
+    environment:
+      DB_HOST: postgres-db
+      DB_PORT: 5432
+      DB_NAME: fitpulse_gym
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgrespassword
+    ports:
+      - "8080:8080"
+    networks:
+      - fitpulse-net
+
+  frontend-ui:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: fitpulse-frontend
+    restart: always
+    ports:
+      - "5173:80"
+    networks:
+      - fitpulse-net
+
+volumes:
+  postgres_data:
+
+networks:
+  fitpulse-net:
+    driver: bridge
