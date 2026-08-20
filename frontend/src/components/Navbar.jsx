@@ -15,7 +15,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 
-export const Navbar = ({ onToggleMobileDrawer }) => {
+export const Navbar = ({ onToggleMobileDrawer, onOpenSearch }) => {
   const { currentUser, logoutUser, data, simulateQRCheckIn } = useGym();
   const [showQRScanModal, setShowQRScanModal] = useState(false);
   const [scannedCode, setScannedCode] = useState('');
@@ -66,14 +66,18 @@ export const Navbar = ({ onToggleMobileDrawer }) => {
       </div>
 
       {/* Global Search Bar (Desktop) */}
-      <div className="hidden md:flex items-center w-72 lg:w-96 relative">
+      <div
+        onClick={onOpenSearch}
+        className="hidden md:flex items-center w-72 lg:w-96 relative cursor-pointer"
+      >
         <Search className="h-4 w-4 text-zinc-500 absolute left-3 pointer-events-none" />
         <input
+          readOnly
           type="text"
-          placeholder="Search anything..."
-          className="w-full bg-[#12151f] border border-white/[0.08] rounded-xl pl-9 pr-14 py-1.5 text-xs text-zinc-200 placeholder:text-zinc-500 focus:outline-none focus:border-emerald-500/50"
+          placeholder="Search members, equipment, plans..."
+          className="w-full bg-[#12151f] border border-white/[0.08] rounded-xl pl-9 pr-14 py-1.5 text-xs text-zinc-200 placeholder:text-zinc-500 cursor-pointer focus:outline-none"
         />
-        <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-mono text-zinc-500 bg-[#171a26] border border-white/[0.08] px-1.5 py-0.5 rounded">
+        <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-mono text-zinc-500 bg-[#171a26] border border-white/[0.08] px-1.5 py-0.5 rounded pointer-events-none">
           Ctrl K
         </kbd>
       </div>

@@ -1,8 +1,10 @@
 package com.fitpulse.gym.controllers;
 
+import com.fitpulse.gym.dto.ApiResponse;
 import com.fitpulse.gym.models.Role;
 import com.fitpulse.gym.models.User;
 import com.fitpulse.gym.repositories.UserRepository;
+import com.fitpulse.gym.security.JwtTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
@@ -22,34 +24,39 @@ public class AuthController {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider tokenProvider;
 
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider tokenProvider) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.tokenProvider = tokenProvider;
     }
 
     @PostMapping("/login")
-    @Operation(summary = "Authenticate user with email and password from database")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
+    @Operation(summary = "Authenticate user with email and password, returning a signed JWT token")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> login(@RequestBody Map<String, String> credentials) {
         String email = credentials.get("email");
         String password = credentials.get("password");
 
         if (email == null || password == null) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Email and Password are required"));
+            return ResponseEntity.badRequest().body(ApiResponse.error("Email and Password are required"));
         }
 
         Optional<User> userOpt = userRepository.findByEmail(email.trim().toLowerCase());
         if (userOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Invalid email or password"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("Invalid email or password"));
         }
 
         User user = userOpt.get();
         if (!passwordEncoder.matches(password, user.getPassword()) && !password.equals(user.getPassword())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Invalid email or password"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("Invalid email or password"));
         }
 
+        // Generate true cryptographic JWT token
+        String jwt = tokenProvider.generateToken(user.getEmail(), user.getRole().name(), user.getId());
+
         Map<String, Object> response = new HashMap<>();
-        response.put("token", "jwt-token-fitpulse-" + user.getId() + "-" + System.currentTimeMillis());
+        response.put("token", jwt);
         response.put("id", user.getId());
         response.put("name", user.getFullName());
         response.put("email", user.getEmail());
@@ -62,15 +69,15 @@ public class AuthController {
         response.put("totalPaid", user.getTotalPaid());
         response.put("pendingDue", user.getPendingDue());
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.ok("Login successful", response));
     }
 
     @PostMapping("/register")
-    @Operation(summary = "Register new member into database")
-    public ResponseEntity<?> register(@RequestBody Map<String, String> regData) {
+    @Operation(summary = "Register new member into database with BCrypt hashed password")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> register(@RequestBody Map<String, String> regData) {
         String email = regData.get("email");
         if (userRepository.existsByEmail(email)) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Email is already registered"));
+            return ResponseEntity.badRequest().body(ApiResponse.error("Email is already registered"));
         }
 
         User user = new User(
@@ -92,6 +99,6 @@ public class AuthController {
         );
 
         userRepository.save(user);
-        return ResponseEntity.ok(Map.of("message", "User registered successfully", "userId", user.getId()));
+        return ResponseEntity.ok(ApiResponse.ok("User registered successfully", Map.of("userId", user.getId())));
     }
 }

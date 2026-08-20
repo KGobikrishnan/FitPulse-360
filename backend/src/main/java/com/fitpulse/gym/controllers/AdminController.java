@@ -1,9 +1,14 @@
 package com.fitpulse.gym.controllers;
 
+import com.fitpulse.gym.dto.ApiResponse;
 import com.fitpulse.gym.models.*;
 import com.fitpulse.gym.repositories.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +27,7 @@ public class AdminController {
     private final InventoryItemRepository invRepo;
     private final LockerRepository lockerRepo;
     private final AttendanceLogRepository attRepo;
+    private final ExpenseRepository expRepo;
     private final PasswordEncoder passwordEncoder;
 
     public AdminController(
@@ -31,6 +37,7 @@ public class AdminController {
             InventoryItemRepository invRepo,
             LockerRepository lockerRepo,
             AttendanceLogRepository attRepo,
+            ExpenseRepository expRepo,
             PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
         this.planRepo = planRepo;
@@ -38,12 +45,13 @@ public class AdminController {
         this.invRepo = invRepo;
         this.lockerRepo = lockerRepo;
         this.attRepo = attRepo;
+        this.expRepo = expRepo;
         this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/overview")
     @Operation(summary = "Get full database metrics for Admin Dashboard")
-    public ResponseEntity<?> getAdminOverview() {
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getAdminOverview() {
         List<User> members = userRepo.findByRole(Role.ROLE_USER);
         List<User> trainers = userRepo.findByRole(Role.ROLE_TRAINER);
         List<MembershipPlan> plans = planRepo.findAll();
@@ -51,9 +59,10 @@ public class AdminController {
         List<InventoryItem> inventory = invRepo.findAll();
         List<Locker> lockers = lockerRepo.findAll();
         List<AttendanceLog> recentAttendance = attRepo.findTop20ByOrderByIdDesc();
+        List<Expense> expenses = expRepo.findAll();
 
         double totalRevenue = members.stream().mapToDouble(m -> m.getTotalPaid() != null ? m.getTotalPaid() : 0).sum() + 120000;
-        double totalExpense = 187200;
+        double totalExpense = expenses.stream().mapToDouble(e -> e.getAmount() != null ? e.getAmount() : 0).sum() + 85000;
 
         Map<String, Object> data = new HashMap<>();
         data.put("members", members);
@@ -63,16 +72,32 @@ public class AdminController {
         data.put("inventoryStore", inventory);
         data.put("lockers", lockers);
         data.put("recentAttendance", recentAttendance);
+        data.put("expenses", expenses);
         data.put("totalRevenue", totalRevenue);
         data.put("totalExpense", totalExpense);
         data.put("netProfit", totalRevenue - totalExpense);
 
-        return ResponseEntity.ok(data);
+        return ResponseEntity.ok(ApiResponse.ok("Overview fetched successfully", data));
+    }
+
+    @GetMapping("/members")
+    @Operation(summary = "Get paginated members list with sorting")
+    public ResponseEntity<ApiResponse<Page<User>>> getMembersPaged(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction) {
+
+        Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<User> users = userRepo.findAll(pageable);
+
+        return ResponseEntity.ok(ApiResponse.ok("Members fetched successfully", users));
     }
 
     @PostMapping("/members/enroll")
     @Operation(summary = "Enroll member directly into PostgreSQL database")
-    public ResponseEntity<?> enrollMember(@RequestBody Map<String, Object> form) {
+    public ResponseEntity<ApiResponse<User>> enrollMember(@RequestBody Map<String, Object> form) {
         String name = (String) form.get("name");
         String email = (String) form.get("email");
         String phone = (String) form.get("phone");
@@ -100,23 +125,53 @@ public class AdminController {
         );
 
         userRepo.save(user);
-        return ResponseEntity.ok(Map.of("message", "Member saved in PostgreSQL", "member", user));
+        return ResponseEntity.ok(ApiResponse.ok("Member enrolled successfully", user));
     }
 
     @PatchMapping("/members/{id}/status")
     @Operation(summary = "Update member status in database")
-    public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestBody Map<String, String> body) {
+    public ResponseEntity<ApiResponse<User>> updateStatus(@PathVariable Long id, @RequestBody Map<String, String> body) {
         Optional<User> userOpt = userRepo.findById(id);
         if (userOpt.isEmpty()) return ResponseEntity.notFound().build();
         User user = userOpt.get();
         user.setStatus(body.get("status"));
         userRepo.save(user);
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(ApiResponse.ok("Status updated successfully", user));
+    }
+
+    @PostMapping("/expenses")
+    @Operation(summary = "Record new expense into database")
+    public ResponseEntity<ApiResponse<Expense>> recordExpense(@RequestBody Map<String, Object> body) {
+        String name = (String) body.get("name");
+        Double amount = Double.valueOf(String.valueOf(body.get("amount")));
+        String category = (String) body.getOrDefault("category", "General");
+        String date = (String) body.getOrDefault("expenseDate", LocalDate.now().toString());
+
+        Expense expense = new Expense(name, amount, category, date);
+        expRepo.save(expense);
+
+        return ResponseEntity.ok(ApiResponse.ok("Expense recorded successfully", expense));
+    }
+
+    @PatchMapping("/lockers/{id}/status")
+    @Operation(summary = "Update locker status in database")
+    public ResponseEntity<ApiResponse<Locker>> updateLockerStatus(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body) {
+        Optional<Locker> lockerOpt = lockerRepo.findById(id);
+        if (lockerOpt.isEmpty()) return ResponseEntity.notFound().build();
+
+        Locker locker = lockerOpt.get();
+        if (body.containsKey("status")) locker.setStatus(body.get("status"));
+        if (body.containsKey("assignedTo")) locker.setAssignedTo(body.get("assignedTo"));
+
+        lockerRepo.save(locker);
+        return ResponseEntity.ok(ApiResponse.ok("Locker updated successfully", locker));
     }
 
     @PostMapping("/attendance/qr-scan")
     @Operation(summary = "Process QR check-in and record to PostgreSQL")
-    public ResponseEntity<?> processQRScan(@RequestBody Map<String, String> payload) {
+    public ResponseEntity<ApiResponse<Map<String, Object>>> processQRScan(@RequestBody Map<String, String> payload) {
         String code = payload.get("passCode");
         Optional<User> userOpt = userRepo.findByQrCodeString(code);
         if (userOpt.isEmpty()) {
@@ -124,7 +179,7 @@ public class AdminController {
         }
 
         if (userOpt.isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Invalid Pass"));
+            return ResponseEntity.badRequest().body(ApiResponse.error("Invalid Pass"));
         }
 
         User user = userOpt.get();
@@ -140,9 +195,9 @@ public class AdminController {
         if ("Granted".equals(status)) {
             user.setStreak((user.getStreak() != null ? user.getStreak() : 0) + 1);
             userRepo.save(user);
-            return ResponseEntity.ok(Map.of("success", true, "message", "Access Granted", "member", user));
+            return ResponseEntity.ok(ApiResponse.ok("Access Granted", Map.of("granted", true, "member", user)));
         } else {
-            return ResponseEntity.ok(Map.of("success", false, "message", "Membership Expired", "member", user));
+            return ResponseEntity.ok(ApiResponse.ok("Access Denied (Membership Expired)", Map.of("granted", false, "member", user)));
         }
     }
 }

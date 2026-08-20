@@ -6,7 +6,7 @@ const GymContext = createContext(null);
 
 export const GymProvider = ({ children }) => {
   const [data, setData] = useState(() => {
-    const saved = localStorage.getItem('fitpulse_gym_data_v3');
+    const saved = localStorage.getItem('fitpulse_gym_data_v4');
     if (saved) {
       try {
         return JSON.parse(saved);
@@ -15,22 +15,20 @@ export const GymProvider = ({ children }) => {
     return initialGymData;
   });
 
-  // Current logged in user context (null if not logged in)
   const [currentUser, setCurrentUser] = useState(() => {
-    const savedUser = localStorage.getItem('fitpulse_current_user_v3');
+    const savedUser = localStorage.getItem('fitpulse_current_user_v4');
     if (savedUser) {
       try {
         return JSON.parse(savedUser);
       } catch (e) {}
     }
-    return null; // Force Login Page first
+    return null;
   });
 
-  // Active view / subtab
   const [activeTab, setActiveTab] = useState('dashboard');
   const [toastMessage, setToastMessage] = useState(null);
 
-  // Sync with PostgreSQL Backend on startup
+  // Sync with PostgreSQL Backend on startup and auth changes
   useEffect(() => {
     const syncFromDB = async () => {
       const dbOverview = await api.getAdminOverview();
@@ -59,7 +57,7 @@ export const GymProvider = ({ children }) => {
             muscleMass: '36.8 kg'
           })),
           lockers: dbOverview.lockers && dbOverview.lockers.length > 0 ? dbOverview.lockers.map((l) => ({
-            id: l.lockerNumber,
+            id: l.id || l.lockerNumber,
             number: l.lockerNumber,
             status: l.status,
             assignedTo: l.assignedTo,
@@ -72,17 +70,25 @@ export const GymProvider = ({ children }) => {
       }
     };
     syncFromDB();
+
+    // Listen for unauthorized events to trigger clean logout
+    const handleUnauthorized = () => {
+      setCurrentUser(null);
+      showToast('Session expired. Please log in again.');
+    };
+    window.addEventListener('auth:unauthorized', handleUnauthorized);
+    return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('fitpulse_gym_data_v3', JSON.stringify(data));
+    localStorage.setItem('fitpulse_gym_data_v4', JSON.stringify(data));
   }, [data]);
 
   useEffect(() => {
     if (currentUser) {
-      localStorage.setItem('fitpulse_current_user_v3', JSON.stringify(currentUser));
+      localStorage.setItem('fitpulse_current_user_v4', JSON.stringify(currentUser));
     } else {
-      localStorage.removeItem('fitpulse_current_user_v3');
+      localStorage.removeItem('fitpulse_current_user_v4');
     }
   }, [currentUser]);
 
@@ -93,16 +99,15 @@ export const GymProvider = ({ children }) => {
     }, 3500);
   };
 
-  // LOGIN FLOW (Checks DB or fallback)
+  // Real Database Login via JWT
   const loginUser = async (email, password) => {
-    // 1. Try Backend DB authentication first
     const dbRes = await api.login(email, password);
     if (dbRes && dbRes.role) {
       const loggedIn = {
         id: `u-${dbRes.id}`,
         name: dbRes.name,
         email: dbRes.email,
-        role: dbRes.role, // ADMIN | TRAINER | USER
+        role: dbRes.role,
         avatar: dbRes.role === 'ADMIN'
           ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'
           : dbRes.role === 'TRAINER'
@@ -112,11 +117,11 @@ export const GymProvider = ({ children }) => {
       };
       setCurrentUser(loggedIn);
       setActiveTab(loggedIn.role === 'ADMIN' ? 'dashboard' : loggedIn.role === 'TRAINER' ? 'trainees' : 'routine');
-      showToast(`Welcome back, ${loggedIn.name}! Authenticated via PostgreSQL.`);
+      showToast(`Welcome back, ${loggedIn.name}! Authenticated via PostgreSQL JWT.`);
       return true;
     }
 
-    // 2. Local Fallback Verification
+    // Local Fallback Verification if server is offline
     if (email === 'admin@fitlife.com' && password === 'admin123') {
       const u = {
         id: 'u-admin',
@@ -161,24 +166,19 @@ export const GymProvider = ({ children }) => {
   };
 
   const logoutUser = () => {
+    localStorage.removeItem('fitpulse_jwt_token');
     setCurrentUser(null);
     showToast('Logged out successfully.');
   };
 
-  // Switch role seamlessly
   const switchRole = (role) => {
-    if (role === 'ADMIN') {
-      loginUser('admin@fitlife.com', 'admin123');
-    } else if (role === 'TRAINER') {
-      loginUser('trainer@fitlife.com', 'trainer123');
-    } else if (role === 'USER') {
-      loginUser('user@fitlife.com', 'user123');
-    }
+    if (role === 'ADMIN') loginUser('admin@fitlife.com', 'admin123');
+    else if (role === 'TRAINER') loginUser('trainer@fitlife.com', 'trainer123');
+    else if (role === 'USER') loginUser('user@fitlife.com', 'user123');
   };
 
-  // ADMIN ACTIONS
+  // ADMIN ACTIONS WITH BACKEND SYNC
   const addMember = async (member) => {
-    // Send to PostgreSQL Backend
     await api.enrollMember(member);
 
     const newMember = {
@@ -206,7 +206,8 @@ export const GymProvider = ({ children }) => {
     showToast(`Member "${member.name}" enrolled into PostgreSQL & auto-invoiced!`);
   };
 
-  const updateMemberStatus = (memberId, newStatus) => {
+  const updateMemberStatus = async (memberId, newStatus) => {
+    await api.updateMemberStatus(memberId, newStatus);
     setData((prev) => ({
       ...prev,
       members: prev.members.map((m) => (m.id === memberId ? { ...m, status: newStatus } : m))
@@ -214,7 +215,14 @@ export const GymProvider = ({ children }) => {
     showToast(`Member status updated to ${newStatus}`);
   };
 
-  const recordExpense = (expense) => {
+  const recordExpense = async (expense) => {
+    await api.recordExpense({
+      name: expense.name,
+      amount: Number(expense.amount),
+      category: 'General',
+      expenseDate: new Date().toISOString().split('T')[0]
+    });
+
     setData((prev) => ({
       ...prev,
       financials: {
@@ -227,14 +235,15 @@ export const GymProvider = ({ children }) => {
         ]
       }
     }));
-    showToast(`Expense recorded: ₹${expense.amount} for ${expense.name}`);
+    showToast(`Expense recorded in database: ₹${expense.amount} for ${expense.name}`);
   };
 
-  const toggleLockerStatus = (lockerId, newStatus, assignedTo = null) => {
+  const toggleLockerStatus = async (lockerId, newStatus, assignedTo = null) => {
+    await api.updateLockerStatus(lockerId, newStatus, assignedTo);
     setData((prev) => ({
       ...prev,
       lockers: prev.lockers.map((loc) =>
-        loc.id === lockerId ? { ...loc, status: newStatus, assignedTo } : loc
+        loc.id === lockerId || loc.number === lockerId ? { ...loc, status: newStatus, assignedTo } : loc
       )
     }));
     showToast(`Locker ${lockerId} status updated: ${newStatus}`);
@@ -247,7 +256,7 @@ export const GymProvider = ({ children }) => {
         eq.id === eqId ? { ...eq, status, nextDue: nextDue || eq.nextDue } : eq
       )
     }));
-    showToast(`Equipment ${eqId} maintenance status saved.`);
+    showToast(`Equipment ${eqId} status saved.`);
   };
 
   const sellInventoryItem = (itemId, qty = 1) => {
@@ -271,7 +280,6 @@ export const GymProvider = ({ children }) => {
   };
 
   const simulateQRCheckIn = async (qrPassString) => {
-    // Also sync to Backend DB
     await api.scanGateQR(qrPassString);
 
     const member = data.members.find((m) => m.qrCodeString === qrPassString || m.id === qrPassString || m.name.toLowerCase().includes(qrPassString.toLowerCase()));
@@ -309,8 +317,16 @@ export const GymProvider = ({ children }) => {
     return { success: true, member, message: "Access Granted" };
   };
 
-  // TRAINER ACTIONS
-  const saveWorkoutTemplate = (newTemplate) => {
+  // TRAINER ACTIONS WITH BACKEND SYNC
+  const saveWorkoutTemplate = async (newTemplate) => {
+    await api.createWorkout({
+      name: newTemplate.name,
+      trainerId: currentUser.id,
+      targetGoal: newTemplate.targetGoal,
+      difficulty: newTemplate.difficulty,
+      exercisesJson: JSON.stringify(newTemplate.exercises)
+    });
+
     setData((prev) => ({
       ...prev,
       workoutTemplates: [
@@ -318,10 +334,21 @@ export const GymProvider = ({ children }) => {
         ...prev.workoutTemplates
       ]
     }));
-    showToast(`Workout plan "${newTemplate.name}" created and published!`);
+    showToast(`Workout plan "${newTemplate.name}" created and synced to database!`);
   };
 
-  const saveDietPlan = (newDiet) => {
+  const saveDietPlan = async (newDiet) => {
+    await api.assignDiet({
+      name: newDiet.name,
+      trainerId: currentUser.id,
+      calorieTarget: newDiet.calorieTarget,
+      waterIntakeLiters: newDiet.waterIntakeLiters,
+      proteinG: newDiet.macros.proteinG,
+      carbsG: newDiet.macros.carbsG,
+      fatG: newDiet.macros.fatG,
+      mealsJson: JSON.stringify(newDiet.meals)
+    });
+
     setData((prev) => ({
       ...prev,
       dietPlans: [
@@ -329,7 +356,7 @@ export const GymProvider = ({ children }) => {
         ...prev.dietPlans
       ]
     }));
-    showToast(`Diet chart "${newDiet.name}" assigned successfully!`);
+    showToast(`Diet chart "${newDiet.name}" assigned & saved to database!`);
   };
 
   const addTrainerFeedback = (memberId, noteText) => {

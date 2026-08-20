@@ -21,6 +21,9 @@ public class DatabaseSeeder {
             LockerRepository lockerRepo,
             AttendanceLogRepository attRepo,
             PersonalRecordRepository prRepo,
+            ExpenseRepository expRepo,
+            WorkoutTemplateRepository workoutRepo,
+            DietPlanRepository dietRepo,
             PasswordEncoder passwordEncoder) {
 
         return args -> {
@@ -195,6 +198,14 @@ public class DatabaseSeeder {
                 prRepo.save(new PersonalRecord(3L, "Bench Press", "105 kg", "1 Rep Max (PR)", "Aug 12, 2026", "Gold Standard"));
                 prRepo.save(new PersonalRecord(3L, "Barbell Back Squat", "140 kg", "1 Rep Max (PR)", "Jul 28, 2026", "Double Bodyweight"));
                 prRepo.save(new PersonalRecord(3L, "Conventional Deadlift", "175 kg", "1 Rep Max (PR)", "Aug 04, 2026", "Elite Puller"));
+            }
+
+            // 8. Seed Expenses
+            if (expRepo.count() == 0) {
+                expRepo.save(new Expense("Facility Rent", 85000.0, "Infrastructure", "2026-08-01"));
+                expRepo.save(new Expense("Electricity & AC Power", 26000.0, "Utilities", "2026-08-05"));
+                expRepo.save(new Expense("Supplement Restocking", 18000.0, "Inventory", "2026-08-10"));
+                expRepo.save(new Expense("Machine Lubrication & Service", 10600.0, "Maintenance", "2026-08-15"));
             }
         };
     }
