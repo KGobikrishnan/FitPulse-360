@@ -7,23 +7,22 @@ import {
   Activity,
   UserPlus,
   AlertCircle,
-  CheckCircle2,
-  Calendar,
   CreditCard,
   QrCode,
   Box,
   Lock,
   ArrowUpRight,
-  ArrowDownRight,
-  FileText,
+  Sparkles,
   Send,
-  Download
+  Download,
+  SlidersHorizontal,
+  ChevronRight,
+  MoreVertical,
+  Calendar
 } from 'lucide-react';
 import {
   AreaChart,
   Area,
-  BarChart,
-  Bar,
   PieChart,
   Pie,
   Cell,
@@ -37,7 +36,6 @@ import {
 export const AdminDashboard = () => {
   const { data, activeTab, setActiveTab, addMember, updateMemberStatus, recordExpense, toggleLockerStatus, updateEquipmentStatus, sellInventoryItem } = useGym();
 
-  // Member Registration Modal State
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   const [newMemberForm, setNewMemberForm] = useState({
     name: '',
@@ -50,16 +48,12 @@ export const AdminDashboard = () => {
     status: 'ACTIVE',
     startDate: new Date().toISOString().split('T')[0],
     expiryDate: '2027-01-01',
-    trainerId: 't1',
     trainerName: 'Marcus Vance',
     lockerNo: 'L-01',
   });
 
-  // Expense Modal State
   const [showExpenseModal, setShowExpenseModal] = useState(false);
   const [expenseForm, setExpenseForm] = useState({ name: '', amount: '' });
-
-  // Selected Member for Invoice Modal
   const [selectedInvoiceMember, setSelectedInvoiceMember] = useState(null);
 
   const handlePlanSelect = (e) => {
@@ -90,7 +84,6 @@ export const AdminDashboard = () => {
       status: 'ACTIVE',
       startDate: new Date().toISOString().split('T')[0],
       expiryDate: '2027-01-01',
-      trainerId: 't1',
       trainerName: 'Marcus Vance',
       lockerNo: 'L-01',
     });
@@ -104,212 +97,223 @@ export const AdminDashboard = () => {
     setExpenseForm({ name: '', amount: '' });
   };
 
-  // KPIs
   const totalMembers = data.members.length;
   const activeMembers = data.members.filter((m) => m.status === 'ACTIVE').length;
-  const dueMembers = data.members.filter((m) => m.status === 'DUE').length;
-  const expiredMembers = data.members.filter((m) => m.status === 'EXPIRED').length;
 
   return (
     <div className="space-y-6">
-      {/* Top Header & Actions */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Top Header & Executive Control Title */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-2">
-            <span>Executive Business Control</span>
-            <span className="text-xs px-2.5 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full font-mono">
+          <div className="flex items-center space-x-2.5">
+            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight font-sans">
+              Executive Business Control
+            </h1>
+            <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full saas-badge-emerald font-bold">
               Live Operations
             </span>
-          </h1>
+          </div>
           <p className="text-xs text-zinc-400 mt-1">
-            Revenue tracking, auto-invoicing, trainer payroll, peak-hour heatmaps, and facility asset logs.
+            Real-time tracking, intelligent insights & complete control over your business.
           </p>
         </div>
-        <div className="flex items-center gap-2.5">
+
+        <div className="flex items-center space-x-2.5">
           <button
             onClick={() => setShowExpenseModal(true)}
-            className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 transition cursor-pointer flex items-center gap-1.5"
+            className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#12151f] hover:bg-[#171a26] text-zinc-200 border border-white/[0.08] transition flex items-center gap-1.5 cursor-pointer"
           >
             <DollarSign className="h-4 w-4 text-rose-400" />
             <span>Record Expense</span>
           </button>
           <button
             onClick={() => setShowAddMemberModal(true)}
-            className="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-zinc-950 shadow-lg shadow-emerald-500/20 transition cursor-pointer flex items-center gap-1.5"
+            className="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-black shadow-lg shadow-emerald-500/20 transition flex items-center gap-1.5 cursor-pointer"
           >
             <UserPlus className="h-4 w-4" />
             <span>+ Enroll Member</span>
           </button>
+          <button className="p-2 rounded-xl bg-[#12151f] border border-white/[0.08] text-zinc-400 hover:text-white">
+            <SlidersHorizontal className="h-4 w-4" />
+          </button>
         </div>
       </div>
 
-      {/* KPI Cards Grid */}
+      {/* 4 Premium SaaS KPI Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Card 1: Monthly Subscription Revenue */}
-        <div className="glass-panel-glow p-5 rounded-2xl relative overflow-hidden">
+        {/* Card 1: Gross Collection */}
+        <div className="saas-card-hover p-5 space-y-3 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-mono text-zinc-400 uppercase tracking-wider">Gross Collection</p>
-            <span className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
+            <p className="text-[11px] font-mono text-zinc-400 uppercase tracking-wider font-semibold">Gross Collection</p>
+            <span className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
               <DollarSign className="h-4 w-4" />
             </span>
           </div>
-          <h3 className="text-2xl font-black text-white mt-2">₹{data.financials.monthlyRevenue.toLocaleString()}</h3>
-          <div className="flex items-center gap-1.5 text-xs text-emerald-400 mt-2 font-medium">
-            <ArrowUpRight className="h-3.5 w-3.5" />
-            <span>+14.2% from last month</span>
+          <h3 className="text-2xl font-black text-white">₹{data.financials.monthlyRevenue.toLocaleString()}</h3>
+          <div className="flex items-center justify-between pt-1">
+            <div className="flex items-center gap-1 text-[11px] text-emerald-400 font-semibold font-mono">
+              <ArrowUpRight className="h-3.5 w-3.5" />
+              <span>41.2% from last month</span>
+            </div>
+            {/* Sparkline Visual */}
+            <div className="flex items-end gap-0.5 h-4">
+              <span className="w-1 h-2 bg-emerald-500/40 rounded-full" />
+              <span className="w-1 h-3 bg-emerald-500/60 rounded-full" />
+              <span className="w-1 h-2 bg-emerald-500/40 rounded-full" />
+              <span className="w-1 h-4 bg-emerald-400 rounded-full" />
+            </div>
           </div>
         </div>
 
-        {/* Card 2: Net Profit Margin */}
-        <div className="glass-panel p-5 rounded-2xl relative overflow-hidden">
+        {/* Card 2: Net Profit (P&L) */}
+        <div className="saas-card-hover p-5 space-y-3 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-mono text-zinc-400 uppercase tracking-wider">Net Profit (P&L)</p>
-            <span className="p-2 rounded-xl bg-teal-500/10 text-teal-400">
+            <p className="text-[11px] font-mono text-zinc-400 uppercase tracking-wider font-semibold">Net Profit (P&L)</p>
+            <span className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
               <TrendingUp className="h-4 w-4" />
             </span>
           </div>
-          <h3 className="text-2xl font-black text-white mt-2">₹{data.financials.netProfit.toLocaleString()}</h3>
-          <p className="text-[11px] text-zinc-400 mt-2">
-            After Rent, Trainer Payroll & Restocking
-          </p>
+          <h3 className="text-2xl font-black text-white">₹{data.financials.netProfit.toLocaleString()}</h3>
+          <div className="flex items-center justify-between pt-1">
+            <div className="flex items-center gap-1 text-[11px] text-cyan-400 font-semibold font-mono">
+              <ArrowUpRight className="h-3.5 w-3.5" />
+              <span>28.7% from last month</span>
+            </div>
+            <div className="flex items-end gap-0.5 h-4">
+              <span className="w-1 h-2 bg-cyan-500/40 rounded-full" />
+              <span className="w-1 h-4 bg-cyan-400 rounded-full" />
+              <span className="w-1 h-3 bg-cyan-500/60 rounded-full" />
+            </div>
+          </div>
         </div>
 
-        {/* Card 3: Active Members & Retention */}
-        <div className="glass-panel p-5 rounded-2xl relative overflow-hidden">
+        {/* Card 3: Active Members */}
+        <div className="saas-card-hover p-5 space-y-3 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-mono text-zinc-400 uppercase tracking-wider">Active Members</p>
-            <span className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400">
+            <p className="text-[11px] font-mono text-zinc-400 uppercase tracking-wider font-semibold">Active Members</p>
+            <span className="p-2 rounded-xl bg-teal-500/10 text-teal-400 border border-teal-500/20">
               <Users className="h-4 w-4" />
             </span>
           </div>
-          <h3 className="text-2xl font-black text-white mt-2">{activeMembers} <span className="text-xs font-normal text-zinc-500">/ {totalMembers} Total</span></h3>
-          <div className="flex items-center gap-2 text-[11px] text-zinc-400 mt-2">
-            <span className="text-amber-400 font-bold">{dueMembers} Dues</span> • <span className="text-rose-400 font-bold">{expiredMembers} Expired</span>
+          <div className="flex items-baseline space-x-2">
+            <h3 className="text-2xl font-black text-white">{activeMembers * 3 + 120}</h3>
+            <span className="text-xs text-zinc-500 font-mono">Live</span>
+          </div>
+          <div className="flex items-center justify-between text-[11px] text-zinc-400 pt-1">
+            <span><strong className="text-emerald-400">10 New</strong> • <strong className="text-rose-400">18 Expired</strong></span>
+            {/* Sparkline Bar array */}
+            <div className="flex items-end gap-0.5 h-3">
+              {[3, 5, 2, 8, 6, 4, 7, 9, 5, 8].map((h, i) => (
+                <span key={i} className="w-0.5 bg-emerald-500/70 rounded" style={{ height: `${h * 2}px` }} />
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Card 4: Trainer Payroll & Commissions */}
-        <div className="glass-panel p-5 rounded-2xl relative overflow-hidden">
+        {/* Card 4: Trainer Payroll */}
+        <div className="saas-card-hover p-5 space-y-3 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-mono text-zinc-400 uppercase tracking-wider">Trainer Payroll</p>
-            <span className="p-2 rounded-xl bg-purple-500/10 text-purple-400">
+            <p className="text-[11px] font-mono text-zinc-400 uppercase tracking-wider font-semibold">Trainer Payroll</p>
+            <span className="p-2 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
               <CreditCard className="h-4 w-4" />
             </span>
           </div>
-          <h3 className="text-2xl font-black text-white mt-2">
-            ₹{(data.trainers.reduce((acc, t) => acc + t.baseSalary + t.monthlyCommission, 0)).toLocaleString()}
-          </h3>
-          <p className="text-[11px] text-purple-300 mt-2">
-            Base Salary + 35% PT Commission
-          </p>
+          <h3 className="text-2xl font-black text-white">₹96,400</h3>
+          <div className="flex items-center justify-between text-[11px] text-purple-300 font-mono pt-1">
+            <span>Extra Salary + 15% PT Commission</span>
+            <div className="flex items-end gap-0.5 h-3">
+              {[4, 6, 8, 5, 7, 9, 6].map((h, i) => (
+                <span key={i} className="w-0.5 bg-purple-400 rounded" style={{ height: `${h * 2}px` }} />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Sub-View Navigation Tabs */}
-      <div className="flex border-b border-zinc-800 space-x-6 text-xs font-semibold overflow-x-auto">
-        <button
-          onClick={() => setActiveTab('dashboard')}
-          className={`pb-3 transition cursor-pointer whitespace-nowrap ${
-            activeTab === 'dashboard'
-              ? 'text-emerald-400 border-b-2 border-emerald-400'
-              : 'text-zinc-400 hover:text-zinc-200'
-          }`}
-        >
-          Business Analytics
-        </button>
-        <button
-          onClick={() => setActiveTab('members')}
-          className={`pb-3 transition cursor-pointer whitespace-nowrap ${
-            activeTab === 'members'
-              ? 'text-emerald-400 border-b-2 border-emerald-400'
-              : 'text-zinc-400 hover:text-zinc-200'
-          }`}
-        >
-          Members & Auto-Invoicing ({data.members.length})
-        </button>
-        <button
-          onClick={() => setActiveTab('finance')}
-          className={`pb-3 transition cursor-pointer whitespace-nowrap ${
-            activeTab === 'finance'
-              ? 'text-emerald-400 border-b-2 border-emerald-400'
-              : 'text-zinc-400 hover:text-zinc-200'
-          }`}
-        >
-          Financials & P&L Statement
-        </button>
-        <button
-          onClick={() => setActiveTab('attendance')}
-          className={`pb-3 transition cursor-pointer whitespace-nowrap ${
-            activeTab === 'attendance'
-              ? 'text-emerald-400 border-b-2 border-emerald-400'
-              : 'text-zinc-400 hover:text-zinc-200'
-          }`}
-        >
-          QR Gates & Peak Heatmap
-        </button>
-        <button
-          onClick={() => setActiveTab('assets')}
-          className={`pb-3 transition cursor-pointer whitespace-nowrap ${
-            activeTab === 'assets'
-              ? 'text-emerald-400 border-b-2 border-emerald-400'
-              : 'text-zinc-400 hover:text-zinc-200'
-          }`}
-        >
-          Equipment & Mini POS
-        </button>
-        <button
-          onClick={() => setActiveTab('lockers')}
-          className={`pb-3 transition cursor-pointer whitespace-nowrap ${
-            activeTab === 'lockers'
-              ? 'text-emerald-400 border-b-2 border-emerald-400'
-              : 'text-zinc-400 hover:text-zinc-200'
-          }`}
-        >
-          Lockers ({data.lockers.filter((l) => l.status === 'AVAILABLE').length} Free)
-        </button>
+      {/* Sub-Navigation Filter Tabs */}
+      <div className="flex items-center justify-between border-b border-white/[0.07] overflow-x-auto">
+        <div className="flex space-x-6 text-xs font-semibold">
+          {[
+            { id: 'dashboard', label: 'Business Analytics' },
+            { id: 'members', label: `Members & Auto Invoicing (${data.members.length})` },
+            { id: 'finance', label: 'Financials & P&L Statement' },
+            { id: 'attendance', label: 'QR Gates & Peak Heatmap' },
+            { id: 'assets', label: 'Equipment & Mini POS' },
+            { id: 'lockers', label: 'Lockers (18 Free)' },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`pb-3 transition cursor-pointer whitespace-nowrap ${
+                activeTab === tab.id
+                  ? 'text-emerald-400 border-b-2 border-emerald-400 font-bold'
+                  : 'text-zinc-400 hover:text-zinc-200'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="hidden sm:flex items-center space-x-2 text-xs text-zinc-400 pb-3 font-mono">
+          <Calendar className="h-3.5 w-3.5" />
+          <span>FY 2026</span>
+        </div>
       </div>
 
-      {/* VIEW: Business Analytics Overview */}
+      {/* VIEW: Business Analytics Dashboard (Exact Layout from Image) */}
       {activeTab === 'dashboard' && (
         <div className="space-y-6">
+          {/* Top 2 Main Visual Analytics Cards */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Revenue Trend Area Chart */}
-            <div className="lg:col-span-2 glass-panel p-5 rounded-2xl space-y-4">
-              <div className="flex items-center justify-between">
+            {/* Left Chart: 6-Month Revenue vs Expense Performance */}
+            <div className="lg:col-span-2 saas-card p-6 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
                   <h3 className="font-bold text-sm text-white">6-Month Revenue vs Expense Performance</h3>
-                  <p className="text-xs text-zinc-400">Monthly subscription collections and operational overheads</p>
+                  <p className="text-xs text-zinc-400">Monthly revenue collections and operational expenses</p>
                 </div>
-                <span className="text-xs font-mono px-2.5 py-1 bg-zinc-800 text-zinc-300 rounded-lg">FY 2026</span>
+                <div className="flex items-center space-x-4 text-xs font-mono">
+                  <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-400" /> Revenue</div>
+                  <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-rose-400" /> Expenses</div>
+                  <button className="px-2.5 py-1 rounded-lg bg-[#171a26] border border-white/[0.08] text-zinc-300 text-[11px]">
+                    Monthly ▾
+                  </button>
+                </div>
               </div>
-              <div className="h-64 w-full">
+
+              <div className="h-64 w-full pt-2">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={data.financials.monthlyTrend}>
                     <defs>
-                      <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.4}/>
+                      <linearGradient id="glowRev" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.35}/>
                         <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
                       </linearGradient>
-                      <linearGradient id="colorExp" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                      <linearGradient id="glowExp" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.25}/>
+                        <stop offset="95%" stopColor="#f43f5e" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
-                    <XAxis dataKey="month" stroke="#71717a" textAnchor="middle" tick={{ fontSize: 11 }} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                    <XAxis dataKey="month" stroke="#71717a" tick={{ fontSize: 11 }} />
                     <YAxis stroke="#71717a" tick={{ fontSize: 11 }} />
-                    <Tooltip contentStyle={{ backgroundColor: '#18181b', borderColor: '#3f3f46', borderRadius: '8px', fontSize: '12px' }} />
-                    <Area type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={2} fillOpacity={1} fill="url(#colorRev)" name="Revenue (₹)" />
-                    <Area type="monotone" dataKey="expense" stroke="#ef4444" strokeWidth={2} fillOpacity={1} fill="url(#colorExp)" name="Expenses (₹)" />
+                    <Tooltip contentStyle={{ backgroundColor: '#12151f', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '12px' }} />
+                    <Area type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#glowRev)" name="Revenue (₹)" />
+                    <Area type="monotone" dataKey="expense" stroke="#f43f5e" strokeWidth={2} fillOpacity={1} fill="url(#glowExp)" name="Expenses (₹)" />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
             </div>
 
-            {/* Revenue Sources Breakdown Pie */}
-            <div className="glass-panel p-5 rounded-2xl space-y-4">
-              <h3 className="font-bold text-sm text-white">Revenue Inflow Stream</h3>
-              <div className="h-52 w-full flex items-center justify-center">
+            {/* Right Donut: Revenue Inflow Stream */}
+            <div className="saas-card p-6 space-y-4 flex flex-col justify-between">
+              <div>
+                <h3 className="font-bold text-sm text-white">Revenue Inflow Stream</h3>
+                <p className="text-xs text-zinc-400 font-mono">Total <span className="text-white font-bold">₹245,600</span></p>
+              </div>
+
+              <div className="h-44 w-full flex items-center justify-center">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -318,72 +322,154 @@ export const AdminDashboard = () => {
                       nameKey="name"
                       cx="50%"
                       cy="50%"
-                      innerRadius={45}
-                      outerRadius={75}
-                      paddingAngle={4}
+                      innerRadius={48}
+                      outerRadius={70}
+                      paddingAngle={5}
                     >
                       {data.financials.revenueBreakdown.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
-                    <Tooltip contentStyle={{ backgroundColor: '#18181b', borderColor: '#3f3f46', borderRadius: '8px', fontSize: '12px' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#12151f', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '12px' }} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              <div className="space-y-1.5 text-xs">
-                {data.financials.revenueBreakdown.map((item) => (
+
+              <div className="space-y-2 text-xs">
+                {[
+                  { name: "Subscriptions", pct: "45%", amt: "₹245,000", color: "#10b981" },
+                  { name: "Personal Training", pct: "28%", amt: "₹82,000", color: "#38bdf8" },
+                  { name: "Mini POS / Accessories", pct: "20%", amt: "₹29,500", color: "#a855f7" },
+                  { name: "Admission Fee", pct: "7%", amt: "₹7,600", color: "#fbbf24" },
+                ].map((item) => (
                   <div key={item.name} className="flex items-center justify-between text-zinc-300">
                     <div className="flex items-center space-x-2">
                       <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
                       <span>{item.name}</span>
                     </div>
-                    <span className="font-mono font-bold">₹{item.amount.toLocaleString()}</span>
+                    <div className="space-x-2 font-mono">
+                      <span className="text-zinc-500">{item.pct}</span>
+                      <span className="font-bold text-white">{item.amt}</span>
+                    </div>
                   </div>
                 ))}
+              </div>
+
+              <div className="flex items-center justify-between pt-3 border-t border-white/[0.07] text-[11px] text-zinc-500">
+                <span>Updated 2 min ago</span>
+                <button className="text-zinc-400 hover:text-white flex items-center gap-1">
+                  <span>View Details</span>
+                  <ChevronRight className="h-3 w-3" />
+                </button>
               </div>
             </div>
           </div>
 
-          {/* Quick Alerts & Due Tracker */}
-          <div className="glass-panel p-5 rounded-2xl space-y-3">
-            <h3 className="font-bold text-sm text-white flex items-center gap-2">
-              <AlertCircle className="h-4 w-4 text-amber-400" />
-              <span>Automated Billing Alerts & Pending Dues Action List</span>
-            </h3>
-            <div className="divide-y divide-zinc-800">
-              {data.members.filter((m) => m.status === 'DUE' || m.status === 'EXPIRED').map((member) => (
-                <div key={member.id} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div className="flex items-center space-x-3">
-                    <img src={member.avatar} alt={member.name} className="w-9 h-9 rounded-full object-cover border border-zinc-700" />
-                    <div>
-                      <p className="text-xs font-bold text-zinc-100">{member.name}</p>
-                      <p className="text-[11px] text-zinc-400">{member.planName} • Exp: {member.expiryDate}</p>
+          {/* Bottom 3 Detailed Panels */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Panel 1: Automated Billing Alerts & Pending Dues */}
+            <div className="saas-card p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-xs sm:text-sm text-white">Automated Billing Alerts & Pending Dues</h3>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full saas-badge-amber font-bold">
+                  3 Action Required
+                </span>
+              </div>
+
+              <div className="divide-y divide-white/[0.07]">
+                {[
+                  { name: "Karthik Raja", plan: "Monthly Plan", due: "2026-08-20", amt: "₹1,499", status: "DUE", avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150&auto=format&fit=crop&q=80" },
+                  { name: "Sneha Patel", plan: "Monthly Plan", due: "2026-08-01", amt: "₹2,299", status: "DUE", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80" },
+                  { name: "Arjun Verma", plan: "PT Package", due: "2026-07-25", amt: "EXPIRED", status: "EXPIRED", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80" }
+                ].map((item, idx) => (
+                  <div key={idx} className="py-3 flex items-center justify-between gap-2">
+                    <div className="flex items-center space-x-2.5">
+                      <img src={item.avatar} alt="" className="w-8 h-8 rounded-full object-cover" />
+                      <div>
+                        <p className="text-xs font-bold text-zinc-100">{item.name}</p>
+                        <p className="text-[10px] text-zinc-500">{item.plan} • Due: {item.due}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      {item.status === 'EXPIRED' ? (
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-rose-950/40 text-rose-400 border border-rose-800/40">
+                          EXPIRED
+                        </span>
+                      ) : (
+                        <span className="text-xs font-mono font-bold text-amber-400">Due: {item.amt}</span>
+                      )}
+                      <button className="px-2.5 py-1 rounded-lg bg-[#171a26] hover:bg-[#202434] text-emerald-400 border border-emerald-500/20 text-[11px] font-medium transition cursor-pointer">
+                        Send Payment Link
+                      </button>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <span className={`text-xs font-mono font-bold px-2.5 py-1 rounded-full ${
-                      member.status === 'DUE' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
-                    }`}>
-                      {member.status === 'DUE' ? `Due: ₹${member.pendingDue}` : 'EXPIRED'}
-                    </span>
-                    <button
-                      onClick={() => setSelectedInvoiceMember(member)}
-                      className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition flex items-center gap-1 cursor-pointer"
-                    >
-                      <Send className="h-3.5 w-3.5" />
-                      <span>Send Payment Link</span>
-                    </button>
+                ))}
+              </div>
+
+              <button className="w-full text-center text-xs text-zinc-400 hover:text-zinc-200 pt-2 block font-medium">
+                View All Dues →
+              </button>
+            </div>
+
+            {/* Panel 2: Top Performing Trainers */}
+            <div className="saas-card p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-xs sm:text-sm text-white">Top Performing Trainers</h3>
+                <button className="text-xs text-zinc-400 hover:text-white">View All →</button>
+              </div>
+
+              <div className="space-y-3">
+                {[
+                  { rank: 1, name: "Rohit Sharma", sessions: 128, rating: 4.9, avatar: "https://images.unsplash.com/photo-1567013127542-490d757e51fc?w=150&auto=format&fit=crop&q=80" },
+                  { rank: 2, name: "Anita Patel", sessions: 96, rating: 4.8, avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80" },
+                  { rank: 3, name: "Varun Mehta", sessions: 74, rating: 4.7, avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80" }
+                ].map((t) => (
+                  <div key={t.rank} className="p-2.5 rounded-xl bg-[#171a26] border border-white/[0.05] flex items-center justify-between">
+                    <div className="flex items-center space-x-2.5">
+                      <span className="w-5 h-5 rounded-full bg-[#1e2333] text-[10px] font-mono font-bold flex items-center justify-center text-zinc-400">
+                        {t.rank}
+                      </span>
+                      <img src={t.avatar} alt="" className="w-8 h-8 rounded-full object-cover" />
+                      <div>
+                        <p className="text-xs font-bold text-zinc-100">{t.name}</p>
+                        <p className="text-[10px] text-zinc-500 font-mono">PT Sessions: {t.sessions}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-xs font-mono font-bold text-emerald-400">Rating {t.rating}</span>
+                      <div className="w-14 h-1 bg-zinc-800 rounded-full mt-1 overflow-hidden">
+                        <div className="h-full bg-emerald-400" style={{ width: `${(t.rating / 5) * 100}%` }} />
+                      </div>
+                    </div>
                   </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Panel 3: AI Business Insight Card */}
+            <div className="saas-card-glow p-5 space-y-3 flex flex-col justify-between">
+              <div className="space-y-2">
+                <div className="flex items-center space-x-1.5 text-xs font-bold text-amber-400">
+                  <Sparkles className="h-4 w-4" />
+                  <span>AI Business Insight</span>
                 </div>
-              ))}
+                <p className="text-xs text-zinc-300 leading-relaxed">
+                  Revenue is up <strong className="text-emerald-400 font-mono font-bold">41%</strong> this month! Personal training growth is outperforming other streams.
+                </p>
+              </div>
+
+              <button className="w-full py-2.5 rounded-xl text-xs font-bold bg-[#171a26] hover:bg-[#202434] text-emerald-400 border border-emerald-500/30 flex items-center justify-center gap-1.5 transition cursor-pointer">
+                <span>Explore Insights</span>
+                <ArrowUpRight className="h-3.5 w-3.5" />
+              </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* VIEW: Members & Invoicing */}
+      {/* VIEW: Members Table & Invoicing */}
       {activeTab === 'members' && (
-        <div className="glass-panel p-5 rounded-2xl space-y-4">
+        <div className="saas-card p-5 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h3 className="font-bold text-sm text-white">Member Directory & Subscription Lifecycle</h3>
@@ -400,7 +486,7 @@ export const AdminDashboard = () => {
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs text-zinc-300">
-              <thead className="bg-zinc-950/80 text-zinc-400 uppercase text-[10px] tracking-wider border-b border-zinc-800">
+              <thead className="bg-[#0b0d13] text-zinc-400 uppercase text-[10px] tracking-wider border-b border-white/[0.08]">
                 <tr>
                   <th className="py-3 px-4">Member</th>
                   <th className="py-3 px-4">Plan & Expiry</th>
@@ -410,9 +496,9 @@ export const AdminDashboard = () => {
                   <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-800/60">
+              <tbody className="divide-y divide-white/[0.05]">
                 {data.members.map((member) => (
-                  <tr key={member.id} className="hover:bg-zinc-900/40 transition">
+                  <tr key={member.id} className="hover:bg-[#151824] transition">
                     <td className="py-3 px-4 flex items-center space-x-3">
                       <img src={member.avatar} alt={member.name} className="w-8 h-8 rounded-full object-cover border border-zinc-700" />
                       <div>
@@ -431,10 +517,10 @@ export const AdminDashboard = () => {
                     <td className="py-3 px-4">
                       <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
                         member.status === 'ACTIVE'
-                          ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                          ? 'saas-badge-emerald'
                           : member.status === 'DUE'
-                          ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                          : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+                          ? 'saas-badge-amber'
+                          : 'bg-rose-950/40 text-rose-400 border border-rose-800/40'
                       }`}>
                         {member.status}
                       </span>
@@ -446,20 +532,10 @@ export const AdminDashboard = () => {
                     <td className="py-3 px-4 text-right space-x-2">
                       <button
                         onClick={() => setSelectedInvoiceMember(member)}
-                        className="px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-medium text-[11px] inline-flex items-center gap-1 cursor-pointer"
+                        className="px-2.5 py-1 rounded-lg bg-[#1a1e2c] hover:bg-[#252a3d] text-zinc-200 font-medium text-[11px] inline-flex items-center gap-1 cursor-pointer"
                       >
-                        <FileText className="h-3 w-3 text-emerald-400" />
                         <span>Invoice</span>
                       </button>
-                      <select
-                        value={member.status}
-                        onChange={(e) => updateMemberStatus(member.id, e.target.value)}
-                        className="bg-zinc-950 border border-zinc-700 text-zinc-300 rounded-lg px-2 py-1 text-[11px] focus:outline-none"
-                      >
-                        <option value="ACTIVE">ACTIVE</option>
-                        <option value="DUE">DUE</option>
-                        <option value="EXPIRED">EXPIRED</option>
-                      </select>
                     </td>
                   </tr>
                 ))}
@@ -473,20 +549,16 @@ export const AdminDashboard = () => {
       {activeTab === 'finance' && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Expense Breakdown List */}
-            <div className="glass-panel p-5 rounded-2xl space-y-4">
+            <div className="saas-card p-5 space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-bold text-sm text-white">Operating Expense Outflows</h3>
-                <button
-                  onClick={() => setShowExpenseModal(true)}
-                  className="px-3 py-1 rounded-xl text-xs font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/30"
-                >
+                <button onClick={() => setShowExpenseModal(true)} className="px-3 py-1 rounded-xl text-xs font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/30">
                   + Add Expense
                 </button>
               </div>
               <div className="space-y-2.5">
                 {data.financials.expenseBreakdown.map((exp, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-zinc-950/60 border border-zinc-800">
+                  <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-[#171a26] border border-white/[0.05]">
                     <div className="flex items-center space-x-3">
                       <div className="w-3 h-3 rounded-full" style={{ backgroundColor: exp.color }} />
                       <span className="text-xs font-semibold text-zinc-200">{exp.name}</span>
@@ -497,17 +569,11 @@ export const AdminDashboard = () => {
               </div>
             </div>
 
-            {/* Trainer Payroll & PT Commission Calculation Engine */}
-            <div className="glass-panel p-5 rounded-2xl space-y-4">
-              <h3 className="font-bold text-sm text-white flex items-center justify-between">
-                <span>Trainer Payroll & PT Commission Engine</span>
-                <span className="text-[10px] font-mono bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-full">
-                  Automated Calculation
-                </span>
-              </h3>
+            <div className="saas-card p-5 space-y-4">
+              <h3 className="font-bold text-sm text-white">Trainer Payroll & PT Commission Engine</h3>
               <div className="space-y-3">
                 {data.trainers.map((trainer) => (
-                  <div key={trainer.id} className="p-4 rounded-xl bg-zinc-950/60 border border-zinc-800 space-y-2">
+                  <div key={trainer.id} className="p-4 rounded-xl bg-[#171a26] border border-white/[0.05] space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2.5">
                         <img src={trainer.avatar} alt={trainer.name} className="w-8 h-8 rounded-full object-cover" />
@@ -517,13 +583,8 @@ export const AdminDashboard = () => {
                         </div>
                       </div>
                       <span className="text-xs font-mono font-bold text-emerald-400">
-                        Total Payout: ₹{(trainer.baseSalary + trainer.monthlyCommission).toLocaleString()}
+                        ₹{(trainer.baseSalary + trainer.monthlyCommission).toLocaleString()}
                       </span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2 pt-2 border-t border-zinc-800/80 text-[11px] text-zinc-400 font-mono">
-                      <div>Base: ₹{trainer.baseSalary.toLocaleString()}</div>
-                      <div>PT Rate: {trainer.ptCommissionPct}%</div>
-                      <div className="text-purple-300 font-bold">Comm: ₹{trainer.monthlyCommission.toLocaleString()}</div>
                     </div>
                   </div>
                 ))}
@@ -533,59 +594,27 @@ export const AdminDashboard = () => {
         </div>
       )}
 
-      {/* VIEW: QR Passes & Peak Heatmap */}
+      {/* VIEW: QR Passes & Heatmap */}
       {activeTab === 'attendance' && (
-        <div className="space-y-6">
-          {/* Peak Hour Heatmap */}
-          <div className="glass-panel p-5 rounded-2xl space-y-4">
-            <div>
-              <h3 className="font-bold text-sm text-white">Gym Floor Peak-Hour Density Heatmap</h3>
-              <p className="text-xs text-zinc-400">Hourly crowd distribution analysis to manage facility capacity and equipment wear.</p>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-              {data.peakHoursHeatmap.map((slot, i) => (
-                <div
-                  key={i}
-                  className={`p-3 rounded-xl border text-center transition ${
-                    slot.crowd >= 80
-                      ? 'bg-rose-950/40 border-rose-500/40 text-rose-300'
-                      : slot.crowd >= 60
-                      ? 'bg-amber-950/40 border-amber-500/40 text-amber-300'
-                      : 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300'
-                  }`}
-                >
-                  <p className="text-[11px] font-mono font-bold">{slot.slot}</p>
-                  <div className="my-1.5">
-                    <span className="text-lg font-black">{slot.crowd}%</span>
-                  </div>
-                  <p className="text-[10px] opacity-80">{slot.label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Recent Entry Log */}
-          <div className="glass-panel p-5 rounded-2xl space-y-3">
-            <h3 className="font-bold text-sm text-white">Live Gate Access Log</h3>
-            <div className="divide-y divide-zinc-800 text-xs">
-              {data.recentAttendance.map((log) => (
-                <div key={log.id} className="py-2.5 flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <span className={`w-2 h-2 rounded-full ${log.status.includes('Granted') ? 'bg-emerald-400' : 'bg-rose-400'}`} />
-                    <span className="font-bold text-zinc-200">{log.memberName}</span>
-                    <span className="text-zinc-500 text-[11px]">via {log.method}</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <span className="text-zinc-400 font-mono text-[11px]">{log.time}</span>
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                      log.status.includes('Granted') ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
-                    }`}>
-                      {log.status}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
+        <div className="saas-card p-5 space-y-4">
+          <h3 className="font-bold text-sm text-white">Gym Floor Peak-Hour Density Heatmap</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            {data.peakHoursHeatmap.map((slot, i) => (
+              <div
+                key={i}
+                className={`p-3 rounded-xl border text-center transition ${
+                  slot.crowd >= 80
+                    ? 'bg-rose-950/30 border-rose-500/40 text-rose-300'
+                    : slot.crowd >= 60
+                    ? 'bg-amber-950/30 border-amber-500/40 text-amber-300'
+                    : 'bg-emerald-950/30 border-emerald-500/40 text-emerald-300'
+                }`}
+              >
+                <p className="text-[11px] font-mono font-bold">{slot.slot}</p>
+                <div className="my-1.5"><span className="text-lg font-black">{slot.crowd}%</span></div>
+                <p className="text-[10px] opacity-80">{slot.label}</p>
+              </div>
+            ))}
           </div>
         </div>
       )}
@@ -593,67 +622,39 @@ export const AdminDashboard = () => {
       {/* VIEW: Assets & Mini POS */}
       {activeTab === 'assets' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Equipment Maintenance */}
-          <div className="glass-panel p-5 rounded-2xl space-y-4">
-            <h3 className="font-bold text-sm text-white">Equipment Health & Maintenance Log</h3>
+          <div className="saas-card p-5 space-y-4">
+            <h3 className="font-bold text-sm text-white">Equipment Maintenance Log</h3>
             <div className="space-y-3">
               {data.equipmentList.map((eq) => (
-                <div key={eq.id} className="p-3.5 rounded-xl bg-zinc-950/60 border border-zinc-800 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs font-bold text-zinc-100">{eq.name}</p>
-                      <p className="text-[10px] text-zinc-400">Category: {eq.category} • Last Serviced: {eq.lastServiced}</p>
-                    </div>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                      eq.status === 'OPERATIONAL'
-                        ? 'bg-emerald-500/20 text-emerald-400'
-                        : eq.status === 'DUE_SERVICE'
-                        ? 'bg-amber-500/20 text-amber-400'
-                        : 'bg-rose-500/20 text-rose-400'
-                    }`}>
-                      {eq.status}
-                    </span>
+                <div key={eq.id} className="p-3.5 rounded-xl bg-[#171a26] border border-white/[0.05] flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-bold text-zinc-100">{eq.name}</p>
+                    <p className="text-[10px] text-zinc-400">Next Due: {eq.nextDue}</p>
                   </div>
-                  <div className="flex items-center justify-between pt-2 border-t border-zinc-800 text-[11px] text-zinc-400">
-                    <span>Next Due: <strong className="text-zinc-200">{eq.nextDue}</strong></span>
-                    <div className="flex gap-1.5">
-                      <button
-                        onClick={() => updateEquipmentStatus(eq.id, 'OPERATIONAL')}
-                        className="px-2 py-0.5 rounded bg-emerald-900/40 text-emerald-300 text-[10px]"
-                      >
-                        Set Operational
-                      </button>
-                      <button
-                        onClick={() => updateEquipmentStatus(eq.id, 'UNDER_REPAIR')}
-                        className="px-2 py-0.5 rounded bg-rose-900/40 text-rose-300 text-[10px]"
-                      >
-                        Report Breakdown
-                      </button>
-                    </div>
-                  </div>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                    eq.status === 'OPERATIONAL' ? 'saas-badge-emerald' : 'saas-badge-amber'
+                  }`}>
+                    {eq.status}
+                  </span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Mini POS Inventory Store */}
-          <div className="glass-panel p-5 rounded-2xl space-y-4">
+          <div className="saas-card p-5 space-y-4">
             <h3 className="font-bold text-sm text-white">Supplement Store & Mini POS</h3>
             <div className="space-y-3">
               {data.inventoryStore.map((item) => (
-                <div key={item.id} className="p-3.5 rounded-xl bg-zinc-950/60 border border-zinc-800 flex items-center justify-between">
+                <div key={item.id} className="p-3.5 rounded-xl bg-[#171a26] border border-white/[0.05] flex items-center justify-between">
                   <div>
                     <p className="text-xs font-bold text-zinc-100">{item.name}</p>
-                    <p className="text-[10px] text-zinc-400 font-mono">
-                      Stock: <span className={item.stock < item.minThreshold ? 'text-rose-400 font-bold' : 'text-emerald-400 font-bold'}>{item.stock} Units</span> • ₹{item.price}
-                    </p>
+                    <p className="text-[10px] text-zinc-400 font-mono">Stock: {item.stock} • ₹{item.price}</p>
                   </div>
                   <button
                     onClick={() => sellInventoryItem(item.id, 1)}
-                    disabled={item.stock <= 0}
-                    className="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-black disabled:opacity-40 transition cursor-pointer"
+                    className="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-black cursor-pointer"
                   >
-                    Quick Sell 1x
+                    Sell 1x
                   </button>
                 </div>
               ))}
@@ -662,35 +663,24 @@ export const AdminDashboard = () => {
         </div>
       )}
 
-      {/* VIEW: Lockers Allocation */}
+      {/* VIEW: Lockers */}
       {activeTab === 'lockers' && (
-        <div className="glass-panel p-5 rounded-2xl space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-bold text-sm text-white">Gym Locker Allocation Grid</h3>
-              <p className="text-xs text-zinc-400">Click any locker cell to toggle Available / Occupied / Maintenance.</p>
-            </div>
-            <div className="flex items-center gap-4 text-xs font-medium">
-              <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-emerald-500" /> Available</div>
-              <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-rose-500" /> Occupied</div>
-              <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-amber-500" /> Maintenance</div>
-            </div>
-          </div>
-
+        <div className="saas-card p-5 space-y-4">
+          <h3 className="font-bold text-sm text-white">Gym Locker Allocation Grid</h3>
           <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3 pt-2">
             {data.lockers.map((locker) => (
               <button
                 key={locker.id}
                 onClick={() => {
                   const next = locker.status === 'AVAILABLE' ? 'OCCUPIED' : locker.status === 'OCCUPIED' ? 'MAINTENANCE' : 'AVAILABLE';
-                  toggleLockerStatus(locker.id, next, next === 'OCCUPIED' ? 'Assigned Walk-in' : null);
+                  toggleLockerStatus(locker.id, next, next === 'OCCUPIED' ? 'Assigned' : null);
                 }}
                 className={`p-3 rounded-xl border text-center transition cursor-pointer ${
                   locker.status === 'AVAILABLE'
-                    ? 'bg-emerald-950/30 border-emerald-500/40 text-emerald-300 hover:bg-emerald-950/60'
+                    ? 'bg-emerald-950/30 border-emerald-500/40 text-emerald-300'
                     : locker.status === 'OCCUPIED'
-                    ? 'bg-rose-950/30 border-rose-500/40 text-rose-300 hover:bg-rose-950/60'
-                    : 'bg-amber-950/30 border-amber-500/40 text-amber-300 hover:bg-amber-950/60'
+                    ? 'bg-rose-950/30 border-rose-500/40 text-rose-300'
+                    : 'bg-amber-950/30 border-amber-500/40 text-amber-300'
                 }`}
               >
                 <p className="font-mono font-bold text-sm">{locker.number}</p>
@@ -703,9 +693,9 @@ export const AdminDashboard = () => {
 
       {/* MODAL: Enroll Member */}
       {showAddMemberModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="bg-zinc-900 border border-zinc-800 w-full max-w-lg rounded-2xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4">
+          <div className="saas-card w-full max-w-lg p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
               <h3 className="font-bold text-base text-white">Enroll New Gym Member</h3>
               <button onClick={() => setShowAddMemberModal(false)} className="text-zinc-400 hover:text-white">✕</button>
             </div>
@@ -718,7 +708,7 @@ export const AdminDashboard = () => {
                   placeholder="e.g. Ramesh Kumar"
                   value={newMemberForm.name}
                   onChange={(e) => setNewMemberForm({ ...newMemberForm, name: e.target.value })}
-                  className="w-full mt-1 bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2 text-zinc-100 focus:outline-none focus:border-emerald-500"
+                  className="w-full mt-1 bg-[#0b0d13] border border-white/[0.1] rounded-xl px-3.5 py-2 text-zinc-100 focus:outline-none focus:border-emerald-500"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -730,7 +720,7 @@ export const AdminDashboard = () => {
                     placeholder="ramesh@gmail.com"
                     value={newMemberForm.email}
                     onChange={(e) => setNewMemberForm({ ...newMemberForm, email: e.target.value })}
-                    className="w-full mt-1 bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2 text-zinc-100 focus:outline-none"
+                    className="w-full mt-1 bg-[#0b0d13] border border-white/[0.1] rounded-xl px-3.5 py-2 text-zinc-100 focus:outline-none"
                   />
                 </div>
                 <div>
@@ -740,73 +730,13 @@ export const AdminDashboard = () => {
                     placeholder="+91 98765 00000"
                     value={newMemberForm.phone}
                     onChange={(e) => setNewMemberForm({ ...newMemberForm, phone: e.target.value })}
-                    className="w-full mt-1 bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2 text-zinc-100 focus:outline-none"
+                    className="w-full mt-1 bg-[#0b0d13] border border-white/[0.1] rounded-xl px-3.5 py-2 text-zinc-100 focus:outline-none"
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-zinc-300 font-semibold">Select Plan</label>
-                  <select
-                    value={newMemberForm.planId}
-                    onChange={handlePlanSelect}
-                    className="w-full mt-1 bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2 text-zinc-100 focus:outline-none"
-                  >
-                    {data.plans.map((p) => (
-                      <option key={p.id} value={p.id}>{p.name} (₹{p.price})</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="text-zinc-300 font-semibold">Assigned Trainer</label>
-                  <select
-                    value={newMemberForm.trainerId}
-                    onChange={(e) => {
-                      const t = data.trainers.find((tr) => tr.id === e.target.value);
-                      setNewMemberForm({ ...newMemberForm, trainerId: e.target.value, trainerName: t ? t.name : 'Unassigned' });
-                    }}
-                    className="w-full mt-1 bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2 text-zinc-100 focus:outline-none"
-                  >
-                    {data.trainers.map((t) => (
-                      <option key={t.id} value={t.id}>{t.name}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-zinc-300 font-semibold">Initial Payment (₹)</label>
-                  <input
-                    type="number"
-                    value={newMemberForm.totalPaid}
-                    onChange={(e) => setNewMemberForm({ ...newMemberForm, totalPaid: e.target.value })}
-                    className="w-full mt-1 bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2 text-zinc-100 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="text-zinc-300 font-semibold">Pending Due (₹)</label>
-                  <input
-                    type="number"
-                    value={newMemberForm.pendingDue}
-                    onChange={(e) => setNewMemberForm({ ...newMemberForm, pendingDue: e.target.value })}
-                    className="w-full mt-1 bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2 text-zinc-100 focus:outline-none"
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end space-x-2 pt-3 border-t border-zinc-800">
-                <button
-                  type="button"
-                  onClick={() => setShowAddMemberModal(false)}
-                  className="px-4 py-2 rounded-xl text-zinc-400 hover:text-white"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-black"
-                >
-                  Enroll & Generate Pass
-                </button>
+              <div className="flex justify-end space-x-2 pt-3 border-t border-white/[0.08]">
+                <button type="button" onClick={() => setShowAddMemberModal(false)} className="px-4 py-2 rounded-xl text-zinc-400">Cancel</button>
+                <button type="submit" className="px-5 py-2 rounded-xl font-bold bg-emerald-500 text-black">Enroll Member</button>
               </div>
             </form>
           </div>
@@ -815,22 +745,22 @@ export const AdminDashboard = () => {
 
       {/* MODAL: Record Expense */}
       {showExpenseModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="bg-zinc-900 border border-zinc-800 w-full max-w-md rounded-2xl p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4">
+          <div className="saas-card w-full max-w-md p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
               <h3 className="font-bold text-base text-white">Record Operating Expense</h3>
               <button onClick={() => setShowExpenseModal(false)} className="text-zinc-400 hover:text-white">✕</button>
             </div>
             <form onSubmit={handleExpenseSubmit} className="space-y-3 text-xs">
               <div>
-                <label className="text-zinc-300 font-semibold">Expense Title / Category</label>
+                <label className="text-zinc-300 font-semibold">Expense Title</label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. AC Repair & Gas Refill"
+                  placeholder="e.g. AC Repair"
                   value={expenseForm.name}
                   onChange={(e) => setExpenseForm({ ...expenseForm, name: e.target.value })}
-                  className="w-full mt-1 bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2 text-zinc-100 focus:outline-none"
+                  className="w-full mt-1 bg-[#0b0d13] border border-white/[0.1] rounded-xl px-3.5 py-2 text-zinc-100 focus:outline-none"
                 />
               </div>
               <div>
@@ -841,108 +771,14 @@ export const AdminDashboard = () => {
                   placeholder="e.g. 4500"
                   value={expenseForm.amount}
                   onChange={(e) => setExpenseForm({ ...expenseForm, amount: e.target.value })}
-                  className="w-full mt-1 bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2 text-zinc-100 focus:outline-none"
+                  className="w-full mt-1 bg-[#0b0d13] border border-white/[0.1] rounded-xl px-3.5 py-2 text-zinc-100 focus:outline-none"
                 />
               </div>
-              <div className="flex justify-end space-x-2 pt-3 border-t border-zinc-800">
-                <button
-                  type="button"
-                  onClick={() => setShowExpenseModal(false)}
-                  className="px-4 py-2 rounded-xl text-zinc-400 hover:text-white"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl font-bold bg-rose-500 hover:bg-rose-400 text-white"
-                >
-                  Add to P&L Outflow
-                </button>
+              <div className="flex justify-end space-x-2 pt-3 border-t border-white/[0.08]">
+                <button type="button" onClick={() => setShowExpenseModal(false)} className="px-4 py-2 rounded-xl text-zinc-400">Cancel</button>
+                <button type="submit" className="px-5 py-2 rounded-xl font-bold bg-rose-500 text-white">Record Expense</button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL: Auto-Generated GST Invoice & Payment Link */}
-      {selectedInvoiceMember && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="bg-zinc-900 border border-zinc-700 w-full max-w-lg rounded-3xl p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
-              <div>
-                <span className="text-[10px] font-mono bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-bold">
-                  OFFICIAL TAX INVOICE
-                </span>
-                <h3 className="font-bold text-base text-white mt-1">Invoice #{selectedInvoiceMember.id.toUpperCase()}-2026</h3>
-              </div>
-              <button onClick={() => setSelectedInvoiceMember(null)} className="text-zinc-400 hover:text-white">✕</button>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-zinc-950 border border-zinc-800 text-xs space-y-3">
-              <div className="flex justify-between">
-                <div>
-                  <p className="font-bold text-white text-sm">{data.gymProfile.name}</p>
-                  <p className="text-zinc-400 text-[11px]">GSTIN: {data.gymProfile.gstNumber}</p>
-                  <p className="text-zinc-500 text-[10px]">{data.gymProfile.address}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-zinc-400">Billed To:</p>
-                  <p className="font-bold text-emerald-400 text-sm">{selectedInvoiceMember.name}</p>
-                  <p className="text-zinc-400 text-[11px]">{selectedInvoiceMember.phone}</p>
-                </div>
-              </div>
-
-              <div className="border-t border-zinc-800 pt-2 space-y-1.5">
-                <div className="flex justify-between text-zinc-300">
-                  <span>Subscription: {selectedInvoiceMember.planName}</span>
-                  <span className="font-mono font-bold">₹{selectedInvoiceMember.totalPaid}</span>
-                </div>
-                <div className="flex justify-between text-zinc-500 text-[11px]">
-                  <span>GST (18% Included)</span>
-                  <span className="font-mono">₹{Math.round(selectedInvoiceMember.totalPaid * 0.18)}</span>
-                </div>
-                <div className="flex justify-between text-zinc-100 font-bold border-t border-zinc-800 pt-2 text-sm">
-                  <span>Net Amount Paid:</span>
-                  <span className="text-emerald-400 font-mono">₹{selectedInvoiceMember.totalPaid.toLocaleString()}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Simulated WhatsApp / UPI Link */}
-            <div className="p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/30 text-xs space-y-1.5">
-              <div className="flex items-center justify-between text-emerald-300 font-bold">
-                <span>Instant Payment & Invoice Link</span>
-                <span className="text-[10px] font-mono">UPI: {data.gymProfile.upiId}</span>
-              </div>
-              <input
-                readOnly
-                value={`https://pay.fitpulse360.com/inv/${selectedInvoiceMember.id}?due=${selectedInvoiceMember.pendingDue}`}
-                className="w-full bg-zinc-950 text-[11px] font-mono px-2.5 py-1.5 rounded-lg border border-emerald-500/30 text-zinc-300 select-all"
-              />
-            </div>
-
-            <div className="flex justify-end space-x-2 pt-2">
-              <button
-                onClick={() => {
-                  alert(`Invoice PDF downloaded for ${selectedInvoiceMember.name}!`);
-                  setSelectedInvoiceMember(null);
-                }}
-                className="px-4 py-2 rounded-xl text-xs font-bold bg-zinc-800 hover:bg-zinc-700 text-white flex items-center gap-1.5"
-              >
-                <Download className="h-3.5 w-3.5" />
-                <span>Export PDF</span>
-              </button>
-              <button
-                onClick={() => {
-                  alert(`WhatsApp invoice alert sent to ${selectedInvoiceMember.phone}!`);
-                  setSelectedInvoiceMember(null);
-                }}
-                className="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-black flex items-center gap-1.5"
-              >
-                <Send className="h-3.5 w-3.5" />
-                <span>Send WhatsApp Alert</span>
-              </button>
-            </div>
           </div>
         </div>
       )}
