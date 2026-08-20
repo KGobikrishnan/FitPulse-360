@@ -2,12 +2,18 @@ import React from 'react';
 import { GymProvider, useGym } from './context/GymContext';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
+import { LoginPage } from './pages/auth/LoginPage';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { TrainerDashboard } from './pages/trainer/TrainerDashboard';
 import { MemberDashboard } from './pages/member/MemberDashboard';
 
 const MainLayout = () => {
   const { currentUser, toastMessage } = useGym();
+
+  // If user is not logged in, show Login Page
+  if (!currentUser) {
+    return <LoginPage />;
+  }
 
   return (
     <div className="min-h-screen bg-[#090a0f] text-zinc-100 flex flex-col selection:bg-emerald-500 selection:text-black">

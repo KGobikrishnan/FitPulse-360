@@ -1,29 +1,15 @@
 import React, { useState } from 'react';
 import { useGym } from '../context/GymContext';
 import {
-  LayoutDashboard,
-  Users,
-  DollarSign,
-  QrCode,
   Dumbbell,
-  ShieldCheck,
-  Calendar,
-  Utensils,
-  TrendingUp,
-  Activity,
-  Flame,
-  Award,
-  IdCard,
-  LogOut,
-  Bell,
-  Sparkles,
-  Search,
+  QrCode,
   CheckCircle2,
-  AlertTriangle
+  AlertTriangle,
+  LogOut
 } from 'lucide-react';
 
 export const Navbar = () => {
-  const { currentUser, switchRole, data, toastMessage, simulateQRCheckIn } = useGym();
+  const { currentUser, logoutUser, switchRole, data, simulateQRCheckIn } = useGym();
   const [showQRScanModal, setShowQRScanModal] = useState(false);
   const [scannedCode, setScannedCode] = useState('');
   const [scanResult, setScanResult] = useState(null);
@@ -90,9 +76,9 @@ export const Navbar = () => {
         </button>
       </div>
 
-      {/* Role Switcher & User Profile */}
+      {/* Role Switcher, Profile & Logout */}
       <div className="flex items-center space-x-3">
-        {/* Quick Role Switcher Pill for Recruiters/Evaluators */}
+        {/* Quick Role Switcher Pill */}
         <div className="flex items-center p-1 rounded-xl bg-zinc-900 border border-zinc-800 text-xs">
           <button
             onClick={() => switchRole('ADMIN')}
@@ -126,7 +112,7 @@ export const Navbar = () => {
           </button>
         </div>
 
-        {/* User Avatar */}
+        {/* User Profile */}
         <div className="flex items-center space-x-2 pl-2 border-l border-zinc-800">
           <img
             src={currentUser.avatar}
@@ -138,6 +124,15 @@ export const Navbar = () => {
             <p className="text-[10px] text-emerald-400 font-mono">{currentUser.role}</p>
           </div>
         </div>
+
+        {/* Logout Button */}
+        <button
+          onClick={logoutUser}
+          title="Sign Out"
+          className="p-2 rounded-xl bg-zinc-900 hover:bg-rose-950/40 text-zinc-400 hover:text-rose-400 border border-zinc-800 transition cursor-pointer"
+        >
+          <LogOut className="h-4 w-4" />
+        </button>
       </div>
 
       {/* Gate QR Check-in Simulator Modal */}
@@ -206,7 +201,7 @@ export const Navbar = () => {
                     <p className="font-bold">{scanResult.message}</p>
                     {scanResult.member && (
                       <p className="text-[11px] opacity-80">
-                        {scanResult.member.name} • Plan: {scanResult.member.planName} (Status: {scanResult.member.status})
+                        {scanResult.member.name || scanResult.member.fullName} • Plan: {scanResult.member.planName} (Status: {scanResult.member.status})
                       </p>
                     )}
                   </div>
