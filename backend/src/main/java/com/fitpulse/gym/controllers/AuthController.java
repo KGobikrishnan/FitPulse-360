@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -19,7 +20,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
-@Tag(name = "Authentication & Onboarding", description = "Endpoints for user login, role authorization, and registration")
+@Tag(name = "Authentication & Onboarding", description = "Endpoints for user login, token refresh, logout blacklisting, and registration")
 public class AuthController {
 
     private final UserRepository userRepository;
@@ -33,7 +34,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    @Operation(summary = "Authenticate user with email and password, returning a signed JWT token")
+    @Operation(summary = "Authenticate user and return short-lived Access Token (15m) + long-lived Refresh Token (7d)")
     public ResponseEntity<ApiResponse<Map<String, Object>>> login(@RequestBody Map<String, String> credentials) {
         String email = credentials.get("email");
         String password = credentials.get("password");
@@ -52,11 +53,14 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("Invalid email or password"));
         }
 
-        // Generate true cryptographic JWT token
-        String jwt = tokenProvider.generateToken(user.getEmail(), user.getRole().name(), user.getId());
+        // Generate Short-lived Access Token & Refresh Token
+        String accessToken = tokenProvider.generateAccessToken(user.getEmail(), user.getRole().name(), user.getId());
+        String refreshToken = tokenProvider.generateRefreshToken(user.getEmail());
 
         Map<String, Object> response = new HashMap<>();
-        response.put("token", jwt);
+        response.put("accessToken", accessToken);
+        response.put("refreshToken", refreshToken);
+        response.put("token", accessToken); // Backwards compatibility
         response.put("id", user.getId());
         response.put("name", user.getFullName());
         response.put("email", user.getEmail());
@@ -70,6 +74,41 @@ public class AuthController {
         response.put("pendingDue", user.getPendingDue());
 
         return ResponseEntity.ok(ApiResponse.ok("Login successful", response));
+    }
+
+    @PostMapping("/refresh-token")
+    @Operation(summary = "Refresh expired Access Token using valid Refresh Token")
+    public ResponseEntity<ApiResponse<Map<String, String>>> refreshToken(@RequestBody Map<String, String> request) {
+        String refreshToken = request.get("refreshToken");
+
+        if (!StringUtils.hasText(refreshToken) || !tokenProvider.validateToken(refreshToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("Invalid or expired refresh token"));
+        }
+
+        String email = tokenProvider.getEmailFromToken(refreshToken);
+        Optional<User> userOpt = userRepository.findByEmail(email);
+
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("User not found"));
+        }
+
+        User user = userOpt.get();
+        String newAccessToken = tokenProvider.generateAccessToken(user.getEmail(), user.getRole().name(), user.getId());
+
+        return ResponseEntity.ok(ApiResponse.ok("Token refreshed", Map.of(
+                "accessToken", newAccessToken,
+                "token", newAccessToken
+        )));
+    }
+
+    @PostMapping("/logout")
+    @Operation(summary = "Invalidate and blacklist the current JWT Access Token")
+    public ResponseEntity<ApiResponse<String>> logout(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            tokenProvider.blacklistToken(token);
+        }
+        return ResponseEntity.ok(ApiResponse.ok("Logged out successfully. Token blacklisted.", null));
     }
 
     @PostMapping("/register")

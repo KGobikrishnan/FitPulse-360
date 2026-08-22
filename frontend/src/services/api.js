@@ -22,16 +22,75 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response Interceptor: Handle 401 Session Expiry globally
+// Response Interceptor: Auto Refresh Token on 401
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
 apiClient.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      console.warn('Session expired or unauthorized. Logging out...');
-      localStorage.removeItem('fitpulse_jwt_token');
-      localStorage.removeItem('fitpulse_current_user_v3');
-      window.dispatchEvent(new Event('auth:unauthorized'));
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
+      const refreshToken = localStorage.getItem('fitpulse_refresh_token');
+
+      if (!refreshToken) {
+        // No refresh token available, trigger clean logout
+        localStorage.removeItem('fitpulse_jwt_token');
+        localStorage.removeItem('fitpulse_refresh_token');
+        localStorage.removeItem('fitpulse_current_user_v4');
+        window.dispatchEvent(new Event('auth:unauthorized'));
+        return Promise.reject(error);
+      }
+
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return apiClient(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        const res = await axios.post(`${API_BASE_URL}/auth/refresh-token`, { refreshToken });
+        const newToken = res.data?.data?.accessToken || res.data?.accessToken;
+
+        if (newToken) {
+          localStorage.setItem('fitpulse_jwt_token', newToken);
+          apiClient.defaults.headers.common.Authorization = `Bearer ${newToken}`;
+          processQueue(null, newToken);
+          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+          return apiClient(originalRequest);
+        }
+      } catch (refreshErr) {
+        processQueue(refreshErr, null);
+        localStorage.removeItem('fitpulse_jwt_token');
+        localStorage.removeItem('fitpulse_refresh_token');
+        localStorage.removeItem('fitpulse_current_user_v4');
+        window.dispatchEvent(new Event('auth:unauthorized'));
+        return Promise.reject(refreshErr);
+      } finally {
+        isRefreshing = false;
+      }
     }
+
     return Promise.reject(error);
   }
 );
@@ -41,13 +100,28 @@ export const api = {
   login: async (email, password) => {
     try {
       const res = await apiClient.post('/auth/login', { email, password });
-      if (res.data && res.data.data && res.data.data.token) {
-        localStorage.setItem('fitpulse_jwt_token', res.data.data.token);
+      const data = res.data.data || res.data;
+      if (data && data.token) {
+        localStorage.setItem('fitpulse_jwt_token', data.token);
       }
-      return res.data.data || res.data;
+      if (data && data.refreshToken) {
+        localStorage.setItem('fitpulse_refresh_token', data.refreshToken);
+      }
+      return data;
     } catch (e) {
       console.warn('Backend login error:', e);
       return null;
+    }
+  },
+
+  logout: async () => {
+    try {
+      await apiClient.post('/auth/logout');
+    } catch (e) {
+      console.warn('Backend logout error:', e);
+    } finally {
+      localStorage.removeItem('fitpulse_jwt_token');
+      localStorage.removeItem('fitpulse_refresh_token');
     }
   },
 

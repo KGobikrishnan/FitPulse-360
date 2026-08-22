@@ -42,11 +42,11 @@ public class SecurityConfig {
                     "/swagger-ui/**",
                     "/swagger-ui.html",
                     "/v3/api-docs/**",
-                    "/api/public/**",
-                    "/api/admin/**",
-                    "/api/trainer/**",
-                    "/api/member/**"
+                    "/actuator/**"
                 ).permitAll()
+                .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "STAFF")
+                .requestMatchers("/api/trainer/**").hasAnyRole("TRAINER", "ADMIN")
+                .requestMatchers("/api/member/**").hasAnyRole("USER", "MEMBER", "ADMIN")
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

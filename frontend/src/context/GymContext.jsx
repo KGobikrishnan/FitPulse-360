@@ -166,7 +166,9 @@ export const GymProvider = ({ children }) => {
   };
 
   const logoutUser = () => {
+    api.logout();
     localStorage.removeItem('fitpulse_jwt_token');
+    localStorage.removeItem('fitpulse_refresh_token');
     setCurrentUser(null);
     showToast('Logged out successfully.');
   };
