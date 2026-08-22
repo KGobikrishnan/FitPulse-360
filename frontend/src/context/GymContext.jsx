@@ -371,7 +371,7 @@ export const GymProvider = ({ children }) => {
     showToast("Feedback sent to trainee dashboard!");
   };
 
-  // MEMBER ACTIONS
+  // MEMBER ACTIONS (Offline resilient)
   const toggleExerciseSet = (exerciseId, setIndex) => {
     setData((prev) => {
       const routine = { ...prev.todayMemberRoutine };
@@ -386,6 +386,15 @@ export const GymProvider = ({ children }) => {
       });
       return { ...prev, todayMemberRoutine: routine };
     });
+
+    if (!navigator.onLine) {
+      try {
+        const queue = JSON.parse(localStorage.getItem('fitpulse_offline_sync_queue') || '[]');
+        queue.push({ action: 'TOGGLE_SET', exerciseId, setIndex, time: new Date().toISOString() });
+        localStorage.setItem('fitpulse_offline_sync_queue', JSON.stringify(queue));
+      } catch (e) {}
+      showToast('⚡ Logged set offline! Will auto-sync when network returns.');
+    }
   };
 
   const logNewPR = (pr) => {

@@ -15,8 +15,11 @@ import {
   ChevronDown
 } from 'lucide-react';
 
+import { useNetworkStatus } from '../hooks/useNetworkStatus';
+
 export const Navbar = ({ onToggleMobileDrawer, onOpenSearch }) => {
   const { currentUser, logoutUser, data, simulateQRCheckIn } = useGym();
+  const { isOnline, pendingSyncCount } = useNetworkStatus();
   const [showQRScanModal, setShowQRScanModal] = useState(false);
   const [scannedCode, setScannedCode] = useState('');
   const [scanResult, setScanResult] = useState(null);
@@ -92,11 +95,21 @@ export const Navbar = ({ onToggleMobileDrawer, onOpenSearch }) => {
           <span className="text-amber-400 font-bold">42,800 (63%)</span>
         </div>
 
+        {/* Offline Mode Indicator Badge */}
+        {!isOnline && (
+          <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-bold font-mono bg-amber-950/60 text-amber-300 border border-amber-500/40 animate-pulse">
+            <span className="w-2 h-2 rounded-full bg-amber-400" />
+            <span>Offline ({pendingSyncCount} queued)</span>
+          </div>
+        )}
+
         {/* Growth Metric Badge */}
-        <div className="hidden lg:flex items-center space-x-1 saas-badge-emerald px-2.5 py-1 rounded-lg text-xs font-bold font-mono">
-          <TrendingUp className="h-3.5 w-3.5" />
-          <span>Grow 12%</span>
-        </div>
+        {isOnline && (
+          <div className="hidden lg:flex items-center space-x-1 saas-badge-emerald px-2.5 py-1 rounded-lg text-xs font-bold font-mono">
+            <TrendingUp className="h-3.5 w-3.5" />
+            <span>Grow 12%</span>
+          </div>
+        )}
 
         {/* Gate QR Trigger */}
         <button
