@@ -1,52 +1,87 @@
 services:
-  postgres-db:
+  # 1. PostgreSQL 16 Database
+  postgres:
     image: postgres:16-alpine
     container_name: fitpulse-postgres
-    restart: always
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: fitpulse_gym
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: ${DB_NAME:-fitpulse_gym}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_NAME:-fitpulse_gym}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - fitpulse-net
 
-  backend-api:
+  # 2. Redis Caching & Session Store
+  redis:
+    image: redis:7-alpine
+    container_name: fitpulse-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fitpulse-net
+
+  # 3. Spring Boot REST API
+  backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: fitpulse-backend
-    restart: always
+    restart: unless-stopped
     depends_on:
-      - postgres-db
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
-      DB_HOST: postgres-db
+      SPRING_PROFILES_ACTIVE: prod
+      DB_HOST: postgres
       DB_PORT: 5432
-      DB_NAME: fitpulse_gym
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgrespassword
+      DB_NAME: ${DB_NAME:-fitpulse_gym}
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      JWT_SECRET: ${JWT_SECRET:-9a6747f3b97b8d123456789abcdef0123456789abcdef0123456789abcdef012345}
+      JWT_EXPIRATION_MS: 86400000
     ports:
       - "8080:8080"
     networks:
       - fitpulse-net
 
-  frontend-ui:
+  # 4. React 19 + Nginx Frontend
+  frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: fitpulse-frontend
-    restart: always
+    restart: unless-stopped
+    depends_on:
+      - backend
     ports:
-      - "5173:80"
+      - "80:80"
+      - "3000:80"
     networks:
       - fitpulse-net
-
-volumes:
-  postgres_data:
 
 networks:
   fitpulse-net:
     driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:

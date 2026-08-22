@@ -1,21 +1,29 @@
 spring:
   application:
     name: gym-management-api
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
 
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/fitpulse_gym
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:fitpulse_gym}
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 15
+      minimum-idle: 5
+      idle-timeout: 300000
+      max-lifetime: 1800000
+      connection-timeout: 20000
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
 
 # Swagger UI & OpenAPI Docs
 springdoc:
@@ -28,8 +36,42 @@ springdoc:
 
 # Security JWT
 jwt:
-  secret: 9a6747f3b97b8d123456789abcdef0123456789abcdef0123456789abcdef012345
-  expiration-ms: 86400000 # 24 Hours
+  secret: ${JWT_SECRET:9a6747f3b97b8d123456789abcdef0123456789abcdef0123456789abcdef012345}
+  expiration-ms: ${JWT_EXPIRATION_MS:86400000} # 24 Hours
+
+# Spring Boot Actuator Monitoring & Health
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
 
 server:
-  port: 8080
+  port: ${PORT:8080}
+  shutdown: graceful
+
+---
+# Development Profile
+spring:
+  config:
+    activate:
+      on-profile: dev
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+---
+# Production Profile
+spring:
+  config:
+    activate:
+      on-profile: prod
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
