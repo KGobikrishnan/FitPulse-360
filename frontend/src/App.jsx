@@ -30,7 +30,7 @@ const MainLayout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F5F0] text-slate-900 flex flex-col selection:bg-indigo-600 selection:text-white relative font-sans">
+    <div className="min-h-screen text-slate-900 flex flex-col selection:bg-indigo-600 selection:text-white relative font-sans">
       <CommandPalette
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
