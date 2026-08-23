@@ -2,25 +2,25 @@
 
 @layer base {
   :root {
-    --bg-main: #f8fafc;
-    --bg-card: #ffffff;
-    --bg-card-subtle: #f1f5f9;
-    --border-subtle: rgba(226, 232, 240, 0.9);
-    --primary: #059669;
-    --primary-glow: rgba(16, 185, 129, 0.15);
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
   }
 
   body {
     background-color: #f8fafc;
     color: #0f172a;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: var(--font-sans);
     overflow-x: hidden;
-    letter-spacing: -0.015em;
+    letter-spacing: -0.018em;
     background-image: 
-      radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.06) 0px, transparent 45%),
-      radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 45%),
-      radial-gradient(at 50% 100%, rgba(14, 165, 233, 0.04) 0px, transparent 45%);
+      radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 40%),
+      radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.06) 0px, transparent 40%),
+      radial-gradient(at 50% 100%, rgba(14, 165, 233, 0.05) 0px, transparent 40%);
     background-attachment: fixed;
+  }
+
+  code, kbd, samp, pre {
+    font-family: var(--font-mono);
   }
 }
 
@@ -40,54 +40,48 @@
   background: #94a3b8;
 }
 
-/* 💎 LUXURY CLEAN TECH CARDS */
-.saas-card {
+/* 💎 LUXURY MASTERPIECE CARDS & SURFACES */
+.luxury-card {
   background: #ffffff;
-  border: 1px solid rgba(226, 232, 240, 0.85);
+  border: 1px solid rgba(226, 232, 240, 0.9);
   box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.02);
-  border-radius: 1.25rem;
-}
-
-.saas-card-hover {
-  background: #ffffff;
-  border: 1px solid rgba(226, 232, 240, 0.85);
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.02);
+  border-radius: 1.5rem;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  border-radius: 1.25rem;
-}
-.saas-card-hover:hover {
-  border-color: rgba(16, 185, 129, 0.35);
-  transform: translateY(-2px);
-  box-shadow: 0 16px 32px -6px rgba(15, 23, 42, 0.08), 0 0 20px -4px rgba(16, 185, 129, 0.12);
 }
 
-.saas-card-glow {
+.luxury-card:hover {
+  border-color: rgba(16, 185, 129, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.09), 0 0 25px -4px rgba(16, 185, 129, 0.15);
+}
+
+.luxury-hero-card {
   background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
   border: 1px solid rgba(16, 185, 129, 0.3);
-  box-shadow: 0 10px 25px -4px rgba(16, 185, 129, 0.1), 0 4px 10px -2px rgba(15, 23, 42, 0.03);
-  border-radius: 1.25rem;
+  box-shadow: 0 12px 30px -5px rgba(16, 185, 129, 0.12), 0 4px 10px -2px rgba(15, 23, 42, 0.03);
+  border-radius: 1.5rem;
 }
 
-/* 🏷️ CLEAN PASTEL / NEON BADGES */
-.saas-badge-emerald {
+/* 🏷️ SOFT PASTEL / EMERALD BADGES */
+.luxury-badge-emerald {
   background: #ecfdf5;
   color: #047857;
   border: 1px solid #a7f3d0;
 }
 
-.saas-badge-cyan {
+.luxury-badge-cyan {
   background: #f0fdfa;
   color: #0f766e;
   border: 1px solid #99f6e4;
 }
 
-.saas-badge-purple {
+.luxury-badge-purple {
   background: #f5f3ff;
   color: #6d28d9;
   border: 1px solid #ddd6fe;
 }
 
-.saas-badge-amber {
+.luxury-badge-amber {
   background: #fffbeb;
   color: #b45309;
   border: 1px solid #fde68a;
@@ -97,7 +91,7 @@
 .btn-shiny {
   position: relative;
   overflow: hidden;
-  transition: all 0.25s ease;
+  transition: all 0.3s ease;
 }
 .btn-shiny::after {
   content: '';
@@ -109,7 +103,7 @@
   background: linear-gradient(
     60deg,
     transparent 20%,
-    rgba(255, 255, 255, 0.3) 25%,
+    rgba(255, 255, 255, 0.35) 25%,
     transparent 30%
   );
   transform: rotate(30deg);
@@ -119,3 +113,33 @@
 .btn-shiny:hover::after {
   left: 100%;
 }
+
+/* Backwards compatibility for existing classes */
+.saas-card {
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+  border-radius: 1.5rem;
+}
+.saas-card-hover {
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 1.5rem;
+}
+.saas-card-hover:hover {
+  border-color: rgba(16, 185, 129, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 32px -6px rgba(15, 23, 42, 0.08);
+}
+.saas-card-glow {
+  background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  box-shadow: 0 10px 25px -4px rgba(16, 185, 129, 0.1);
+  border-radius: 1.5rem;
+}
+.saas-badge-emerald { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+.saas-badge-cyan { background: #f0fdfa; color: #0f766e; border: 1px solid #99f6e4; }
+.saas-badge-purple { background: #f5f3ff; color: #6d28d9; border: 1px solid #ddd6fe; }
+.saas-badge-amber { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }

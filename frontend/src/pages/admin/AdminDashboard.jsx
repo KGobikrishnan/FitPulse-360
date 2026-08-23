@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useGym } from '../../context/GymContext';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users,
   DollarSign,
@@ -20,7 +21,13 @@ import {
   MoreVertical,
   Calendar,
   Zap,
-  TrendingDown
+  TrendingDown,
+  CheckCircle2,
+  AlertTriangle,
+  Building2,
+  Clock,
+  Flame,
+  ShieldCheck
 } from 'lucide-react';
 import {
   AreaChart,
@@ -93,107 +100,127 @@ export const AdminDashboard = () => {
 
   const activeMembers = data.members.filter((m) => m.status === 'ACTIVE').length;
 
+  const containerVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1], staggerChildren: 0.08 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 12 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
+  };
+
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
-      {/* Top Header & Executive Control Title */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-6"
+    >
+      {/* 🌟 Top Hero Bar */}
+      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-3">
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-sans">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
               Executive Business Control
             </h1>
-            <span className="text-[11px] font-mono px-3 py-0.5 rounded-full saas-badge-emerald font-bold flex items-center gap-1.5 shadow-2xs">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[11px] font-mono px-3 py-1 rounded-full luxury-badge-emerald font-bold flex items-center gap-1.5 shadow-xs">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span>Live Operations</span>
             </span>
           </div>
-          <p className="text-xs text-slate-500 mt-1">
-            Real-time revenue tracking, intelligent member analytics & complete facility management.
+          <p className="text-xs sm:text-sm text-slate-500 mt-1 font-medium">
+            Real-time revenue telemetry, member retention analytics & complete gym operations.
           </p>
         </div>
 
         <div className="flex items-center space-x-2.5">
           <button
             onClick={() => setShowExpenseModal(true)}
-            className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
+            className="px-4 py-2.5 rounded-xl text-xs font-bold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 transition flex items-center gap-2 cursor-pointer shadow-xs active:scale-98"
           >
             <DollarSign className="h-4 w-4 text-rose-500" />
             <span>Record Expense</span>
           </button>
           <button
             onClick={() => setShowAddMemberModal(true)}
-            className="btn-shiny px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 transition flex items-center gap-1.5 cursor-pointer"
+            className="btn-shiny px-5 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/25 transition flex items-center gap-2 cursor-pointer active:scale-98"
           >
             <UserPlus className="h-4 w-4" />
             <span>+ Enroll Member</span>
           </button>
-          <button className="p-2 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-slate-700 shadow-2xs cursor-pointer">
-            <SlidersHorizontal className="h-4 w-4" />
-          </button>
         </div>
-      </div>
+      </motion.div>
 
-      {/* 4 Clean Luxury Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Card 1: Gross Collection */}
-        <div className="saas-card-hover p-5 space-y-3 relative overflow-hidden">
+      {/* 📊 4 Hero Telemetry KPI Cards */}
+      <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        {/* Card 1: Gross Revenue */}
+        <div className="luxury-card p-6 space-y-3 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <p className="text-[11px] font-mono text-slate-400 uppercase tracking-wider font-bold">Gross Collection</p>
-            <span className="p-2 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100">
+            <p className="text-xs font-mono text-slate-400 uppercase tracking-wider font-bold">Gross Collection</p>
+            <span className="p-2.5 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100">
               <DollarSign className="h-4 w-4" />
             </span>
           </div>
-          <h3 className="text-2xl font-black text-slate-900">₹{data.financials.monthlyRevenue.toLocaleString()}</h3>
+          <h3 className="text-3xl font-black text-slate-900 tracking-tight font-mono">
+            ₹{data.financials.monthlyRevenue.toLocaleString()}
+          </h3>
           <div className="flex items-center justify-between pt-1">
-            <div className="flex items-center gap-1 text-[11px] text-emerald-700 font-bold font-mono">
-              <ArrowUpRight className="h-3.5 w-3.5" />
-              <span>41.2% vs last month</span>
+            <div className="flex items-center gap-1 text-xs text-emerald-700 font-bold font-mono">
+              <ArrowUpRight className="h-4 w-4" />
+              <span>+41.2% this month</span>
             </div>
             <div className="flex items-end gap-0.5 h-4">
               <span className="w-1 h-2 bg-emerald-300 rounded-full" />
               <span className="w-1 h-3 bg-emerald-400 rounded-full" />
               <span className="w-1 h-2 bg-emerald-300 rounded-full" />
-              <span className="w-1 h-4 bg-emerald-500 rounded-full" />
+              <span className="w-1 h-4 bg-emerald-600 rounded-full" />
             </div>
           </div>
         </div>
 
         {/* Card 2: Net Profit */}
-        <div className="saas-card-hover p-5 space-y-3 relative overflow-hidden">
+        <div className="luxury-card p-6 space-y-3 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <p className="text-[11px] font-mono text-slate-400 uppercase tracking-wider font-bold">Net Profit (P&L)</p>
-            <span className="p-2 rounded-xl bg-cyan-50 text-cyan-700 border border-cyan-100">
+            <p className="text-xs font-mono text-slate-400 uppercase tracking-wider font-bold">Net Profit (P&L)</p>
+            <span className="p-2.5 rounded-xl bg-cyan-50 text-cyan-700 border border-cyan-100">
               <TrendingUp className="h-4 w-4" />
             </span>
           </div>
-          <h3 className="text-2xl font-black text-slate-900">₹{data.financials.netProfit.toLocaleString()}</h3>
+          <h3 className="text-3xl font-black text-slate-900 tracking-tight font-mono">
+            ₹{data.financials.netProfit.toLocaleString()}
+          </h3>
           <div className="flex items-center justify-between pt-1">
-            <div className="flex items-center gap-1 text-[11px] text-cyan-800 font-bold font-mono">
-              <ArrowUpRight className="h-3.5 w-3.5" />
-              <span>28.7% vs last month</span>
+            <div className="flex items-center gap-1 text-xs text-cyan-800 font-bold font-mono">
+              <ArrowUpRight className="h-4 w-4" />
+              <span>+28.7% margin</span>
             </div>
             <div className="flex items-end gap-0.5 h-4">
               <span className="w-1 h-2 bg-cyan-300 rounded-full" />
-              <span className="w-1 h-4 bg-cyan-500 rounded-full" />
+              <span className="w-1 h-4 bg-cyan-600 rounded-full" />
               <span className="w-1 h-3 bg-cyan-400 rounded-full" />
             </div>
           </div>
         </div>
 
         {/* Card 3: Active Members */}
-        <div className="saas-card-hover p-5 space-y-3 relative overflow-hidden">
+        <div className="luxury-card p-6 space-y-3 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <p className="text-[11px] font-mono text-slate-400 uppercase tracking-wider font-bold">Active Members</p>
-            <span className="p-2 rounded-xl bg-teal-50 text-teal-700 border border-teal-100">
+            <p className="text-xs font-mono text-slate-400 uppercase tracking-wider font-bold">Active Members</p>
+            <span className="p-2.5 rounded-xl bg-teal-50 text-teal-700 border border-teal-100">
               <Users className="h-4 w-4" />
             </span>
           </div>
           <div className="flex items-baseline space-x-2">
-            <h3 className="text-2xl font-black text-slate-900">{activeMembers * 3 + 120}</h3>
-            <span className="text-xs text-slate-500 font-mono font-medium">Live on floor</span>
+            <h3 className="text-3xl font-black text-slate-900 tracking-tight font-mono">{activeMembers * 3 + 120}</h3>
+            <span className="text-xs text-slate-400 font-mono font-medium">Live on floor</span>
           </div>
-          <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1">
-            <span><strong className="text-emerald-700">10 New</strong> • <strong className="text-rose-600">18 Expired</strong></span>
+          <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
+            <span><strong className="text-emerald-700 font-bold">10 New</strong> • <strong className="text-rose-600 font-bold">18 Expired</strong></span>
             <div className="flex items-end gap-0.5 h-3">
               {[3, 5, 2, 8, 6, 4, 7, 9, 5, 8].map((h, i) => (
                 <span key={i} className="w-0.5 bg-emerald-500 rounded" style={{ height: `${h * 2}px` }} />
@@ -203,16 +230,16 @@ export const AdminDashboard = () => {
         </div>
 
         {/* Card 4: Trainer Payroll */}
-        <div className="saas-card-hover p-5 space-y-3 relative overflow-hidden">
+        <div className="luxury-card p-6 space-y-3 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <p className="text-[11px] font-mono text-slate-400 uppercase tracking-wider font-bold">Trainer Payroll</p>
-            <span className="p-2 rounded-xl bg-purple-50 text-purple-700 border border-purple-100">
+            <p className="text-xs font-mono text-slate-400 uppercase tracking-wider font-bold">Trainer Payroll</p>
+            <span className="p-2.5 rounded-xl bg-purple-50 text-purple-700 border border-purple-100">
               <CreditCard className="h-4 w-4" />
             </span>
           </div>
-          <h3 className="text-2xl font-black text-slate-900">₹96,400</h3>
-          <div className="flex items-center justify-between text-[11px] text-purple-700 font-mono font-bold pt-1">
-            <span>Base + 15% PT Commission</span>
+          <h3 className="text-3xl font-black text-slate-900 tracking-tight font-mono">₹96,400</h3>
+          <div className="flex items-center justify-between text-xs text-purple-700 font-mono font-bold pt-1">
+            <span>Base + 15% Commission</span>
             <div className="flex items-end gap-0.5 h-3">
               {[4, 6, 8, 5, 7, 9, 6].map((h, i) => (
                 <span key={i} className="w-0.5 bg-purple-500 rounded" style={{ height: `${h * 2}px` }} />
@@ -220,11 +247,11 @@ export const AdminDashboard = () => {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Sub-Navigation Filter Tabs */}
-      <div className="flex items-center justify-between border-b border-slate-200 overflow-x-auto">
-        <div className="flex space-x-6 text-xs font-semibold">
+      {/* 🧭 Horizontal Sub Navigation Tabs */}
+      <motion.div variants={itemVariants} className="flex items-center justify-between border-b border-slate-200/80 overflow-x-auto">
+        <div className="flex space-x-6 sm:space-x-8 text-xs sm:text-sm font-semibold">
           {[
             { id: 'dashboard', label: 'Business Analytics' },
             { id: 'members', label: `Members & Invoicing (${data.members.length})` },
@@ -236,44 +263,50 @@ export const AdminDashboard = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`pb-3.5 transition cursor-pointer whitespace-nowrap font-medium ${
+              className={`pb-3.5 transition cursor-pointer whitespace-nowrap font-medium relative ${
                 currentTab === tab.id
-                  ? 'text-emerald-700 border-b-2 border-emerald-600 font-bold'
+                  ? 'text-emerald-700 font-bold'
                   : 'text-slate-500 hover:text-slate-800'
               }`}
             >
-              {tab.label}
+              <span>{tab.label}</span>
+              {currentTab === tab.id && (
+                <motion.div
+                  layoutId="adminTabIndicator"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 rounded-full shadow-xs"
+                />
+              )}
             </button>
           ))}
         </div>
 
-        <div className="hidden sm:flex items-center space-x-2 text-xs text-slate-500 pb-3 font-mono">
-          <Calendar className="h-3.5 w-3.5 text-slate-400" />
-          <span>FY 2026</span>
+        <div className="hidden sm:flex items-center space-x-2 text-xs text-slate-500 pb-3.5 font-mono">
+          <Calendar className="h-4 w-4 text-slate-400" />
+          <span>Fiscal Year 2026</span>
         </div>
-      </div>
+      </motion.div>
 
-      {/* VIEW: Business Analytics Dashboard */}
+      {/* 📈 TAB 1: Business Analytics */}
       {currentTab === 'dashboard' && (
-        <div className="space-y-6">
+        <motion.div variants={itemVariants} className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Chart */}
-            <div className="lg:col-span-2 saas-card p-6 space-y-4">
+            {/* 6-Month Area Chart */}
+            <div className="lg:col-span-2 luxury-card p-6 space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
-                  <h3 className="font-bold text-sm text-slate-900">6-Month Revenue vs Expense Performance</h3>
+                  <h3 className="font-bold text-base text-slate-900">6-Month Revenue vs Expense Performance</h3>
                   <p className="text-xs text-slate-500">Monthly subscription collections and operational expenses</p>
                 </div>
                 <div className="flex items-center space-x-4 text-xs font-mono font-medium">
-                  <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" /> Revenue</div>
-                  <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-rose-500" /> Expenses</div>
-                  <button className="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-700 text-[11px] cursor-pointer">
+                  <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500" /> Revenue</div>
+                  <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-rose-500" /> Expenses</div>
+                  <button className="px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold cursor-pointer hover:bg-slate-200 transition">
                     Monthly ▾
                   </button>
                 </div>
               </div>
 
-              <div className="h-64 w-full pt-2">
+              <div className="h-68 w-full pt-2">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={data.financials.monthlyTrend}>
                     <defs>
@@ -289,18 +322,18 @@ export const AdminDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                     <XAxis dataKey="month" stroke="#94a3b8" tick={{ fontSize: 11 }} />
                     <YAxis stroke="#94a3b8" tick={{ fontSize: 11 }} />
-                    <Tooltip contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '12px', fontSize: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '16px', fontSize: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.06)' }} />
                     <Area type="monotone" dataKey="revenue" stroke="#059669" strokeWidth={3} fillOpacity={1} fill="url(#glowRevLight)" name="Revenue (₹)" />
-                    <Area type="monotone" dataKey="expense" stroke="#e11d48" strokeWidth={2} fillOpacity={1} fill="url(#glowExpLight)" name="Expenses (₹)" />
+                    <Area type="monotone" dataKey="expense" stroke="#e11d48" strokeWidth={2.5} fillOpacity={1} fill="url(#glowExpLight)" name="Expenses (₹)" />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
             </div>
 
-            {/* Right Donut */}
-            <div className="saas-card p-6 space-y-4 flex flex-col justify-between">
+            {/* Inflow Stream Donut */}
+            <div className="luxury-card p-6 space-y-4 flex flex-col justify-between">
               <div>
-                <h3 className="font-bold text-sm text-slate-900">Revenue Inflow Stream</h3>
+                <h3 className="font-bold text-base text-slate-900">Revenue Inflow Stream</h3>
                 <p className="text-xs text-slate-500 font-mono">Total <span className="text-slate-900 font-bold">₹245,600</span></p>
               </div>
 
@@ -315,13 +348,13 @@ export const AdminDashboard = () => {
                       cy="50%"
                       innerRadius={48}
                       outerRadius={70}
-                      paddingAngle={4}
+                      paddingAngle={5}
                     >
                       {data.financials.revenueBreakdown.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
-                    <Tooltip contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '12px', fontSize: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '12px', fontSize: '12px' }} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -347,22 +380,22 @@ export const AdminDashboard = () => {
               </div>
 
               <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-[11px] text-slate-400">
-                <span>Updated 2 min ago</span>
+                <span>Updated live from POS</span>
                 <button className="text-emerald-700 hover:text-emerald-800 font-bold flex items-center gap-1 cursor-pointer">
-                  <span>View Details</span>
+                  <span>View Breakdown</span>
                   <ChevronRight className="h-3 w-3" />
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Bottom 3 Cards */}
+          {/* 3 Lower Intelligent Control Cards */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Dues */}
-            <div className="saas-card p-5 space-y-4">
+            {/* Card 1: Dues & WhatsApp Automation */}
+            <div className="luxury-card p-6 space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="font-bold text-xs sm:text-sm text-slate-900">Automated Billing Alerts</h3>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full saas-badge-amber font-bold">
+                <h3 className="font-bold text-sm text-slate-900">Automated Billing Alerts</h3>
+                <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full luxury-badge-amber font-bold">
                   3 Action Required
                 </span>
               </div>
@@ -375,7 +408,7 @@ export const AdminDashboard = () => {
                 ].map((item, idx) => (
                   <div key={idx} className="py-3 flex items-center justify-between gap-2">
                     <div className="flex items-center space-x-2.5">
-                      <img src={item.avatar} alt="" className="w-8 h-8 rounded-full object-cover" />
+                      <img src={item.avatar} alt="" className="w-8 h-8 rounded-full object-cover ring-1 ring-slate-200" />
                       <div>
                         <p className="text-xs font-bold text-slate-800">{item.name}</p>
                         <p className="text-[10px] text-slate-500">{item.plan} • Due: {item.due}</p>
@@ -402,10 +435,10 @@ export const AdminDashboard = () => {
               </button>
             </div>
 
-            {/* Top Trainers */}
-            <div className="saas-card p-5 space-y-4">
+            {/* Card 2: Coach Roster Performance */}
+            <div className="luxury-card p-6 space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="font-bold text-xs sm:text-sm text-slate-900">Top Performing Trainers</h3>
+                <h3 className="font-bold text-sm text-slate-900">Top Performing Trainers</h3>
                 <button onClick={() => setActiveTab('finance')} className="text-xs text-slate-500 hover:text-slate-800 cursor-pointer font-bold">View All →</button>
               </div>
 
@@ -415,20 +448,20 @@ export const AdminDashboard = () => {
                   { rank: 2, name: "Anita Patel", sessions: 96, rating: 4.8, avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80" },
                   { rank: 3, name: "Varun Mehta", sessions: 74, rating: 4.7, avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80" }
                 ].map((t) => (
-                  <div key={t.rank} className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
-                    <div className="flex items-center space-x-2.5">
-                      <span className="w-5 h-5 rounded-full bg-white text-[10px] font-mono font-bold flex items-center justify-center text-slate-600 shadow-2xs">
+                  <div key={t.rank} className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <span className="w-6 h-6 rounded-full bg-white text-xs font-mono font-bold flex items-center justify-center text-slate-700 shadow-xs">
                         {t.rank}
                       </span>
-                      <img src={t.avatar} alt="" className="w-8 h-8 rounded-full object-cover" />
+                      <img src={t.avatar} alt="" className="w-9 h-9 rounded-full object-cover ring-1 ring-slate-200" />
                       <div>
-                        <p className="text-xs font-bold text-slate-800">{t.name}</p>
-                        <p className="text-[10px] text-slate-500 font-mono">Sessions: {t.sessions}</p>
+                        <p className="text-xs font-bold text-slate-900">{t.name}</p>
+                        <p className="text-[11px] text-slate-500 font-mono">Sessions: {t.sessions}</p>
                       </div>
                     </div>
                     <div className="text-right">
                       <span className="text-xs font-mono font-bold text-emerald-700">★ {t.rating}</span>
-                      <div className="w-14 h-1.5 bg-slate-200 rounded-full mt-1 overflow-hidden">
+                      <div className="w-16 h-1.5 bg-slate-200 rounded-full mt-1 overflow-hidden">
                         <div className="h-full bg-emerald-500" style={{ width: `${(t.rating / 5) * 100}%` }} />
                       </div>
                     </div>
@@ -437,30 +470,30 @@ export const AdminDashboard = () => {
               </div>
             </div>
 
-            {/* Smart Insights */}
-            <div className="saas-card-glow p-5 space-y-3 flex flex-col justify-between">
-              <div className="space-y-2">
+            {/* Card 3: AI Smart Telemetry */}
+            <div className="luxury-hero-card p-6 space-y-4 flex flex-col justify-between">
+              <div className="space-y-2.5">
                 <div className="flex items-center space-x-1.5 text-xs font-bold text-emerald-800">
                   <Sparkles className="h-4 w-4 text-emerald-600" />
-                  <span>Executive Revenue Insight</span>
+                  <span>Executive Revenue Telemetry</span>
                 </div>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  Monthly recurring revenue is up <strong className="text-emerald-700 font-mono font-bold">+41%</strong>. Supplement sales and PT cross-sell conversion have hit all-time highs.
+                  Monthly recurring revenue is up <strong className="text-emerald-700 font-mono font-bold">+41%</strong>. Supplement sales and personal training retention have hit all-time records this quarter.
                 </p>
               </div>
 
-              <button className="w-full py-2.5 rounded-xl text-xs font-bold bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center gap-1.5 transition cursor-pointer shadow-xs">
-                <span>Explore Full Audit</span>
-                <ArrowUpRight className="h-3.5 w-3.5" />
+              <button className="w-full py-2.5 rounded-xl text-xs font-bold bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center gap-2 transition cursor-pointer shadow-xs">
+                <span>Explore Full Audit Report</span>
+                <ArrowUpRight className="h-4 w-4" />
               </button>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
 
-      {/* VIEW: Members Table */}
+      {/* 👥 TAB 2: Members Directory */}
       {currentTab === 'members' && (
-        <div className="saas-card p-6 space-y-4">
+        <motion.div variants={itemVariants} className="luxury-card p-6 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h3 className="font-bold text-base text-slate-900">Member Directory & Subscription Lifecycle</h3>
@@ -508,9 +541,9 @@ export const AdminDashboard = () => {
                     <td className="py-3.5 px-4">
                       <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
                         member.status === 'ACTIVE'
-                          ? 'saas-badge-emerald'
+                          ? 'luxury-badge-emerald'
                           : member.status === 'DUE'
-                          ? 'saas-badge-amber'
+                          ? 'luxury-badge-amber'
                           : 'bg-rose-50 text-rose-700 border border-rose-200'
                       }`}>
                         {member.status}
@@ -533,14 +566,14 @@ export const AdminDashboard = () => {
               </tbody>
             </table>
           </div>
-        </div>
+        </motion.div>
       )}
 
-      {/* VIEW: Financials */}
+      {/* 💰 TAB 3: Finance & P&L */}
       {currentTab === 'finance' && (
-        <div className="space-y-6">
+        <motion.div variants={itemVariants} className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="saas-card p-6 space-y-4">
+            <div className="luxury-card p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-bold text-sm text-slate-900">Operating Expense Outflows</h3>
                 <button onClick={() => setShowExpenseModal(true)} className="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 cursor-pointer">
@@ -549,9 +582,9 @@ export const AdminDashboard = () => {
               </div>
               <div className="space-y-3">
                 {data.financials.expenseBreakdown.map((exp, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-200/80">
+                  <div key={idx} className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80">
                     <div className="flex items-center space-x-3">
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: exp.color }} />
+                      <div className="w-3.5 h-3.5 rounded-full" style={{ backgroundColor: exp.color }} />
                       <span className="text-xs font-bold text-slate-800">{exp.name}</span>
                     </div>
                     <span className="text-xs font-mono font-bold text-rose-600">₹{exp.amount.toLocaleString()}</span>
@@ -560,13 +593,13 @@ export const AdminDashboard = () => {
               </div>
             </div>
 
-            <div className="saas-card p-6 space-y-4">
+            <div className="luxury-card p-6 space-y-4">
               <h3 className="font-bold text-sm text-slate-900">Trainer Payroll & PT Commissions</h3>
               <div className="space-y-3">
                 {data.trainers.map((trainer) => (
-                  <div key={trainer.id} className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+                  <div key={trainer.id} className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <img src={trainer.avatar} alt={trainer.name} className="w-9 h-9 rounded-full object-cover" />
+                      <img src={trainer.avatar} alt={trainer.name} className="w-10 h-10 rounded-full object-cover ring-1 ring-slate-200" />
                       <div>
                         <p className="text-xs font-bold text-slate-900">{trainer.name}</p>
                         <p className="text-[10px] text-slate-500">{trainer.specialization}</p>
@@ -580,18 +613,18 @@ export const AdminDashboard = () => {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
 
-      {/* VIEW: Attendance Heatmap */}
+      {/* 🚪 TAB 4: Attendance & Heatmap */}
       {currentTab === 'attendance' && (
-        <div className="saas-card p-6 space-y-4">
+        <motion.div variants={itemVariants} className="luxury-card p-6 space-y-4">
           <h3 className="font-bold text-sm text-slate-900">Gym Floor Peak-Hour Density Heatmap</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
             {data.peakHoursHeatmap.map((slot, i) => (
               <div
                 key={i}
-                className={`p-3.5 rounded-xl border text-center transition ${
+                className={`p-4 rounded-2xl border text-center transition ${
                   slot.crowd >= 80
                     ? 'bg-rose-50 border-rose-200 text-rose-800'
                     : slot.crowd >= 60
@@ -599,29 +632,29 @@ export const AdminDashboard = () => {
                     : 'bg-emerald-50 border-emerald-200 text-emerald-800'
                 }`}
               >
-                <p className="text-[11px] font-mono font-bold">{slot.slot}</p>
-                <div className="my-1.5"><span className="text-xl font-black">{slot.crowd}%</span></div>
-                <p className="text-[10px] opacity-80">{slot.label}</p>
+                <p className="text-xs font-mono font-bold">{slot.slot}</p>
+                <div className="my-1.5"><span className="text-2xl font-black">{slot.crowd}%</span></div>
+                <p className="text-[11px] opacity-80">{slot.label}</p>
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
       )}
 
-      {/* VIEW: Assets */}
+      {/* 📦 TAB 5: Assets & Mini POS */}
       {currentTab === 'assets' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="saas-card p-6 space-y-4">
+        <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="luxury-card p-6 space-y-4">
             <h3 className="font-bold text-sm text-slate-900">Equipment Maintenance Log</h3>
             <div className="space-y-3">
               {data.equipmentList.map((eq) => (
-                <div key={eq.id} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+                <div key={eq.id} className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
                   <div>
                     <p className="text-xs font-bold text-slate-900">{eq.name}</p>
                     <p className="text-[10px] text-slate-500">Next Due: {eq.nextDue}</p>
                   </div>
                   <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
-                    eq.status === 'OPERATIONAL' ? 'saas-badge-emerald' : 'saas-badge-amber'
+                    eq.status === 'OPERATIONAL' ? 'luxury-badge-emerald' : 'luxury-badge-amber'
                   }`}>
                     {eq.status}
                   </span>
@@ -630,11 +663,11 @@ export const AdminDashboard = () => {
             </div>
           </div>
 
-          <div className="saas-card p-6 space-y-4">
+          <div className="luxury-card p-6 space-y-4">
             <h3 className="font-bold text-sm text-slate-900">Supplement Store & Mini POS</h3>
             <div className="space-y-3">
               {data.inventoryStore.map((item) => (
-                <div key={item.id} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+                <div key={item.id} className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
                   <div>
                     <p className="text-xs font-bold text-slate-900">{item.name}</p>
                     <p className="text-[10px] text-slate-500 font-mono">Stock: {item.stock} • ₹{item.price}</p>
@@ -649,12 +682,12 @@ export const AdminDashboard = () => {
               ))}
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
 
-      {/* VIEW: Lockers */}
+      {/* 🔐 TAB 6: Lockers Grid */}
       {currentTab === 'lockers' && (
-        <div className="saas-card p-6 space-y-4">
+        <motion.div variants={itemVariants} className="luxury-card p-6 space-y-4">
           <h3 className="font-bold text-sm text-slate-900">Gym Locker Allocation Grid</h3>
           <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3 pt-2">
             {data.lockers.map((locker) => (
@@ -664,7 +697,7 @@ export const AdminDashboard = () => {
                   const next = locker.status === 'AVAILABLE' ? 'OCCUPIED' : locker.status === 'OCCUPIED' ? 'MAINTENANCE' : 'AVAILABLE';
                   toggleLockerStatus(locker.id, next, next === 'OCCUPIED' ? 'Assigned' : null);
                 }}
-                className={`p-3.5 rounded-xl border text-center transition cursor-pointer ${
+                className={`p-3.5 rounded-2xl border text-center transition cursor-pointer active:scale-95 ${
                   locker.status === 'AVAILABLE'
                     ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
                     : locker.status === 'OCCUPIED'
@@ -673,17 +706,17 @@ export const AdminDashboard = () => {
                 }`}
               >
                 <p className="font-mono font-bold text-sm">{locker.number}</p>
-                <p className="text-[10px] mt-1 truncate">{locker.assignedTo || locker.status}</p>
+                <p className="text-[10px] mt-1 truncate font-medium">{locker.assignedTo || locker.status}</p>
               </button>
             ))}
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* MODAL: Add Member */}
       {showAddMemberModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
-          <div className="saas-card w-full max-w-lg p-6 space-y-4 max-h-[90vh] overflow-y-auto shadow-2xl">
+          <div className="luxury-card w-full max-w-lg p-6 space-y-4 max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="font-bold text-base text-slate-900">Enroll New Gym Member</h3>
               <button onClick={() => setShowAddMemberModal(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer">✕</button>
@@ -697,7 +730,7 @@ export const AdminDashboard = () => {
                   placeholder="e.g. Ramesh Kumar"
                   value={newMemberForm.name}
                   onChange={(e) => setNewMemberForm({ ...newMemberForm, name: e.target.value })}
-                  className="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-slate-800 focus:outline-none focus:border-emerald-500"
+                  className="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:border-emerald-500"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -709,7 +742,7 @@ export const AdminDashboard = () => {
                     placeholder="ramesh@gmail.com"
                     value={newMemberForm.email}
                     onChange={(e) => setNewMemberForm({ ...newMemberForm, email: e.target.value })}
-                    className="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-slate-800 focus:outline-none"
+                    className="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none"
                   />
                 </div>
                 <div>
@@ -719,13 +752,13 @@ export const AdminDashboard = () => {
                     placeholder="+91 98765 00000"
                     value={newMemberForm.phone}
                     onChange={(e) => setNewMemberForm({ ...newMemberForm, phone: e.target.value })}
-                    className="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-slate-800 focus:outline-none"
+                    className="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none"
                   />
                 </div>
               </div>
               <div className="flex justify-end space-x-2 pt-3 border-t border-slate-100">
-                <button type="button" onClick={() => setShowAddMemberModal(false)} className="px-4 py-2 rounded-xl text-slate-500 cursor-pointer">Cancel</button>
-                <button type="submit" className="btn-shiny px-5 py-2 rounded-xl font-bold bg-emerald-600 text-white cursor-pointer">Enroll Member</button>
+                <button type="button" onClick={() => setShowAddMemberModal(false)} className="px-4 py-2 rounded-xl text-slate-500 cursor-pointer font-medium">Cancel</button>
+                <button type="submit" className="btn-shiny px-5 py-2.5 rounded-xl font-bold bg-emerald-600 text-white cursor-pointer shadow-md">Enroll Member</button>
               </div>
             </form>
           </div>
@@ -735,7 +768,7 @@ export const AdminDashboard = () => {
       {/* MODAL: Record Expense */}
       {showExpenseModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
-          <div className="saas-card w-full max-w-md p-6 space-y-4 shadow-2xl">
+          <div className="luxury-card w-full max-w-md p-6 space-y-4 shadow-2xl">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="font-bold text-base text-slate-900">Record Operating Expense</h3>
               <button onClick={() => setShowExpenseModal(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer">✕</button>
@@ -749,7 +782,7 @@ export const AdminDashboard = () => {
                   placeholder="e.g. AC Maintenance"
                   value={expenseForm.name}
                   onChange={(e) => setExpenseForm({ ...expenseForm, name: e.target.value })}
-                  className="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-slate-800 focus:outline-none"
+                  className="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none"
                 />
               </div>
               <div>
@@ -760,17 +793,17 @@ export const AdminDashboard = () => {
                   placeholder="e.g. 4500"
                   value={expenseForm.amount}
                   onChange={(e) => setExpenseForm({ ...expenseForm, amount: e.target.value })}
-                  className="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-slate-800 focus:outline-none"
+                  className="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none"
                 />
               </div>
               <div className="flex justify-end space-x-2 pt-3 border-t border-slate-100">
-                <button type="button" onClick={() => setShowExpenseModal(false)} className="px-4 py-2 rounded-xl text-slate-500 cursor-pointer">Cancel</button>
-                <button type="submit" className="btn-shiny px-5 py-2 rounded-xl font-bold bg-rose-600 text-white cursor-pointer">Record Expense</button>
+                <button type="button" onClick={() => setShowExpenseModal(false)} className="px-4 py-2 rounded-xl text-slate-500 cursor-pointer font-medium">Cancel</button>
+                <button type="submit" className="btn-shiny px-5 py-2.5 rounded-xl font-bold bg-rose-600 text-white cursor-pointer shadow-md">Record Expense</button>
               </div>
             </form>
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 };

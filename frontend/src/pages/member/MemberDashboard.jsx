@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useGym } from '../../context/GymContext';
 import { QRCodeSVG } from 'qrcode.react';
 import confetti from 'canvas-confetti';
+import { motion } from 'framer-motion';
 import {
   Flame,
   Utensils,
@@ -76,16 +77,31 @@ export const MemberDashboard = () => {
   const currentMember = data.members.find((m) => m.email === currentUser.email) || data.members[0];
   const routine = data.todayMemberRoutine;
 
+  const containerVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1], staggerChildren: 0.08 } }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 12 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
+  };
+
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-6"
+    >
       {/* 🌟 Hero Member Header Card */}
-      <div className="saas-card-glow p-6 flex flex-col md:flex-row md:items-center justify-between gap-5 relative overflow-hidden">
+      <motion.div variants={itemVariants} className="luxury-hero-card p-6 flex flex-col md:flex-row md:items-center justify-between gap-5 relative overflow-hidden">
         <div className="flex items-center space-x-4 z-10">
           <div className="relative">
             <img
               src={currentMember.avatar}
               alt={currentMember.name}
-              className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover ring-2 ring-emerald-500/30 shadow-md shadow-emerald-500/15"
+              className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover ring-2 ring-emerald-500/40 shadow-lg shadow-emerald-500/15"
             />
             <span className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 border-2 border-white rounded-full flex items-center justify-center text-[10px] text-white font-bold">
               ✓
@@ -94,7 +110,7 @@ export const MemberDashboard = () => {
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-xl sm:text-2xl font-black text-slate-900">{currentMember.name}</h1>
-              <span className="text-xs px-3 py-0.5 rounded-full saas-badge-emerald font-bold font-mono">
+              <span className="text-xs px-3 py-0.5 rounded-full luxury-badge-emerald font-bold font-mono">
                 {currentMember.planName}
               </span>
             </div>
@@ -115,26 +131,26 @@ export const MemberDashboard = () => {
         <div className="flex flex-wrap items-center gap-2.5 z-10">
           <button
             onClick={() => setActiveTab('digital-pass')}
-            className="btn-shiny px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 cursor-pointer flex items-center gap-1.5"
+            className="btn-shiny px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 cursor-pointer flex items-center gap-1.5 active:scale-98"
           >
             <IdCard className="h-4 w-4" />
             <span>Show Digital Entry Pass</span>
           </button>
           <button
             onClick={() => setShowPRModal(true)}
-            className="px-4 py-2.5 rounded-xl text-xs font-bold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 cursor-pointer flex items-center gap-1.5 transition shadow-2xs"
+            className="px-4 py-2.5 rounded-xl text-xs font-bold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 cursor-pointer flex items-center gap-1.5 transition shadow-xs active:scale-98"
           >
             <Trophy className="h-4 w-4 text-amber-500" />
             <span>+ Log New PR</span>
           </button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Sub Tabs */}
-      <div className="flex border-b border-slate-200 space-x-6 text-xs font-semibold overflow-x-auto">
+      <motion.div variants={itemVariants} className="flex border-b border-slate-200/80 space-x-6 sm:space-x-8 text-xs sm:text-sm font-semibold overflow-x-auto">
         {[
           { id: 'routine', label: "Today's Workout Routine 🔥" },
-          { id: 'diet-tracker', label: 'Assigned Diet & Hydration Tracker' },
+          { id: 'diet-tracker', label: 'Diet & Hydration Tracker' },
           { id: 'pr-vault', label: 'PR (1-Rep Max) Vault 🏆' },
           { id: 'digital-pass', label: 'Digital Gym Pass & QR ID' },
           { id: 'metrics', label: 'Body Metrics & Progress' },
@@ -143,40 +159,46 @@ export const MemberDashboard = () => {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`pb-3.5 transition cursor-pointer whitespace-nowrap font-medium ${
+            className={`pb-3.5 transition cursor-pointer whitespace-nowrap font-medium relative ${
               currentTab === tab.id
-                ? 'text-emerald-700 border-b-2 border-emerald-600 font-bold'
+                ? 'text-emerald-700 font-bold'
                 : 'text-slate-500 hover:text-slate-800'
             }`}
           >
-            {tab.label}
+            <span>{tab.label}</span>
+            {currentTab === tab.id && (
+              <motion.div
+                layoutId="memberTabIndicator"
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 rounded-full shadow-xs"
+              />
+            )}
           </button>
         ))}
-      </div>
+      </motion.div>
 
       {/* VIEW: Today's Routine */}
       {currentTab === 'routine' && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-4">
-            <div className="saas-card p-5 flex items-center justify-between">
+            <div className="luxury-card p-6 flex items-center justify-between">
               <div>
                 <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-700 font-bold">
                   Daily Mission
                 </span>
-                <h3 className="font-black text-slate-900 text-base mt-0.5">{routine.routineTitle}</h3>
-                <p className="text-xs text-slate-500">Coached by {routine.assignedBy}</p>
+                <h3 className="font-extrabold text-slate-900 text-lg mt-0.5">{routine.routineTitle}</h3>
+                <p className="text-xs text-slate-500 font-medium">Coached by {routine.assignedBy}</p>
               </div>
-              <span className="text-xs font-mono px-3 py-1 saas-badge-emerald rounded-full font-bold">
+              <span className="text-xs font-mono px-3.5 py-1 luxury-badge-emerald rounded-full font-bold shadow-xs">
                 {routine.exercises.filter((e) => e.completed).length} / {routine.exercises.length} Exercises Done
               </span>
             </div>
 
             <div className="space-y-4">
               {routine.exercises.map((exercise) => (
-                <div key={exercise.id} className="saas-card-hover p-5 space-y-3.5">
+                <div key={exercise.id} className="luxury-card p-6 space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+                      <h4 className="font-bold text-slate-900 text-base flex items-center gap-2">
                         <span>{exercise.name}</span>
                         {exercise.completed && <CheckCircle2 className="h-4 w-4 text-emerald-600 inline" />}
                       </h4>
@@ -184,30 +206,30 @@ export const MemberDashboard = () => {
                     </div>
                     <button
                       onClick={() => startRestTimer(60)}
-                      className="px-3.5 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-mono flex items-center gap-1.5 border border-slate-200 cursor-pointer transition"
+                      className="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-mono font-bold flex items-center gap-1.5 border border-slate-200 cursor-pointer transition active:scale-95 shadow-xs"
                     >
                       <Zap className="h-3.5 w-3.5 text-amber-500" />
                       <span>60s Timer</span>
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
                     {exercise.loggedSets.map((set, setIdx) => (
                       <button
                         key={setIdx}
                         onClick={() => toggleExerciseSet(exercise.id, setIdx)}
-                        className={`p-3.5 rounded-xl border text-left transition cursor-pointer ${
+                        className={`p-4 rounded-2xl border text-left transition cursor-pointer active:scale-95 ${
                           set.done
-                            ? 'bg-emerald-50 border-emerald-300 text-emerald-900 shadow-2xs'
+                            ? 'bg-emerald-50 border-emerald-300 text-emerald-900 shadow-xs ring-1 ring-emerald-400/30'
                             : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
                         }`}
                       >
-                        <div className="flex items-center justify-between text-[11px]">
+                        <div className="flex items-center justify-between text-xs">
                           <span className="font-mono font-bold">Set {set.setNo}</span>
-                          {set.done ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> : <span className="w-3.5 h-3.5 rounded-full border border-slate-300" />}
+                          {set.done ? <CheckCircle2 className="h-4 w-4 text-emerald-600" /> : <span className="w-4 h-4 rounded-full border border-slate-300" />}
                         </div>
-                        <p className="font-mono font-bold text-base text-slate-900 mt-1.5">{set.weight} kg</p>
-                        <p className="text-[10px] text-slate-500">{set.reps} reps</p>
+                        <p className="font-mono font-black text-lg text-slate-900 mt-2">{set.weight} kg</p>
+                        <p className="text-[11px] text-slate-500 font-medium">{set.reps} reps</p>
                       </button>
                     ))}
                   </div>
@@ -218,34 +240,34 @@ export const MemberDashboard = () => {
 
           {/* Right Rest Timer */}
           <div className="space-y-6">
-            <div className="saas-card-glow p-6 space-y-4 text-center">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-700 font-bold">
+            <div className="luxury-hero-card p-6 space-y-4 text-center">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-emerald-700 font-bold">
                 Inter-Set Rest Timer
               </span>
               <div className="my-2">
-                <span className="font-mono text-5xl font-black text-slate-900 tracking-tight">
+                <span className="font-mono text-6xl font-black text-slate-900 tracking-tight">
                   00:{restSeconds < 10 ? `0${restSeconds}` : restSeconds}
                 </span>
               </div>
-              <div className="flex justify-center gap-2.5">
+              <div className="flex justify-center gap-3">
                 <button
                   onClick={() => setTimerRunning(!timerRunning)}
-                  className={`btn-shiny px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-md ${
-                    timerRunning ? 'bg-amber-500 text-slate-950' : 'bg-emerald-600 text-white shadow-emerald-600/20'
+                  className={`btn-shiny px-6 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer shadow-md active:scale-95 ${
+                    timerRunning ? 'bg-amber-500 text-slate-950' : 'bg-emerald-600 text-white shadow-emerald-600/25'
                   }`}
                 >
                   {timerRunning ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                   <span>{timerRunning ? 'Pause' : 'Start Timer'}</span>
                 </button>
-                <button onClick={() => { setTimerRunning(false); setRestSeconds(60); }} className="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 cursor-pointer hover:text-slate-900">
+                <button onClick={() => { setTimerRunning(false); setRestSeconds(60); }} className="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 cursor-pointer hover:text-slate-900 shadow-xs">
                   <RotateCcw className="h-4 w-4" />
                 </button>
               </div>
             </div>
 
-            {/* Daily Nutrition Mini Card */}
-            <div className="saas-card p-5 space-y-3">
-              <h4 className="font-bold text-xs text-slate-900 flex items-center gap-1.5">
+            {/* Nutrition Mini Card */}
+            <div className="luxury-card p-6 space-y-3">
+              <h4 className="font-bold text-xs text-slate-900 flex items-center gap-2">
                 <Activity className="h-4 w-4 text-cyan-600" />
                 <span>Today's Nutrition Target</span>
               </h4>
@@ -260,22 +282,22 @@ export const MemberDashboard = () => {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* VIEW: Diet Tracker */}
       {currentTab === 'diet-tracker' && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 saas-card p-6 space-y-4">
-            <h3 className="font-bold text-sm text-slate-900">High Protein Clean Cut (2200 kcal Target)</h3>
+        <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 luxury-card p-6 space-y-4">
+            <h3 className="font-bold text-base text-slate-900">High Protein Clean Cut (2200 kcal Target)</h3>
             <div className="space-y-3">
               {data.dietPlans[0].meals.map((meal, idx) => (
                 <div
                   key={idx}
                   onClick={() => setCheckedMeals({ ...checkedMeals, [idx]: !checkedMeals[idx] })}
-                  className={`p-4 rounded-xl border flex items-center justify-between transition cursor-pointer ${
+                  className={`p-4 rounded-2xl border flex items-center justify-between transition cursor-pointer active:scale-99 ${
                     checkedMeals[idx]
-                      ? 'bg-emerald-50/70 border-emerald-200 text-slate-800 shadow-2xs'
+                      ? 'bg-emerald-50/80 border-emerald-200 text-slate-800 shadow-xs'
                       : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
                   }`}
                 >
@@ -299,7 +321,7 @@ export const MemberDashboard = () => {
             </div>
           </div>
 
-          <div className="saas-card p-6 space-y-4 text-center">
+          <div className="luxury-card p-6 space-y-4 text-center">
             <span className="text-xs font-bold text-slate-900 flex items-center justify-center gap-1.5">
               <Droplets className="h-4 w-4 text-cyan-600" />
               <span>Hydration Tracker ({(waterGlasses * 0.35).toFixed(1)}L / 3.5L)</span>
@@ -310,8 +332,8 @@ export const MemberDashboard = () => {
                 <button
                   key={i}
                   onClick={() => setWaterGlasses(i + 1)}
-                  className={`p-3 rounded-xl border flex flex-col items-center justify-center transition cursor-pointer ${
-                    i < waterGlasses ? 'bg-cyan-50 border-cyan-300 text-cyan-700 shadow-2xs' : 'bg-slate-50 border-slate-200 text-slate-400 hover:border-slate-300'
+                  className={`p-3.5 rounded-2xl border flex flex-col items-center justify-center transition cursor-pointer active:scale-95 ${
+                    i < waterGlasses ? 'bg-cyan-50 border-cyan-300 text-cyan-700 shadow-xs' : 'bg-slate-50 border-slate-200 text-slate-400 hover:border-slate-300'
                   }`}
                 >
                   <Droplets className="h-5 w-5" />
@@ -322,21 +344,21 @@ export const MemberDashboard = () => {
 
             <button
               onClick={() => setWaterGlasses((g) => Math.min(targetGlasses, g + 1))}
-              className="btn-shiny w-full py-2.5 rounded-xl text-xs font-bold bg-cyan-600 hover:bg-cyan-500 text-white cursor-pointer shadow-md shadow-cyan-600/20"
+              className="btn-shiny w-full py-3 rounded-xl text-xs font-bold bg-cyan-600 hover:bg-cyan-500 text-white cursor-pointer shadow-md shadow-cyan-600/20"
             >
               + Drink 1 Glass (350ml)
             </button>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* VIEW: PR Vault */}
       {currentTab === 'pr-vault' && (
-        <div className="space-y-6">
+        <motion.div variants={itemVariants} className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {data.personalRecords.map((pr, i) => (
-              <div key={i} className="saas-card-hover p-6 space-y-3 relative overflow-hidden border-t-2 border-t-amber-500">
-                <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full saas-badge-amber font-bold">{pr.badge}</span>
+              <div key={i} className="luxury-card p-6 space-y-3 relative overflow-hidden border-t-4 border-t-amber-500">
+                <span className="text-[10px] font-mono px-3 py-0.5 rounded-full luxury-badge-amber font-bold">{pr.badge}</span>
                 <div>
                   <h4 className="font-bold text-slate-900 text-base">{pr.lift}</h4>
                   <p className="font-mono text-3xl font-black text-amber-600 mt-1">{pr.weight}</p>
@@ -345,56 +367,56 @@ export const MemberDashboard = () => {
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* VIEW: Digital Pass */}
       {currentTab === 'digital-pass' && (
-        <div className="flex justify-center">
-          <div className="w-full max-w-sm rounded-3xl p-7 bg-white border border-slate-200 shadow-xl space-y-6 text-center">
+        <motion.div variants={itemVariants} className="flex justify-center">
+          <div className="w-full max-w-sm rounded-3xl p-8 bg-white border border-slate-200 shadow-2xl space-y-6 text-center">
             <div className="flex items-center justify-between">
               <span className="font-bold text-xs text-slate-900 font-mono">FITPULSE DIGITAL PASS</span>
-              <span className="text-[10px] font-mono px-2.5 py-0.5 rounded saas-badge-emerald font-bold">ACTIVE</span>
+              <span className="text-[10px] font-mono px-3 py-0.5 rounded-full luxury-badge-emerald font-bold">ACTIVE</span>
             </div>
 
             <div className="flex flex-col items-center space-y-2">
-              <img src={currentMember.avatar} alt="" className="w-20 h-20 rounded-2xl object-cover ring-2 ring-emerald-500 shadow-md" />
-              <h3 className="font-black text-xl text-slate-900">{currentMember.name}</h3>
+              <img src={currentMember.avatar} alt="" className="w-22 h-22 rounded-2xl object-cover ring-2 ring-emerald-500 shadow-md" />
+              <h3 className="font-black text-2xl text-slate-900">{currentMember.name}</h3>
               <p className="text-xs text-slate-500 font-mono">PASS ID: {currentMember.id.toUpperCase()}</p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 mx-auto inline-block shadow-2xs">
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 mx-auto inline-block shadow-xs">
               <QRCodeSVG value={currentMember.qrCodeString} size={180} level="H" />
             </div>
 
-            <p className="text-[11px] text-slate-500">Scan at gym gate turnstile scanner for fast access.</p>
+            <p className="text-xs text-slate-500 font-medium">Scan at gym gate turnstile scanner for instant access.</p>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* VIEW: Metrics */}
       {currentTab === 'metrics' && (
-        <div className="saas-card p-6 space-y-4">
-          <h3 className="font-bold text-sm text-slate-900">Body Composition Progression</h3>
+        <motion.div variants={itemVariants} className="luxury-card p-6 space-y-4">
+          <h3 className="font-bold text-base text-slate-900">Body Composition Progression</h3>
           <div className="h-64 w-full pt-2">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data.traineeTransformations[0].weeklyLogs}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                 <XAxis dataKey="week" stroke="#94a3b8" tick={{ fontSize: 11 }} />
                 <YAxis stroke="#94a3b8" domain={['dataMin - 2', 'dataMax + 2']} tick={{ fontSize: 11 }} />
-                <Tooltip contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '12px', fontSize: '12px' }} />
+                <Tooltip contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '16px', fontSize: '12px' }} />
                 <Line type="monotone" dataKey="weight" stroke="#059669" strokeWidth={3} dot={{ r: 4, fill: '#059669' }} name="Weight (kg)" />
                 <Line type="monotone" dataKey="bodyFat" stroke="#0284c7" strokeWidth={2.5} dot={{ r: 4, fill: '#0284c7' }} name="Body Fat %" />
               </LineChart>
             </ResponsiveContainer>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* VIEW: Leaderboard */}
       {currentTab === 'leaderboard' && (
-        <div className="saas-card p-6 space-y-4">
-          <h3 className="font-bold text-sm text-slate-900">Monthly Attendance & Streak Leaderboard</h3>
+        <motion.div variants={itemVariants} className="luxury-card p-6 space-y-4">
+          <h3 className="font-bold text-base text-slate-900">Monthly Attendance & Streak Leaderboard</h3>
           <div className="divide-y divide-slate-100">
             {data.leaderboard.map((user) => (
               <div key={user.rank} className="py-3.5 flex items-center justify-between">
@@ -412,8 +434,8 @@ export const MemberDashboard = () => {
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 };
