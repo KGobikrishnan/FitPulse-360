@@ -16,7 +16,7 @@ const DashboardLoading = () => (
   <div className="flex items-center justify-center min-h-[60vh]">
     <div className="flex flex-col items-center space-y-3">
       <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
-      <p className="text-xs text-zinc-500 font-mono">Loading portal...</p>
+      <p className="text-xs text-slate-500 font-mono">Loading portal...</p>
     </div>
   </div>
 );
@@ -32,7 +32,7 @@ const MainLayout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0b0d13] text-zinc-100 flex flex-col selection:bg-emerald-500 selection:text-black relative font-sans">
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col selection:bg-emerald-500 selection:text-white relative font-sans">
       {/* Global Command Search Palette (Ctrl + K) */}
       <CommandPalette
         isOpen={isSearchOpen}
@@ -68,8 +68,8 @@ const MainLayout = () => {
 
       {/* Global Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-16 md:bottom-6 right-4 md:right-6 z-50 bg-emerald-500 text-zinc-950 font-bold px-4 py-2.5 rounded-2xl shadow-2xl shadow-emerald-500/30 flex items-center space-x-2 text-xs max-w-[90vw] animate-in fade-in slide-in-from-bottom-2">
-          <span>⚡</span>
+        <div className="fixed bottom-16 md:bottom-6 right-4 md:right-6 z-50 bg-slate-900 text-white font-medium px-4 py-2.5 rounded-2xl shadow-2xl flex items-center space-x-2 text-xs max-w-[90vw] animate-in fade-in slide-in-from-bottom-2 border border-slate-700">
+          <span className="text-emerald-400">⚡</span>
           <span className="truncate">{toastMessage}</span>
         </div>
       )}

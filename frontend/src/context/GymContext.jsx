@@ -25,7 +25,17 @@ export const GymProvider = ({ children }) => {
     return null;
   });
 
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState(() => {
+    const savedUser = localStorage.getItem('fitpulse_current_user_v4');
+    if (savedUser) {
+      try {
+        const u = JSON.parse(savedUser);
+        if (u.role === 'TRAINER') return 'trainees';
+        if (u.role === 'USER') return 'routine';
+      } catch (e) {}
+    }
+    return 'dashboard';
+  });
   const [toastMessage, setToastMessage] = useState(null);
 
   // Sync with PostgreSQL Backend on startup and auth changes

@@ -44,28 +44,24 @@ export const CommandPalette = ({ isOpen, onClose }) => {
     e.category.toLowerCase().includes(query.toLowerCase())
   );
 
-  const filteredPlans = data.plans.filter((p) =>
-    p.name.toLowerCase().includes(query.toLowerCase())
-  );
-
   return (
-    <div className="fixed inset-0 z-[99999] flex items-start justify-center pt-20 p-4 bg-black/80 backdrop-blur-md">
+    <div className="fixed inset-0 z-[99999] flex items-start justify-center pt-20 p-4 bg-slate-900/40 backdrop-blur-sm">
       <div
-        className="w-full max-w-xl bg-[#12151f] border border-white/[0.1] rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+        className="w-full max-w-xl bg-white border border-slate-200 rounded-2xl shadow-2xl overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Header */}
-        <div className="flex items-center px-4 py-3.5 border-b border-white/[0.08] relative">
-          <Search className="h-4 w-4 text-emerald-400 mr-2.5 shrink-0" />
+        <div className="flex items-center px-4 py-3.5 border-b border-slate-100 relative">
+          <Search className="h-4 w-4 text-emerald-600 mr-2.5 shrink-0" />
           <input
             autoFocus
             type="text"
             placeholder="Search members, plans, equipment, or routines..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full bg-transparent text-sm text-white placeholder:text-zinc-500 focus:outline-none"
+            className="w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
           />
-          <button onClick={() => onClose(false)} className="p-1 text-zinc-400 hover:text-white rounded-lg">
+          <button onClick={() => onClose(false)} className="p-1 text-slate-400 hover:text-slate-700 rounded-lg cursor-pointer">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -75,7 +71,7 @@ export const CommandPalette = ({ isOpen, onClose }) => {
           {/* Members Category */}
           {filteredMembers.length > 0 && (
             <div>
-              <p className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 px-2 pb-1.5 font-bold flex items-center gap-1.5">
+              <p className="text-[10px] font-mono uppercase tracking-widest text-slate-400 px-2 pb-1.5 font-bold flex items-center gap-1.5">
                 <Users className="h-3 w-3" />
                 <span>Members ({filteredMembers.length})</span>
               </p>
@@ -87,16 +83,16 @@ export const CommandPalette = ({ isOpen, onClose }) => {
                       setActiveTab('members');
                       onClose(false);
                     }}
-                    className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-[#171a26] text-left transition cursor-pointer"
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left transition cursor-pointer"
                   >
                     <div className="flex items-center space-x-2.5">
                       <img src={member.avatar} alt="" className="w-7 h-7 rounded-full object-cover" />
                       <div>
-                        <p className="font-bold text-white text-xs">{member.name}</p>
-                        <p className="text-[10px] text-zinc-400">{member.planName} • Status: {member.status}</p>
+                        <p className="font-bold text-slate-900 text-xs">{member.name}</p>
+                        <p className="text-[10px] text-slate-500">{member.planName} • Status: {member.status}</p>
                       </div>
                     </div>
-                    <span className="text-[10px] font-mono text-emerald-400">View Roster →</span>
+                    <span className="text-[10px] font-mono text-emerald-700 font-bold">View Roster →</span>
                   </button>
                 ))}
               </div>
@@ -106,7 +102,7 @@ export const CommandPalette = ({ isOpen, onClose }) => {
           {/* Equipment Category */}
           {filteredEquipment.length > 0 && (
             <div>
-              <p className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 px-2 pb-1.5 font-bold flex items-center gap-1.5">
+              <p className="text-[10px] font-mono uppercase tracking-widest text-slate-400 px-2 pb-1.5 font-bold flex items-center gap-1.5">
                 <Box className="h-3 w-3" />
                 <span>Equipment & Assets ({filteredEquipment.length})</span>
               </p>
@@ -118,13 +114,13 @@ export const CommandPalette = ({ isOpen, onClose }) => {
                       setActiveTab('assets');
                       onClose(false);
                     }}
-                    className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-[#171a26] text-left transition cursor-pointer"
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left transition cursor-pointer"
                   >
                     <div>
-                      <p className="font-bold text-white text-xs">{eq.name}</p>
-                      <p className="text-[10px] text-zinc-400">{eq.category} • Status: {eq.status}</p>
+                      <p className="font-bold text-slate-900 text-xs">{eq.name}</p>
+                      <p className="text-[10px] text-slate-500">{eq.category} • Status: {eq.status}</p>
                     </div>
-                    <span className="text-[10px] font-mono text-zinc-400">Next due: {eq.nextDue}</span>
+                    <span className="text-[10px] font-mono text-slate-500">Next due: {eq.nextDue}</span>
                   </button>
                 ))}
               </div>
@@ -132,14 +128,14 @@ export const CommandPalette = ({ isOpen, onClose }) => {
           )}
 
           {filteredMembers.length === 0 && filteredEquipment.length === 0 && (
-            <div className="p-8 text-center text-zinc-500 text-xs">
+            <div className="p-8 text-center text-slate-400 text-xs">
               No matching members or items found for "{query}".
             </div>
           )}
         </div>
 
         {/* Footer Shortcut Helper */}
-        <div className="px-4 py-2 bg-[#0b0d13] border-t border-white/[0.08] flex items-center justify-between text-[11px] text-zinc-500 font-mono">
+        <div className="px-4 py-2 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 font-mono">
           <span>Navigation Quick Jumper</span>
           <span>Press ESC to close</span>
         </div>

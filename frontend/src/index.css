@@ -2,87 +2,120 @@
 
 @layer base {
   :root {
-    --bg-main: #0b0d13;
-    --bg-card: #12151f;
-    --bg-card-subtle: #171a26;
-    --border-subtle: rgba(255, 255, 255, 0.07);
-    --border-glow: rgba(16, 185, 129, 0.25);
-    --primary: #10b981;
+    --bg-main: #f8fafc;
+    --bg-card: #ffffff;
+    --bg-card-subtle: #f1f5f9;
+    --border-subtle: rgba(226, 232, 240, 0.9);
+    --primary: #059669;
     --primary-glow: rgba(16, 185, 129, 0.15);
   }
 
   body {
-    background-color: #0b0d13;
-    color: #f1f3f7;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: #f8fafc;
+    color: #0f172a;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     overflow-x: hidden;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.06) 0px, transparent 45%),
+      radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 45%),
+      radial-gradient(at 50% 100%, rgba(14, 165, 233, 0.04) 0px, transparent 45%);
+    background-attachment: fixed;
   }
 }
 
-/* Custom Scrollbar */
+/* Custom Clean Scrollbar */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0b0d13;
+  background: #f1f5f9;
 }
 ::-webkit-scrollbar-thumb {
-  background: #232738;
+  background: #cbd5e1;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #33394f;
+  background: #94a3b8;
 }
 
-/* Ultra Sleek SaaS Dark Cards */
+/* 💎 LUXURY CLEAN TECH CARDS */
 .saas-card {
-  background-color: #12151f;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
-  border-radius: 1rem;
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.02);
+  border-radius: 1.25rem;
 }
 
 .saas-card-hover {
-  background-color: #12151f;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  border-radius: 1rem;
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.02);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 1.25rem;
 }
 .saas-card-hover:hover {
-  border-color: rgba(255, 255, 255, 0.15);
-  background-color: #151824;
-  transform: translateY(-1px);
+  border-color: rgba(16, 185, 129, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 32px -6px rgba(15, 23, 42, 0.08), 0 0 20px -4px rgba(16, 185, 129, 0.12);
 }
 
 .saas-card-glow {
-  background-color: #12151f;
+  background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
   border: 1px solid rgba(16, 185, 129, 0.3);
-  box-shadow: 0 0 25px -4px rgba(16, 185, 129, 0.12);
-  border-radius: 1rem;
+  box-shadow: 0 10px 25px -4px rgba(16, 185, 129, 0.1), 0 4px 10px -2px rgba(15, 23, 42, 0.03);
+  border-radius: 1.25rem;
 }
 
+/* 🏷️ CLEAN PASTEL / NEON BADGES */
 .saas-badge-emerald {
-  background: rgba(16, 185, 129, 0.12);
-  color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
 }
 
 .saas-badge-cyan {
-  background: rgba(6, 182, 212, 0.12);
-  color: #06b6d4;
-  border: 1px solid rgba(6, 182, 212, 0.25);
+  background: #f0fdfa;
+  color: #0f766e;
+  border: 1px solid #99f6e4;
 }
 
 .saas-badge-purple {
-  background: rgba(168, 85, 247, 0.12);
-  color: #c084fc;
-  border: 1px solid rgba(168, 85, 247, 0.25);
+  background: #f5f3ff;
+  color: #6d28d9;
+  border: 1px solid #ddd6fe;
 }
 
 .saas-badge-amber {
-  background: rgba(245, 158, 11, 0.12);
-  color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.25);
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+/* 🌟 SHINY BUTTON EFFECT */
+.btn-shiny {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+.btn-shiny::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    60deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.3) 25%,
+    transparent 30%
+  );
+  transform: rotate(30deg);
+  transition: all 0.6s ease;
+  pointer-events: none;
+}
+.btn-shiny:hover::after {
+  left: 100%;
 }
