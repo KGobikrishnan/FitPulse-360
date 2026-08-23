@@ -181,25 +181,25 @@ export const AdminDashboard = () => {
         </div>
       </motion.div>
 
-      {/* 📊 4 Liquid Glass KPI Cards */}
-      <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+      {/* 📊 4 Liquid Glass KPI Cards (2x2 Grid on Mobile, 4 Cols on Desktop) */}
+      <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
         {/* Card 1: Gross Revenue */}
-        <div className="liquid-glass accent-bar-indigo p-6 space-y-3 relative overflow-hidden">
+        <div className="liquid-glass accent-bar-indigo p-4 sm:p-6 space-y-2 sm:space-y-3 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-mono text-slate-500 uppercase tracking-wider font-bold">Gross Collection</p>
-            <span className="p-2.5 rounded-xl bg-indigo-50/90 text-indigo-700 border border-indigo-100/80 shadow-2xs">
-              <DollarSign className="h-4 w-4" />
+            <p className="text-[10px] sm:text-xs font-mono text-slate-500 uppercase tracking-wider font-bold truncate">Gross Collection</p>
+            <span className="p-1.5 sm:p-2.5 rounded-xl bg-indigo-50/90 text-indigo-700 border border-indigo-100/80 shadow-2xs shrink-0">
+              <DollarSign className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </span>
           </div>
-          <h3 className="text-3xl font-black text-slate-900 tracking-tight tabular-numbers font-display">
+          <h3 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight tabular-numbers font-display">
             <CounterNumber value={data.financials.monthlyRevenue} prefix="₹" />
           </h3>
           <div className="flex items-center justify-between pt-1">
-            <div className="flex items-center gap-1 text-xs text-indigo-700 font-bold font-mono">
-              <ArrowUpRight className="h-4 w-4" />
-              <span>+41.2% vs last month</span>
+            <div className="flex items-center gap-0.5 sm:gap-1 text-[10px] sm:text-xs text-indigo-700 font-bold font-mono truncate">
+              <ArrowUpRight className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
+              <span>+41.2%</span>
             </div>
-            <div className="flex items-end gap-0.5 h-4">
+            <div className="hidden sm:flex items-end gap-0.5 h-4">
               <span className="w-1 h-2 bg-indigo-300 rounded-full" />
               <span className="w-1 h-3 bg-indigo-400 rounded-full" />
               <span className="w-1 h-2 bg-indigo-300 rounded-full" />
@@ -209,22 +209,22 @@ export const AdminDashboard = () => {
         </div>
 
         {/* Card 2: Net Profit */}
-        <div className="liquid-glass accent-bar-emerald p-6 space-y-3 relative overflow-hidden">
+        <div className="liquid-glass accent-bar-emerald p-4 sm:p-6 space-y-2 sm:space-y-3 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-mono text-slate-500 uppercase tracking-wider font-bold">Net Profit (P&L)</p>
-            <span className="p-2.5 rounded-xl bg-emerald-50/90 text-emerald-700 border border-emerald-100/80 shadow-2xs">
-              <TrendingUp className="h-4 w-4" />
+            <p className="text-[10px] sm:text-xs font-mono text-slate-500 uppercase tracking-wider font-bold truncate">Net Profit (P&L)</p>
+            <span className="p-1.5 sm:p-2.5 rounded-xl bg-emerald-50/90 text-emerald-700 border border-emerald-100/80 shadow-2xs shrink-0">
+              <TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </span>
           </div>
-          <h3 className="text-3xl font-black text-slate-900 tracking-tight tabular-numbers font-display">
+          <h3 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight tabular-numbers font-display">
             <CounterNumber value={data.financials.netProfit} prefix="₹" />
           </h3>
           <div className="flex items-center justify-between pt-1">
-            <div className="flex items-center gap-1 text-xs text-emerald-700 font-bold font-mono">
-              <ArrowUpRight className="h-4 w-4" />
-              <span>+28.7% margin</span>
+            <div className="flex items-center gap-0.5 sm:gap-1 text-[10px] sm:text-xs text-emerald-700 font-bold font-mono truncate">
+              <ArrowUpRight className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
+              <span>+28.7%</span>
             </div>
-            <div className="flex items-end gap-0.5 h-4">
+            <div className="hidden sm:flex items-end gap-0.5 h-4">
               <span className="w-1 h-2 bg-emerald-300 rounded-full" />
               <span className="w-1 h-4 bg-emerald-600 rounded-full" />
               <span className="w-1 h-3 bg-emerald-400 rounded-full" />
@@ -233,22 +233,22 @@ export const AdminDashboard = () => {
         </div>
 
         {/* Card 3: Active Members */}
-        <div className="liquid-glass accent-bar-purple p-6 space-y-3 relative overflow-hidden">
+        <div className="liquid-glass accent-bar-purple p-4 sm:p-6 space-y-2 sm:space-y-3 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-mono text-slate-500 uppercase tracking-wider font-bold">Active Members</p>
-            <span className="p-2.5 rounded-xl bg-purple-50/90 text-purple-700 border border-purple-100/80 shadow-2xs">
-              <Users className="h-4 w-4" />
+            <p className="text-[10px] sm:text-xs font-mono text-slate-500 uppercase tracking-wider font-bold truncate">Active Members</p>
+            <span className="p-1.5 sm:p-2.5 rounded-xl bg-purple-50/90 text-purple-700 border border-purple-100/80 shadow-2xs shrink-0">
+              <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </span>
           </div>
-          <div className="flex items-baseline space-x-2">
-            <h3 className="text-3xl font-black text-slate-900 tracking-tight tabular-numbers font-display">
+          <div className="flex items-baseline space-x-1.5">
+            <h3 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight tabular-numbers font-display">
               <CounterNumber value={activeMembers * 3 + 120} />
             </h3>
-            <span className="text-xs text-slate-400 font-mono font-medium">Live on floor</span>
+            <span className="text-[10px] text-slate-400 font-mono">Live</span>
           </div>
-          <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
-            <span><strong className="text-purple-700 font-bold">10 New</strong> • <strong className="text-rose-600 font-bold">18 Expired</strong></span>
-            <div className="flex items-end gap-0.5 h-3">
+          <div className="flex items-center justify-between text-[10px] sm:text-xs text-slate-500 pt-1">
+            <span className="truncate"><strong className="text-purple-700 font-bold">10 New</strong></span>
+            <div className="hidden sm:flex items-end gap-0.5 h-3">
               {[3, 5, 2, 8, 6, 4, 7, 9, 5, 8].map((h, i) => (
                 <span key={i} className="w-0.5 bg-purple-500 rounded" style={{ height: `${h * 2}px` }} />
               ))}
@@ -257,19 +257,19 @@ export const AdminDashboard = () => {
         </div>
 
         {/* Card 4: Trainer Payroll */}
-        <div className="liquid-glass accent-bar-amber p-6 space-y-3 relative overflow-hidden">
+        <div className="liquid-glass accent-bar-amber p-4 sm:p-6 space-y-2 sm:space-y-3 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-mono text-slate-500 uppercase tracking-wider font-bold">Trainer Payroll</p>
-            <span className="p-2.5 rounded-xl bg-amber-50/90 text-amber-700 border border-amber-100/80 shadow-2xs">
-              <CreditCard className="h-4 w-4" />
+            <p className="text-[10px] sm:text-xs font-mono text-slate-500 uppercase tracking-wider font-bold truncate">Trainer Payroll</p>
+            <span className="p-1.5 sm:p-2.5 rounded-xl bg-amber-50/90 text-amber-700 border border-amber-100/80 shadow-2xs shrink-0">
+              <CreditCard className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </span>
           </div>
-          <h3 className="text-3xl font-black text-slate-900 tracking-tight tabular-numbers font-display">
+          <h3 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight tabular-numbers font-display">
             <CounterNumber value={96400} prefix="₹" />
           </h3>
-          <div className="flex items-center justify-between text-xs text-amber-800 font-mono font-bold pt-1">
-            <span>Base + 15% PT Share</span>
-            <div className="flex items-end gap-0.5 h-3">
+          <div className="flex items-center justify-between text-[10px] sm:text-xs text-amber-800 font-mono font-bold pt-1">
+            <span className="truncate">Base + Share</span>
+            <div className="hidden sm:flex items-end gap-0.5 h-3">
               {[4, 6, 8, 5, 7, 9, 6].map((h, i) => (
                 <span key={i} className="w-0.5 bg-amber-500 rounded" style={{ height: `${h * 2}px` }} />
               ))}

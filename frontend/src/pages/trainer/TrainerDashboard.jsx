@@ -198,70 +198,70 @@ export const TrainerDashboard = () => {
         </div>
       </motion.div>
 
-      {/* 4 KPI Cards with Signature Accent Bars */}
-      <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-        <div className="warm-card accent-bar-indigo p-6 space-y-3 relative overflow-hidden">
+      {/* 4 KPI Cards with Signature Accent Bars (2x2 Grid on Mobile, 4 Cols on Desktop) */}
+      <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+        <div className="warm-card accent-bar-indigo p-4 sm:p-6 space-y-2 sm:space-y-3 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-mono text-slate-400 uppercase tracking-wider font-bold">Active Trainees</p>
-            <span className="p-2.5 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-100">
-              <Users className="h-4 w-4" />
+            <p className="text-[10px] sm:text-xs font-mono text-slate-400 uppercase tracking-wider font-bold truncate">Active Trainees</p>
+            <span className="p-1.5 sm:p-2.5 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-100 shrink-0">
+              <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </span>
           </div>
-          <h3 className="text-3xl font-black text-slate-900 font-display tabular-numbers tracking-tight">
+          <h3 className="text-xl sm:text-3xl font-black text-slate-900 font-display tabular-numbers tracking-tight">
             <CounterNumber value={myTrainees.length} />
           </h3>
-          <div className="flex items-center justify-between text-xs font-mono pt-1">
-            <span className="text-indigo-700 font-bold">+2 New Clients</span>
-            <span className="text-slate-400">100% Retained</span>
+          <div className="flex items-center justify-between text-[10px] sm:text-xs font-mono pt-1">
+            <span className="text-indigo-700 font-bold truncate">+2 New</span>
+            <span className="text-slate-400 hidden sm:inline">100% Retained</span>
           </div>
         </div>
 
-        <div className="warm-card accent-bar-purple p-6 space-y-3 relative overflow-hidden">
+        <div className="warm-card accent-bar-purple p-4 sm:p-6 space-y-2 sm:space-y-3 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-mono text-slate-400 uppercase tracking-wider font-bold">Monthly PT Commission</p>
-            <span className="p-2.5 rounded-xl bg-purple-50 text-purple-700 border border-purple-100">
-              <DollarSign className="h-4 w-4" />
+            <p className="text-[10px] sm:text-xs font-mono text-slate-400 uppercase tracking-wider font-bold truncate">PT Commission</p>
+            <span className="p-1.5 sm:p-2.5 rounded-xl bg-purple-50 text-purple-700 border border-purple-100 shrink-0">
+              <DollarSign className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </span>
           </div>
-          <h3 className="text-3xl font-black text-slate-900 font-display tabular-numbers tracking-tight">
+          <h3 className="text-xl sm:text-3xl font-black text-slate-900 font-display tabular-numbers tracking-tight">
             <CounterNumber value={16800} prefix="₹" />
           </h3>
-          <div className="flex items-center justify-between text-xs font-mono pt-1">
-            <span className="text-purple-700 font-bold">35% Revenue Share</span>
-            <span className="text-slate-400">Next Payout: 1st</span>
+          <div className="flex items-center justify-between text-[10px] sm:text-xs font-mono pt-1">
+            <span className="text-purple-700 font-bold truncate">35% Share</span>
+            <span className="text-slate-400 hidden sm:inline">Next: 1st</span>
           </div>
         </div>
 
-        <div className="warm-card accent-bar-emerald p-6 space-y-3 relative overflow-hidden">
+        <div className="warm-card accent-bar-emerald p-4 sm:p-6 space-y-2 sm:space-y-3 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-mono text-slate-400 uppercase tracking-wider font-bold">Sessions Completed</p>
-            <span className="p-2.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100">
-              <Activity className="h-4 w-4" />
+            <p className="text-[10px] sm:text-xs font-mono text-slate-400 uppercase tracking-wider font-bold truncate">Sessions</p>
+            <span className="p-1.5 sm:p-2.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100 shrink-0">
+              <Activity className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </span>
           </div>
-          <h3 className="text-3xl font-black text-slate-900 font-display tabular-numbers tracking-tight">
+          <h3 className="text-xl sm:text-3xl font-black text-slate-900 font-display tabular-numbers tracking-tight">
             <CounterNumber value={48} />
           </h3>
-          <div className="flex items-center justify-between text-xs font-mono pt-1">
-            <span className="text-emerald-700 font-bold">96% Attendance</span>
-            <span className="text-slate-400">Goal: 50</span>
+          <div className="flex items-center justify-between text-[10px] sm:text-xs font-mono pt-1">
+            <span className="text-emerald-700 font-bold truncate">96% Attend</span>
+            <span className="text-slate-400 hidden sm:inline">Goal: 50</span>
           </div>
         </div>
 
-        <div className="warm-card accent-bar-amber p-6 space-y-3 relative overflow-hidden">
+        <div className="warm-card accent-bar-amber p-4 sm:p-6 space-y-2 sm:space-y-3 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-mono text-slate-400 uppercase tracking-wider font-bold">Coach Rating</p>
-            <span className="p-2.5 rounded-xl bg-amber-50 text-amber-600 border border-amber-100">
-              <Star className="h-4 w-4 fill-amber-400 text-amber-500" />
+            <p className="text-[10px] sm:text-xs font-mono text-slate-400 uppercase tracking-wider font-bold truncate">Coach Rating</p>
+            <span className="p-1.5 sm:p-2.5 rounded-xl bg-amber-50 text-amber-600 border border-amber-100 shrink-0">
+              <Star className="h-3.5 w-3.5 sm:h-4 sm:w-4 fill-amber-400 text-amber-500" />
             </span>
           </div>
-          <div className="flex items-baseline space-x-1.5">
-            <h3 className="text-3xl font-black text-slate-900 font-display tabular-numbers tracking-tight">4.9</h3>
-            <span className="text-xs text-slate-400 font-mono">/ 5.0 (38 Reviews)</span>
+          <div className="flex items-baseline space-x-1">
+            <h3 className="text-xl sm:text-3xl font-black text-slate-900 font-display tabular-numbers tracking-tight">4.9</h3>
+            <span className="text-[10px] text-slate-400 font-mono">/ 5.0</span>
           </div>
-          <div className="flex items-center justify-between text-xs font-mono pt-1">
-            <span className="text-amber-800 font-bold">Top 5% in Gym</span>
-            <span className="text-slate-400">Badge: Master</span>
+          <div className="flex items-center justify-between text-[10px] sm:text-xs font-mono pt-1">
+            <span className="text-amber-800 font-bold truncate">Top 5%</span>
+            <span className="text-slate-400 hidden sm:inline">Master</span>
           </div>
         </div>
       </motion.div>
