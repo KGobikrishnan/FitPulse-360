@@ -175,8 +175,8 @@ export const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* 🔮 Three.js 3D Liquid Glass Canvas Widget */}
-        <div className="w-48 h-36 sm:w-56 sm:h-40 flex items-center justify-center shrink-0 relative pointer-events-auto">
+        {/* 🔮 Three.js 3D Liquid Glass Studio Dumbbell Assembly */}
+        <div className="w-full sm:w-72 md:w-80 h-48 sm:h-52 flex items-center justify-center shrink-0 relative pointer-events-auto">
           <ThreeHeroTorus className="w-full h-full" />
         </div>
       </motion.div>
