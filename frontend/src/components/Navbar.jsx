@@ -34,15 +34,8 @@ export const Navbar = ({ onToggleMobileDrawer, onOpenSearch }) => {
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white/70 backdrop-blur-2xl border-b border-white/80 px-4 sm:px-6 py-3 flex items-center justify-between shadow-xs">
-      {/* Brand & Mobile Hamburger */}
+      {/* Brand Logo */}
       <div className="flex items-center space-x-3 sm:space-x-4">
-        <button
-          onClick={onToggleMobileDrawer}
-          className="md:hidden p-2 rounded-xl bg-white/80 border border-white text-slate-700 hover:bg-white cursor-pointer shadow-2xs"
-        >
-          <Menu className="h-5 w-5" />
-        </button>
-
         <div className="flex items-center space-x-2.5">
           <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-700 flex items-center justify-center shadow-lg shadow-indigo-600/30 shrink-0 border border-white/40">
             <Dumbbell className="h-5 w-5 text-white font-black" />
@@ -121,24 +114,32 @@ export const Navbar = ({ onToggleMobileDrawer, onOpenSearch }) => {
           <span className="w-2 h-2 rounded-full bg-indigo-600 absolute top-2 right-2 ring-2 ring-white" />
         </button>
 
-        {/* User Profile Capsule */}
-        <div className="flex items-center space-x-2.5 pl-2.5 border-l border-white/60">
+        {/* User Profile Capsule - Clicking on mobile opens the Drawer */}
+        <button
+          onClick={() => {
+            if (window.innerWidth < 768) {
+              onToggleMobileDrawer();
+            }
+          }}
+          className="flex items-center space-x-2.5 pl-2 border-l border-white/60 cursor-pointer text-left active:scale-95 transition"
+          title="Profile Menu"
+        >
           <img
             src={currentUser.avatar}
             alt={currentUser.name}
-            className="w-9 h-9 rounded-2xl object-cover ring-2 ring-indigo-600/30 shadow-2xs"
+            className="w-9 h-9 rounded-2xl object-cover ring-2 ring-indigo-600/30 shadow-2xs hover:ring-indigo-600 transition"
           />
           <div className="hidden sm:block text-left">
             <p className="text-xs font-bold text-slate-800 leading-tight font-display">{currentUser.name}</p>
             <p className="text-[10px] text-indigo-600 font-mono font-bold">{currentUser.role.toLowerCase() === 'user' ? 'Member' : currentUser.role}</p>
           </div>
-        </div>
+        </button>
 
-        {/* Sign Out Button */}
+        {/* Sign Out Button (Desktop Only) */}
         <button
           onClick={logoutUser}
           title="Sign Out"
-          className="p-2.5 rounded-2xl bg-white/70 hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-white transition cursor-pointer shadow-2xs active:scale-95"
+          className="hidden md:flex p-2.5 rounded-2xl bg-white/70 hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-white transition cursor-pointer shadow-2xs active:scale-95"
         >
           <LogOut className="h-4 w-4" />
         </button>
