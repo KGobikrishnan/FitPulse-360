@@ -26,31 +26,31 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Dynamic Background Ambient Elements */}
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen bg-[#F7F5F0] flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Subtle Warm Background Blur Blobs */}
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="w-full max-w-md space-y-6 z-10">
         {/* Brand Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex h-14 w-14 rounded-2xl bg-emerald-500 items-center justify-center shadow-lg shadow-emerald-500/25 mb-1">
+          <div className="inline-flex h-14 w-14 rounded-2xl bg-indigo-600 items-center justify-center shadow-lg shadow-indigo-600/25 mb-1">
             <Dumbbell className="h-7 w-7 text-white font-black" />
           </div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight font-sans">
-            FIT<span className="text-emerald-600">PULSE</span> 360
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight font-display">
+            FIT<span className="text-indigo-600">PULSE</span> 360
           </h1>
           <p className="text-xs text-slate-500 font-medium">
-            Enterprise Gym Management, Coaching & Member Portal
+            Next-Gen Gym Operating System & Coaching Telemetry
           </p>
         </div>
 
         {/* Login Box */}
-        <div className="saas-card p-8 border border-slate-200/90 shadow-xl space-y-6 bg-white">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h2 className="text-base font-bold text-slate-900">Sign In to Dashboard</h2>
-            <span className="text-[10px] font-mono bg-emerald-50 text-emerald-800 border border-emerald-200 px-2.5 py-0.5 rounded-full font-bold">
-              Cloud Database Live
+        <div className="warm-card p-8 border border-[#EAE6DF] shadow-xl space-y-6 bg-white">
+          <div className="flex items-center justify-between border-b border-[#EAE6DF] pb-3">
+            <h2 className="text-base font-bold text-slate-900 font-display">Sign In to Dashboard</h2>
+            <span className="text-[10px] font-mono bg-indigo-50 text-indigo-700 border border-indigo-200 px-2.5 py-0.5 rounded-full font-bold">
+              PostgreSQL Live
             </span>
           </div>
 
@@ -72,7 +72,7 @@ export const LoginPage = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="e.g. admin@fitlife.com"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 focus:outline-none focus:border-emerald-500 transition"
+                className="w-full bg-[#FAF9F5] border border-[#EAE6DF] rounded-xl px-4 py-2.5 text-slate-800 focus:outline-none focus:border-indigo-500 transition"
               />
             </div>
 
@@ -87,14 +87,14 @@ export const LoginPage = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 focus:outline-none focus:border-emerald-500 transition"
+                className="w-full bg-[#FAF9F5] border border-[#EAE6DF] rounded-xl px-4 py-2.5 text-slate-800 focus:outline-none focus:border-indigo-500 transition"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="btn-shiny w-full py-3 rounded-xl font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 cursor-pointer transition disabled:opacity-50"
+              className="btn-shiny w-full py-3 rounded-xl font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/25 flex items-center justify-center gap-2 cursor-pointer transition disabled:opacity-50 font-display"
             >
               <span>{loading ? 'Authenticating...' : 'Access Dashboard'}</span>
               <ArrowRight className="h-4 w-4" />
@@ -102,7 +102,7 @@ export const LoginPage = () => {
           </form>
 
           {/* Quick Demo Credentials Switcher */}
-          <div className="pt-4 border-t border-slate-100 space-y-2.5">
+          <div className="pt-4 border-t border-[#EAE6DF] space-y-2.5">
             <p className="text-[10px] uppercase font-mono tracking-widest text-slate-400 text-center font-bold">
               1-Click Demo Portals
             </p>
@@ -110,28 +110,28 @@ export const LoginPage = () => {
               <button
                 type="button"
                 onClick={() => handleQuickFill('admin@fitlife.com', 'admin123')}
-                className="p-2.5 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 text-center transition cursor-pointer shadow-2xs"
+                className="p-2.5 rounded-xl bg-[#FAF9F5] hover:bg-indigo-50 border border-[#EAE6DF] hover:border-indigo-200 text-center transition cursor-pointer shadow-2xs"
               >
-                <ShieldCheck className="h-4 w-4 text-emerald-600 mx-auto mb-1" />
-                <p className="text-[11px] font-bold text-slate-800">Admin</p>
+                <ShieldCheck className="h-4 w-4 text-indigo-600 mx-auto mb-1" />
+                <p className="text-[11px] font-bold text-slate-800 font-display">Admin</p>
                 <p className="text-[9px] text-slate-400 font-mono">admin123</p>
               </button>
               <button
                 type="button"
                 onClick={() => handleQuickFill('trainer@fitlife.com', 'trainer123')}
-                className="p-2.5 rounded-xl bg-slate-50 hover:bg-purple-50 border border-slate-200 hover:border-purple-200 text-center transition cursor-pointer shadow-2xs"
+                className="p-2.5 rounded-xl bg-[#FAF9F5] hover:bg-purple-50 border border-[#EAE6DF] hover:border-purple-200 text-center transition cursor-pointer shadow-2xs"
               >
                 <UserCheck className="h-4 w-4 text-purple-600 mx-auto mb-1" />
-                <p className="text-[11px] font-bold text-slate-800">Trainer</p>
+                <p className="text-[11px] font-bold text-slate-800 font-display">Trainer</p>
                 <p className="text-[9px] text-slate-400 font-mono">trainer123</p>
               </button>
               <button
                 type="button"
                 onClick={() => handleQuickFill('user@fitlife.com', 'user123')}
-                className="p-2.5 rounded-xl bg-slate-50 hover:bg-cyan-50 border border-slate-200 hover:border-cyan-200 text-center transition cursor-pointer shadow-2xs"
+                className="p-2.5 rounded-xl bg-[#FAF9F5] hover:bg-emerald-50 border border-[#EAE6DF] hover:border-emerald-200 text-center transition cursor-pointer shadow-2xs"
               >
-                <Flame className="h-4 w-4 text-cyan-600 mx-auto mb-1" />
-                <p className="text-[11px] font-bold text-slate-800">Member</p>
+                <Flame className="h-4 w-4 text-emerald-600 mx-auto mb-1" />
+                <p className="text-[11px] font-bold text-slate-800 font-display">Member</p>
                 <p className="text-[9px] text-slate-400 font-mono">user123</p>
               </button>
             </div>

@@ -33,26 +33,26 @@ export const Navbar = ({ onToggleMobileDrawer, onOpenSearch }) => {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-white/85 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-6 py-3 flex items-center justify-between shadow-xs">
+    <header className="sticky top-0 z-40 w-full bg-white/90 backdrop-blur-md border-b border-[#EAE6DF] px-4 sm:px-6 py-3 flex items-center justify-between shadow-2xs">
       {/* Brand & Mobile Hamburger */}
       <div className="flex items-center space-x-3 sm:space-x-4">
         <button
           onClick={onToggleMobileDrawer}
-          className="md:hidden p-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 cursor-pointer"
+          className="md:hidden p-2 rounded-xl bg-[#FAF9F5] border border-[#EAE6DF] text-slate-700 hover:bg-[#F0EDE8] cursor-pointer"
         >
           <Menu className="h-5 w-5" />
         </button>
 
         <div className="flex items-center space-x-2.5">
-          <div className="h-10 w-10 rounded-xl bg-emerald-500 flex items-center justify-center shadow-md shadow-emerald-500/20 shrink-0">
+          <div className="h-10 w-10 rounded-xl bg-indigo-600 flex items-center justify-center shadow-md shadow-indigo-600/25 shrink-0">
             <Dumbbell className="h-5 w-5 text-white font-black" />
           </div>
           <div>
             <div className="flex items-center space-x-1.5">
-              <span className="font-extrabold tracking-tight text-base sm:text-lg text-slate-900 font-sans">
-                FIT<span className="text-emerald-600">PULSE</span>
+              <span className="font-extrabold tracking-tight text-base sm:text-lg text-slate-900 font-display">
+                FIT<span className="text-indigo-600">PULSE</span>
               </span>
-              <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200">
                 360
               </span>
             </div>
@@ -73,9 +73,9 @@ export const Navbar = ({ onToggleMobileDrawer, onOpenSearch }) => {
           readOnly
           type="text"
           placeholder="Search members, equipment, plans..."
-          className="w-full bg-slate-100/90 border border-slate-200/80 rounded-xl pl-9 pr-14 py-2 text-xs text-slate-800 placeholder:text-slate-400 cursor-pointer focus:outline-none hover:bg-slate-100 transition"
+          className="w-full bg-[#FAF9F5] border border-[#EAE6DF] rounded-xl pl-9 pr-14 py-2 text-xs text-slate-800 placeholder:text-slate-400 cursor-pointer focus:outline-none hover:bg-[#F0EDE8] transition"
         />
-        <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-mono text-slate-500 bg-white border border-slate-200 px-1.5 py-0.5 rounded shadow-2xs pointer-events-none">
+        <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-mono text-slate-500 bg-white border border-[#EAE6DF] px-1.5 py-0.5 rounded shadow-2xs pointer-events-none">
           Ctrl K
         </kbd>
       </div>
@@ -83,9 +83,9 @@ export const Navbar = ({ onToggleMobileDrawer, onOpenSearch }) => {
       {/* Top Right Badges, Metrics & Profile */}
       <div className="flex items-center space-x-2 sm:space-x-3">
         {/* Plan & Occupancy Metric Pill */}
-        <div className="hidden xl:flex items-center space-x-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-mono">
+        <div className="hidden xl:flex items-center space-x-2 bg-[#FAF9F5] border border-[#EAE6DF] px-3 py-1.5 rounded-xl text-xs font-mono">
           <Crown className="h-3.5 w-3.5 text-amber-500" />
-          <span className="text-slate-600 font-medium">Enterprise Tier</span>
+          <span className="text-slate-600 font-medium">Studio Enterprise</span>
           <span className="text-slate-300">•</span>
           <span className="text-slate-900 font-bold">42,800 (63%)</span>
         </div>
@@ -100,7 +100,7 @@ export const Navbar = ({ onToggleMobileDrawer, onOpenSearch }) => {
 
         {/* Growth Metric Badge */}
         {isOnline && (
-          <div className="hidden lg:flex items-center space-x-1 saas-badge-emerald px-2.5 py-1 rounded-lg text-xs font-bold font-mono">
+          <div className="hidden lg:flex items-center space-x-1 warm-badge-emerald px-2.5 py-1 rounded-lg text-xs font-bold font-mono">
             <TrendingUp className="h-3.5 w-3.5" />
             <span>Grow +12%</span>
           </div>
@@ -109,28 +109,28 @@ export const Navbar = ({ onToggleMobileDrawer, onOpenSearch }) => {
         {/* Gate QR Trigger */}
         <button
           onClick={() => setShowQRScanModal(true)}
-          className="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-emerald-600 border border-slate-200 transition cursor-pointer"
+          className="p-2 rounded-xl bg-[#FAF9F5] hover:bg-[#F0EDE8] text-indigo-600 border border-[#EAE6DF] transition cursor-pointer"
           title="Gate QR Scanner"
         >
           <QrCode className="h-4 w-4" />
         </button>
 
         {/* Notifications */}
-        <button className="relative p-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 transition cursor-pointer">
+        <button className="relative p-2 rounded-xl bg-[#FAF9F5] hover:bg-[#F0EDE8] text-slate-600 border border-[#EAE6DF] transition cursor-pointer">
           <Bell className="h-4 w-4" />
-          <span className="w-2 h-2 rounded-full bg-emerald-500 absolute top-1.5 right-1.5 ring-2 ring-white" />
+          <span className="w-2 h-2 rounded-full bg-indigo-600 absolute top-1.5 right-1.5 ring-2 ring-white" />
         </button>
 
         {/* User Profile Capsule */}
-        <div className="flex items-center space-x-2.5 pl-2 border-l border-slate-200">
+        <div className="flex items-center space-x-2.5 pl-2 border-l border-[#EAE6DF]">
           <img
             src={currentUser.avatar}
             alt={currentUser.name}
-            className="w-8 h-8 rounded-full object-cover ring-2 ring-emerald-500/20"
+            className="w-8 h-8 rounded-full object-cover ring-2 ring-indigo-600/20"
           />
           <div className="hidden sm:block text-left">
-            <p className="text-xs font-bold text-slate-800 leading-tight">{currentUser.name}</p>
-            <p className="text-[10px] text-emerald-600 font-mono font-bold">{currentUser.role.toLowerCase() === 'user' ? 'Member' : currentUser.role}</p>
+            <p className="text-xs font-bold text-slate-800 leading-tight font-display">{currentUser.name}</p>
+            <p className="text-[10px] text-indigo-600 font-mono font-bold">{currentUser.role.toLowerCase() === 'user' ? 'Member' : currentUser.role}</p>
           </div>
         </div>
 
@@ -138,7 +138,7 @@ export const Navbar = ({ onToggleMobileDrawer, onOpenSearch }) => {
         <button
           onClick={logoutUser}
           title="Sign Out"
-          className="p-2 rounded-xl bg-slate-50 hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-slate-200 transition cursor-pointer"
+          className="p-2 rounded-xl bg-[#FAF9F5] hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-[#EAE6DF] transition cursor-pointer"
         >
           <LogOut className="h-4 w-4" />
         </button>
@@ -147,17 +147,17 @@ export const Navbar = ({ onToggleMobileDrawer, onOpenSearch }) => {
       {/* Gate QR Scan Modal */}
       {showQRScanModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
-          <div className="saas-card w-full max-w-md p-6 space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div className="warm-card w-full max-w-md p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-[#EAE6DF] pb-3">
               <div className="flex items-center space-x-2">
-                <QrCode className="h-5 w-5 text-emerald-600" />
-                <h3 className="font-bold text-base text-slate-900">Entrance QR Gate Scanner</h3>
+                <QrCode className="h-5 w-5 text-indigo-600" />
+                <h3 className="font-bold text-base text-slate-900 font-display">Entrance QR Gate Scanner</h3>
               </div>
               <button onClick={() => setShowQRScanModal(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer">✕</button>
             </div>
 
             <p className="text-xs text-slate-500">
-              Type member code (e.g. <code className="text-emerald-700 bg-emerald-50 px-1 py-0.5 rounded">FITPULSE-PASS-M1-RAHUL</code>).
+              Type member code (e.g. <code className="text-indigo-700 bg-indigo-50 px-1 py-0.5 rounded">FITPULSE-PASS-M1-RAHUL</code>).
             </p>
 
             <form onSubmit={handleScanSubmit} className="space-y-3">
@@ -166,7 +166,7 @@ export const Navbar = ({ onToggleMobileDrawer, onOpenSearch }) => {
                 placeholder="Pass ID or Member Name..."
                 value={scannedCode}
                 onChange={(e) => setScannedCode(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-[#FAF9F5] border border-[#EAE6DF] rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-indigo-500"
               />
 
               <div className="flex flex-wrap gap-1.5">
@@ -205,7 +205,7 @@ export const Navbar = ({ onToggleMobileDrawer, onOpenSearch }) => {
                 </button>
                 <button
                   type="submit"
-                  className="btn-shiny px-4 py-1.5 text-xs font-bold bg-emerald-600 text-white rounded-xl cursor-pointer"
+                  className="btn-shiny px-4 py-1.5 text-xs font-bold bg-indigo-600 text-white rounded-xl cursor-pointer"
                 >
                   Scan Pass
                 </button>

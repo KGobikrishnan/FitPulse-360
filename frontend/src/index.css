@@ -2,96 +2,119 @@
 
 @layer base {
   :root {
-    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
+    --font-display: 'DM Sans', system-ui, -apple-system, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
   }
 
   body {
-    background-color: #f8fafc;
-    color: #0f172a;
-    font-family: var(--font-sans);
+    background-color: #F7F5F0;
+    color: #0F172A;
+    font-family: var(--font-body);
     overflow-x: hidden;
-    letter-spacing: -0.018em;
-    background-image: 
-      radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 40%),
-      radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.06) 0px, transparent 40%),
-      radial-gradient(at 50% 100%, rgba(14, 165, 233, 0.05) 0px, transparent 40%);
-    background-attachment: fixed;
+    letter-spacing: -0.015em;
   }
 
-  code, kbd, samp, pre {
-    font-family: var(--font-mono);
+  h1, h2, h3, h4, .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.025em;
+  }
+
+  .tabular-numbers {
+    font-family: var(--font-display);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.03em;
   }
 }
 
-/* Custom Clean Scrollbar */
+/* Custom Clean Warm Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #F0EDE8;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #D1CBC1;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #A8A196;
 }
 
-/* 💎 LUXURY MASTERPIECE CARDS & SURFACES */
-.luxury-card {
-  background: #ffffff;
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.02);
-  border-radius: 1.5rem;
+/* 💎 LUXURY WARM CARDS WITH SIGNATURE ACCENT BARS */
+.warm-card {
+  background: #FFFFFF;
+  border: 1px solid #EAE6DF;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.03), 0 1px 3px rgba(15, 23, 42, 0.02);
+  border-radius: 1.25rem;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
 }
 
-.luxury-card:hover {
-  border-color: rgba(16, 185, 129, 0.4);
+.warm-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.09), 0 0 25px -4px rgba(16, 185, 129, 0.15);
+  box-shadow: 0 16px 36px -8px rgba(15, 23, 42, 0.08);
+  border-color: #DDD7CE;
 }
 
-.luxury-hero-card {
-  background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  box-shadow: 0 12px 30px -5px rgba(16, 185, 129, 0.12), 0 4px 10px -2px rgba(15, 23, 42, 0.03);
-  border-radius: 1.5rem;
+/* Signature Left Color Accent Bars */
+.accent-bar-indigo {
+  border-left: 4px solid #4F46E5 !important;
 }
 
-/* 🏷️ SOFT PASTEL / EMERALD BADGES */
-.luxury-badge-emerald {
-  background: #ecfdf5;
+.accent-bar-emerald {
+  border-left: 4px solid #059669 !important;
+}
+
+.accent-bar-coral {
+  border-left: 4px solid #F43F5E !important;
+}
+
+.accent-bar-amber {
+  border-left: 4px solid #D97706 !important;
+}
+
+.accent-bar-purple {
+  border-left: 4px solid #7C3AED !important;
+}
+
+/* 🏷️ WARM ACCENT BADGES */
+.warm-badge-indigo {
+  background: #EEF2FF;
+  color: #4338CA;
+  border: 1px solid #C7D2FE;
+}
+
+.warm-badge-emerald {
+  background: #ECFDF5;
   color: #047857;
-  border: 1px solid #a7f3d0;
+  border: 1px solid #A7F3D0;
 }
 
-.luxury-badge-cyan {
-  background: #f0fdfa;
-  color: #0f766e;
-  border: 1px solid #99f6e4;
+.warm-badge-coral {
+  background: #FFF1F2;
+  color: #BE123C;
+  border: 1px solid #FECDD3;
 }
 
-.luxury-badge-purple {
-  background: #f5f3ff;
-  color: #6d28d9;
-  border: 1px solid #ddd6fe;
+.warm-badge-amber {
+  background: #FFFBEB;
+  color: #B45309;
+  border: 1px solid #FDE68A;
 }
 
-.luxury-badge-amber {
-  background: #fffbeb;
-  color: #b45309;
-  border: 1px solid #fde68a;
+.warm-badge-purple {
+  background: #F5F3FF;
+  color: #6D28D9;
+  border: 1px solid #DDD6FE;
 }
 
 /* 🌟 SHINY BUTTON EFFECT */
 .btn-shiny {
   position: relative;
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
 }
 .btn-shiny::after {
   content: '';
@@ -103,7 +126,7 @@
   background: linear-gradient(
     60deg,
     transparent 20%,
-    rgba(255, 255, 255, 0.35) 25%,
+    rgba(255, 255, 255, 0.3) 25%,
     transparent 30%
   );
   transform: rotate(30deg);
@@ -114,32 +137,52 @@
   left: 100%;
 }
 
-/* Backwards compatibility for existing classes */
-.saas-card {
-  background: #ffffff;
-  border: 1px solid rgba(226, 232, 240, 0.85);
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
-  border-radius: 1.5rem;
+/* Sidebar slide-in left border */
+.nav-item-slide {
+  position: relative;
+  transition: all 0.2s ease;
 }
-.saas-card-hover {
-  background: #ffffff;
-  border: 1px solid rgba(226, 232, 240, 0.85);
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+.nav-item-slide::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 15%;
+  bottom: 15%;
+  width: 3px;
+  background-color: #4F46E5;
+  border-radius: 0 4px 4px 0;
+  transform: scaleY(0);
+  transition: transform 0.2s ease;
+}
+.nav-item-slide:hover::before, .nav-item-slide.active::before {
+  transform: scaleY(1);
+}
+
+/* Backwards compatibility */
+.saas-card, .luxury-card {
+  background: #FFFFFF;
+  border: 1px solid #EAE6DF;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.03);
+  border-radius: 1.25rem;
+}
+.saas-card-hover, .luxury-card-hover {
+  background: #FFFFFF;
+  border: 1px solid #EAE6DF;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.03);
+  border-radius: 1.25rem;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  border-radius: 1.5rem;
 }
-.saas-card-hover:hover {
-  border-color: rgba(16, 185, 129, 0.35);
-  transform: translateY(-2px);
-  box-shadow: 0 16px 32px -6px rgba(15, 23, 42, 0.08);
+.saas-card-hover:hover, .luxury-card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 36px -8px rgba(15, 23, 42, 0.08);
 }
-.saas-card-glow {
-  background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  box-shadow: 0 10px 25px -4px rgba(16, 185, 129, 0.1);
-  border-radius: 1.5rem;
+.saas-card-glow, .luxury-hero-card {
+  background: linear-gradient(135deg, #FFFFFF 0%, #F5F3FF 100%);
+  border: 1px solid #DDD6FE;
+  box-shadow: 0 10px 25px -4px rgba(79, 70, 229, 0.08);
+  border-radius: 1.25rem;
 }
-.saas-badge-emerald { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
-.saas-badge-cyan { background: #f0fdfa; color: #0f766e; border: 1px solid #99f6e4; }
-.saas-badge-purple { background: #f5f3ff; color: #6d28d9; border: 1px solid #ddd6fe; }
-.saas-badge-amber { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+.saas-badge-emerald, .luxury-badge-emerald { background: #ECFDF5; color: #047857; border: 1px solid #A7F3D0; }
+.saas-badge-cyan, .luxury-badge-cyan { background: #EEF2FF; color: #4338CA; border: 1px solid #C7D2FE; }
+.saas-badge-purple, .luxury-badge-purple { background: #F5F3FF; color: #6D28D9; border: 1px solid #DDD6FE; }
+.saas-badge-amber, .luxury-badge-amber { background: #FFFBEB; color: #B45309; border: 1px solid #FDE68A; }
