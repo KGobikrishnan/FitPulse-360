@@ -146,8 +146,8 @@ export const MemberDashboard = () => {
         </div>
       </motion.div>
 
-      {/* Sub Tabs */}
-      <motion.div variants={itemVariants} className="flex border-b border-[#EAE6DF] space-x-6 sm:space-x-8 text-xs sm:text-sm font-semibold overflow-x-auto">
+      {/* Sub Tabs (Modern Glass Pills with No Scrollbar) */}
+      <motion.div variants={itemVariants} className="flex space-x-2 sm:space-x-3 text-xs sm:text-sm font-semibold overflow-x-auto no-scrollbar scroll-smooth py-1 border-b border-white/60">
         {[
           { id: 'routine', label: "Today's Workout Routine 🔥" },
           { id: 'diet-tracker', label: 'Diet & Hydration Tracker' },
@@ -159,19 +159,13 @@ export const MemberDashboard = () => {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`pb-3.5 transition cursor-pointer whitespace-nowrap font-medium relative ${
+            className={`px-3.5 py-2 rounded-2xl transition-all cursor-pointer whitespace-nowrap text-xs font-semibold shrink-0 ${
               currentTab === tab.id
-                ? 'text-indigo-700 font-bold'
-                : 'text-slate-500 hover:text-slate-800'
+                ? 'bg-indigo-600 text-white font-bold shadow-md shadow-indigo-600/25 active:scale-98'
+                : 'bg-white/60 hover:bg-white/90 text-slate-600 hover:text-slate-900 border border-white/80'
             }`}
           >
             <span>{tab.label}</span>
-            {currentTab === tab.id && (
-              <motion.div
-                layoutId="warmMemberTabIndicator"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600 rounded-full shadow-xs"
-              />
-            )}
           </button>
         ))}
       </motion.div>

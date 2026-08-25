@@ -278,9 +278,9 @@ export const AdminDashboard = () => {
         </div>
       </motion.div>
 
-      {/* 🧭 Horizontal Sub Navigation Tabs */}
-      <motion.div variants={itemVariants} className="flex items-center justify-between border-b border-white/60 overflow-x-auto">
-        <div className="flex space-x-6 sm:space-x-8 text-xs sm:text-sm font-semibold">
+      {/* 🧭 Horizontal Sub Navigation Tabs (Glass Pills on Mobile & Desktop) */}
+      <motion.div variants={itemVariants} className="flex items-center justify-between border-b border-white/60 overflow-x-auto no-scrollbar scroll-smooth py-1">
+        <div className="flex space-x-2 sm:space-x-3 text-xs sm:text-sm font-semibold shrink-0">
           {[
             { id: 'dashboard', label: 'Business Analytics' },
             { id: 'members', label: `Members & Invoicing (${data.members.length})` },
@@ -292,24 +292,18 @@ export const AdminDashboard = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`pb-3.5 transition cursor-pointer whitespace-nowrap font-medium relative ${
+              className={`px-3.5 py-2 rounded-2xl transition-all cursor-pointer whitespace-nowrap text-xs font-semibold relative ${
                 currentTab === tab.id
-                  ? 'text-indigo-700 font-bold'
-                  : 'text-slate-500 hover:text-slate-800'
+                  ? 'bg-indigo-600 text-white font-bold shadow-md shadow-indigo-600/25 active:scale-98'
+                  : 'bg-white/60 hover:bg-white/90 text-slate-600 hover:text-slate-900 border border-white/80'
               }`}
             >
               <span>{tab.label}</span>
-              {currentTab === tab.id && (
-                <motion.div
-                  layoutId="glassAdminTabIndicator"
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600 rounded-full shadow-xs"
-                />
-              )}
             </button>
           ))}
         </div>
 
-        <div className="hidden sm:flex items-center space-x-2 text-xs text-slate-500 pb-3.5 font-mono">
+        <div className="hidden sm:flex items-center space-x-2 text-xs text-slate-500 font-mono shrink-0 pl-4">
           <Calendar className="h-4 w-4 text-slate-400" />
           <span>Fiscal Year 2026</span>
         </div>
