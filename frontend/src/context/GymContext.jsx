@@ -38,45 +38,54 @@ export const GymProvider = ({ children }) => {
   });
   const [toastMessage, setToastMessage] = useState(null);
 
-  // Sync with PostgreSQL Backend on startup and auth changes
+  // Sync with PostgreSQL Backend when logged in as ADMIN
   useEffect(() => {
     const syncFromDB = async () => {
-      const dbOverview = await api.getAdminOverview();
-      if (dbOverview && dbOverview.members) {
-        setData((prev) => ({
-          ...prev,
-          members: dbOverview.members.map((m) => ({
-            id: `m-${m.id}`,
-            name: m.fullName,
-            email: m.email,
-            phone: m.phone || '+91 98765 00000',
-            planName: m.planName || 'Monthly Elite',
-            status: m.status || 'ACTIVE',
-            startDate: m.startDate || '2026-01-01',
-            expiryDate: m.expiryDate || '2027-01-01',
-            trainerName: 'Marcus Vance',
-            lockerNo: m.lockerNo || 'L-01',
-            totalPaid: m.totalPaid || 2499,
-            pendingDue: m.pendingDue || 0,
-            streak: m.streak || 1,
-            avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
-            qrCodeString: m.qrCodeString || `FITPULSE-PASS-M${m.id}`,
-            weight: 78.5,
-            targetWeight: 72.0,
-            bodyFat: '17.2%',
-            muscleMass: '36.8 kg'
-          })),
-          lockers: dbOverview.lockers && dbOverview.lockers.length > 0 ? dbOverview.lockers.map((l) => ({
-            id: l.id || l.lockerNumber,
-            number: l.lockerNumber,
-            status: l.status,
-            assignedTo: l.assignedTo,
-            gender: l.gender
-          })) : prev.lockers,
-          equipmentList: dbOverview.equipmentList && dbOverview.equipmentList.length > 0 ? dbOverview.equipmentList : prev.equipmentList,
-          inventoryStore: dbOverview.inventoryStore && dbOverview.inventoryStore.length > 0 ? dbOverview.inventoryStore : prev.inventoryStore,
-          recentAttendance: dbOverview.recentAttendance && dbOverview.recentAttendance.length > 0 ? dbOverview.recentAttendance : prev.recentAttendance
-        }));
+      const token = localStorage.getItem('fitpulse_jwt_token');
+      if (!token) return; // Skip if not authenticated
+
+      if (currentUser && currentUser.role !== 'ADMIN') return; // Only admin can fetch admin overview
+
+      try {
+        const dbOverview = await api.getAdminOverview();
+        if (dbOverview && dbOverview.members) {
+          setData((prev) => ({
+            ...prev,
+            members: dbOverview.members.map((m) => ({
+              id: `m-${m.id}`,
+              name: m.fullName,
+              email: m.email,
+              phone: m.phone || '+91 98765 00000',
+              planName: m.planName || 'Monthly Elite',
+              status: m.status || 'ACTIVE',
+              startDate: m.startDate || '2026-01-01',
+              expiryDate: m.expiryDate || '2027-01-01',
+              trainerName: 'Marcus Vance',
+              lockerNo: m.lockerNo || 'L-01',
+              totalPaid: m.totalPaid || 2499,
+              pendingDue: m.pendingDue || 0,
+              streak: m.streak || 1,
+              avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+              qrCodeString: m.qrCodeString || `FITPULSE-PASS-M${m.id}`,
+              weight: 78.5,
+              targetWeight: 72.0,
+              bodyFat: '17.2%',
+              muscleMass: '36.8 kg'
+            })),
+            lockers: dbOverview.lockers && dbOverview.lockers.length > 0 ? dbOverview.lockers.map((l) => ({
+              id: l.id || l.lockerNumber,
+              number: l.lockerNumber,
+              status: l.status,
+              assignedTo: l.assignedTo,
+              gender: l.gender
+            })) : prev.lockers,
+            equipmentList: dbOverview.equipmentList && dbOverview.equipmentList.length > 0 ? dbOverview.equipmentList : prev.equipmentList,
+            inventoryStore: dbOverview.inventoryStore && dbOverview.inventoryStore.length > 0 ? dbOverview.inventoryStore : prev.inventoryStore,
+            recentAttendance: dbOverview.recentAttendance && dbOverview.recentAttendance.length > 0 ? dbOverview.recentAttendance : prev.recentAttendance
+          }));
+        }
+      } catch (err) {
+        // Suppress unhandled errors if session expired
       }
     };
     syncFromDB();
@@ -88,7 +97,7 @@ export const GymProvider = ({ children }) => {
     };
     window.addEventListener('auth:unauthorized', handleUnauthorized);
     return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
-  }, []);
+  }, [currentUser]);
 
   useEffect(() => {
     localStorage.setItem('fitpulse_gym_data_v4', JSON.stringify(data));
