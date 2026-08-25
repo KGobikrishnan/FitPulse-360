@@ -616,43 +616,77 @@ export const TrainerDashboard = () => {
         </motion.div>
       )}
 
-      {/* VIEW: Schedule */}
+      {/* VIEW: Schedule (1-on-1 PT Calendar) */}
       {currentTab === 'schedule' && (
-        <motion.div variants={itemVariants} className="liquid-glass p-4 sm:p-6 space-y-4 sm:space-y-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/80 pb-3">
-            <div>
-              <h3 className="font-bold text-sm sm:text-base text-slate-900 font-display">1-on-1 Personal Training Daily Schedule</h3>
-              <p className="text-[11px] sm:text-xs text-slate-500">Manage time slots, client check-ins, and session completions</p>
+        <motion.div variants={itemVariants} className="space-y-4">
+          {/* Summary Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/60 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-white/80 shadow-2xs">
+            <div className="flex items-center space-x-2.5">
+              <span className="p-2 rounded-xl bg-purple-50 text-purple-700 font-bold shadow-2xs">
+                <Calendar className="h-4 w-4" />
+              </span>
+              <div>
+                <h3 className="font-bold text-slate-900 text-xs sm:text-sm font-display">1-on-1 Personal Training Daily Schedule</h3>
+                <p className="text-[11px] text-slate-500 font-medium">Manage booked slots, client check-ins, and session completions</p>
+              </div>
             </div>
-            <span className="text-[10px] sm:text-xs font-mono warm-badge-emerald px-3 py-1 rounded-full font-bold self-start sm:self-auto shadow-2xs">
-              Today: 4 Sessions Booked
-            </span>
+            <div className="flex items-center space-x-2 text-[11px] font-mono">
+              <span className="px-2.5 py-1 rounded-xl warm-badge-emerald font-bold">● Today: 4 Sessions Booked</span>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+          {/* Session Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
             {[
-              { time: "06:30 AM - 07:30 AM", client: "Rahul Sharma", goal: "Chest & Delts Hypertrophy", status: "Completed", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80" },
-              { time: "08:00 AM - 09:00 AM", client: "David Miller", goal: "Heavy Deadlift & Grip Strength", status: "Completed", avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150&auto=format&fit=crop&q=80" },
-              { time: "05:00 PM - 06:00 PM", client: "Karthik Raja", goal: "Core & Metabolic Conditioning", status: "Upcoming", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80" },
-              { time: "06:30 PM - 07:30 PM", client: "Ananya Iyer", goal: "Glutes, Hamstrings & Mobility", status: "Upcoming", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80" },
+              { time: "06:30 AM - 07:30 AM", client: "Rahul Sharma", goal: "Chest & Delts Hypertrophy", status: "Completed", location: "Free Weights Area", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80" },
+              { time: "08:00 AM - 09:00 AM", client: "David Miller", goal: "Heavy Deadlift & Grip Strength", status: "Completed", location: "Powerlifting Zone", avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150&auto=format&fit=crop&q=80" },
+              { time: "05:00 PM - 06:00 PM", client: "Karthik Raja", goal: "Core & Metabolic Conditioning", status: "Upcoming", location: "Cardio Loft", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80" },
+              { time: "06:30 PM - 07:30 PM", client: "Ananya Iyer", goal: "Glutes, Hamstrings & Mobility", status: "Upcoming", location: "Mobility Studio", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80" },
             ].map((slot, i) => (
-              <div key={i} className="p-4 rounded-2xl bg-[#FAF9F5] border border-[#EAE6DF] flex items-center justify-between">
-                <div className="flex items-center space-x-3.5">
-                  <img src={slot.avatar} alt="" className="w-11 h-11 rounded-2xl object-cover ring-1 ring-purple-200" />
-                  <div>
-                    <span className="text-[11px] font-mono text-purple-700 font-bold block flex items-center gap-1">
-                      <Clock className="h-3.5 w-3.5" />
-                      {slot.time}
-                    </span>
-                    <h4 className="font-bold text-slate-900 text-xs mt-0.5 font-display">{slot.client}</h4>
-                    <p className="text-[11px] text-slate-500">{slot.goal}</p>
+              <div
+                key={i}
+                className="liquid-glass p-4 sm:p-5 flex flex-col justify-between space-y-3.5 border border-white/90 shadow-sm hover:shadow-md transition-all relative overflow-hidden"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center space-x-3">
+                    <div className="relative">
+                      <img
+                        src={slot.avatar}
+                        alt={slot.client}
+                        className="w-12 h-12 rounded-2xl object-cover ring-2 ring-purple-500/30 shadow-2xs"
+                      />
+                      <span className={`absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full border-2 border-white ${
+                        slot.status === 'Completed' ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'
+                      }`} />
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-mono text-purple-700 font-bold flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        <span>{slot.time}</span>
+                      </span>
+                      <h4 className="font-black text-slate-900 text-sm font-display tracking-tight mt-0.5">{slot.client}</h4>
+                      <p className="text-[11px] text-slate-500 font-medium">{slot.goal}</p>
+                    </div>
                   </div>
+
+                  <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full font-mono shrink-0 shadow-2xs ${
+                    slot.status === 'Completed' ? 'warm-badge-emerald' : 'warm-badge-amber'
+                  }`}>
+                    {slot.status}
+                  </span>
                 </div>
-                <span className={`text-[10px] font-bold px-3 py-1 rounded-full ${
-                  slot.status === 'Completed' ? 'warm-badge-emerald' : 'warm-badge-amber'
-                }`}>
-                  {slot.status}
-                </span>
+
+                {/* Session Location & Quick Action */}
+                <div className="flex items-center justify-between pt-2 border-t border-white/80 text-[11px]">
+                  <span className="text-slate-500 font-mono flex items-center gap-1 font-medium">
+                    <Target className="h-3.5 w-3.5 text-indigo-500" />
+                    <span>{slot.location}</span>
+                  </span>
+
+                  <button className="btn-shiny px-3 py-1 rounded-xl text-[11px] font-bold bg-white hover:bg-indigo-50 text-indigo-700 border border-white/90 shadow-2xs transition active:scale-95 cursor-pointer">
+                    {slot.status === 'Completed' ? 'View Summary' : 'Start Session'}
+                  </button>
+                </div>
               </div>
             ))}
           </div>
