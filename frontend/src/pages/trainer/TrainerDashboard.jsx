@@ -289,53 +289,87 @@ export const TrainerDashboard = () => {
         ))}
       </motion.div>
 
-      {/* VIEW: Trainees Roster */}
+      {/* VIEW: Trainees Roster (Mobile Optimized Liquid Glass Cards) */}
       {currentTab === 'trainees' && (
-        <motion.div variants={itemVariants} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <motion.div variants={itemVariants} className="space-y-4">
+          {/* Header Action & Summary Pill */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/60 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-white/80 shadow-2xs">
+            <div className="flex items-center space-x-2">
+              <span className="p-2 rounded-xl bg-indigo-50 text-indigo-700 font-bold">
+                <Users className="h-4 w-4" />
+              </span>
+              <div>
+                <h3 className="font-bold text-slate-900 text-xs sm:text-sm font-display">Client Roster & Telemetry</h3>
+                <p className="text-[11px] text-slate-500 font-medium">{myTrainees.length} Active Coaching Clients • 100% Retention</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-2 text-[11px] font-mono">
+              <span className="px-2.5 py-1 rounded-xl warm-badge-emerald font-bold">● 92% Avg Compliance</span>
+            </div>
+          </div>
+
+          {/* Trainee Cards Grid (1 col on mobile, 2 on tablet, 3 on desktop) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
             {myTrainees.map((trainee) => (
-              <div key={trainee.id} className="warm-card p-6 space-y-4">
-                <div className="flex items-center space-x-3.5">
-                  <img src={trainee.avatar} alt="" className="w-14 h-14 rounded-2xl object-cover ring-2 ring-purple-100 shadow-sm" />
-                  <div>
-                    <h4 className="font-bold text-slate-900 text-sm font-display">{trainee.name}</h4>
-                    <p className="text-[11px] text-slate-500 font-mono">{trainee.planName}</p>
-                    <span className="inline-block mt-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full warm-badge-emerald">
-                      🔥 {trainee.streak} Day Streak
-                    </span>
+              <div
+                key={trainee.id}
+                className="liquid-glass p-4 sm:p-5 space-y-3.5 relative overflow-hidden border border-white/90 shadow-sm hover:shadow-md transition-all"
+              >
+                {/* Top Profile Header */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="relative">
+                      <img
+                        src={trainee.avatar}
+                        alt={trainee.name}
+                        className="w-12 h-12 rounded-2xl object-cover ring-2 ring-indigo-600/30 shadow-2xs"
+                      />
+                      <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full" />
+                    </div>
+                    <div>
+                      <h4 className="font-black text-slate-900 text-sm font-display tracking-tight leading-tight">{trainee.name}</h4>
+                      <p className="text-[10px] text-indigo-600 font-mono font-bold mt-0.5">{trainee.planName}</p>
+                    </div>
+                  </div>
+
+                  <span className="text-[10px] font-bold px-2.5 py-1 rounded-full warm-badge-amber font-mono shrink-0 shadow-2xs">
+                    🔥 {trainee.streak}d
+                  </span>
+                </div>
+
+                {/* Metrics 2-Col Stat Capsule */}
+                <div className="grid grid-cols-2 gap-2 p-2.5 rounded-2xl bg-white/70 backdrop-blur-md border border-white/90 text-xs font-mono shadow-2xs">
+                  <div className="pl-1">
+                    <span className="text-slate-400 text-[9px] block uppercase font-bold tracking-wider">Weight</span>
+                    <span className="text-slate-900 font-black text-sm font-display tabular-numbers">{trainee.weight} <span className="text-[10px] font-normal text-slate-400">kg</span></span>
+                  </div>
+                  <div className="pl-1 border-l border-white">
+                    <span className="text-slate-400 text-[9px] block uppercase font-bold tracking-wider">Body Fat</span>
+                    <span className="text-purple-700 font-black text-sm font-display tabular-numbers">{trainee.bodyFat}</span>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 p-3 rounded-2xl bg-[#FAF9F5] border border-[#EAE6DF] text-xs font-mono">
-                  <div>
-                    <span className="text-slate-400 text-[10px] block uppercase font-bold">Current Weight</span>
-                    <span className="text-slate-800 font-bold">{trainee.weight} kg</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 text-[10px] block uppercase font-bold">Body Fat %</span>
-                    <span className="text-purple-700 font-bold">{trainee.bodyFat}</span>
-                  </div>
-                </div>
-
-                <div className="space-y-2 text-xs">
-                  <div className="flex justify-between text-slate-500">
+                {/* Compliance Progress Bar */}
+                <div className="space-y-1.5 text-xs">
+                  <div className="flex justify-between text-[11px] text-slate-600 font-medium">
                     <span>Weekly Compliance</span>
                     <span className="text-emerald-700 font-bold font-mono">92%</span>
                   </div>
-                  <div className="w-full h-2 bg-[#FAF9F5] rounded-full overflow-hidden">
-                    <div className="h-full bg-emerald-600 rounded-full" style={{ width: '92%' }} />
+                  <div className="w-full h-2 bg-slate-200/60 rounded-full overflow-hidden p-0.5">
+                    <div className="h-full bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full shadow-2xs" style={{ width: '92%' }} />
                   </div>
                 </div>
 
+                {/* Quick Action Button */}
                 <button
                   onClick={() => {
                     setSelectedTraineeId(trainee.id);
                     setActiveTab('transformations');
                   }}
-                  className="w-full py-2.5 rounded-xl text-xs font-bold bg-[#FAF9F5] hover:bg-indigo-50 text-indigo-700 border border-[#EAE6DF] hover:border-indigo-200 transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                  className="btn-shiny w-full py-2.5 rounded-xl text-xs font-bold bg-white hover:bg-indigo-50 text-indigo-700 border border-white/90 hover:border-indigo-200 transition flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs active:scale-98"
                 >
-                  <span>Review Transformation Progress</span>
-                  <ChevronRight className="h-4 w-4" />
+                  <span>Review Transformation</span>
+                  <ChevronRight className="h-3.5 w-3.5" />
                 </button>
               </div>
             ))}
@@ -343,47 +377,47 @@ export const TrainerDashboard = () => {
         </motion.div>
       )}
 
-      {/* VIEW: Workout Builder */}
+      {/* VIEW: Workout Builder (Liquid Glass Protocol Architect) */}
       {currentTab === 'workout-builder' && (
-        <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 warm-card p-6 space-y-5">
-            <div className="flex items-center justify-between border-b border-[#EAE6DF] pb-3">
+        <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="lg:col-span-2 liquid-glass p-4 sm:p-6 space-y-4 sm:space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/80 pb-3">
               <div>
-                <h3 className="font-bold text-sm text-slate-900 font-display">Create Custom Workout Routine Protocol</h3>
-                <p className="text-xs text-slate-500">Assign specific set, rep and rest ranges for your trainees</p>
+                <h3 className="font-bold text-sm sm:text-base text-slate-900 font-display">Create Custom Workout Routine Protocol</h3>
+                <p className="text-[11px] sm:text-xs text-slate-500">Assign specific set, rep and rest ranges for your trainees</p>
               </div>
-              <span className="text-xs font-mono warm-badge-emerald px-3 py-1 rounded-full font-bold">
-                {workoutForm.exercises.length} Exercises
+              <span className="text-[10px] sm:text-xs font-mono warm-badge-emerald px-3 py-1 rounded-full font-bold self-start sm:self-auto shadow-2xs">
+                {workoutForm.exercises.length} Exercises Loaded
               </span>
             </div>
 
             <form onSubmit={handleSaveWorkout} className="space-y-4 text-xs">
               <div>
-                <label className="text-slate-700 font-bold">Routine Title</label>
+                <label className="text-slate-700 font-bold text-xs">Routine Title</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Chest & Triceps Hypertrophy Protocol"
                   value={workoutForm.name}
                   onChange={(e) => setWorkoutForm({ ...workoutForm, name: e.target.value })}
-                  className="w-full mt-1.5 bg-[#FAF9F5] border border-[#EAE6DF] rounded-xl px-4 py-2.5 text-slate-800 focus:outline-none focus:border-indigo-500"
+                  className="w-full mt-1.5 bg-white/70 border border-white/90 rounded-2xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 shadow-2xs transition"
                 />
               </div>
 
               {/* Added Exercise List */}
               <div className="space-y-2.5">
                 {workoutForm.exercises.map((ex, i) => (
-                  <div key={i} className="p-4 rounded-2xl bg-[#FAF9F5] border border-[#EAE6DF] flex items-center justify-between">
+                  <div key={i} className="p-3.5 sm:p-4 rounded-2xl bg-white/70 backdrop-blur-md border border-white/90 flex items-center justify-between shadow-2xs">
                     <div className="flex items-center space-x-3">
-                      <span className="w-7 h-7 rounded-full bg-indigo-100 text-indigo-800 font-mono text-xs font-bold flex items-center justify-center shadow-xs">
+                      <span className="w-7 h-7 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200/80 font-mono text-xs font-bold flex items-center justify-center shadow-2xs shrink-0">
                         {i + 1}
                       </span>
                       <div>
-                        <p className="font-bold text-slate-900 text-xs font-display">{ex.name}</p>
-                        <p className="text-[11px] text-slate-500">{ex.sets} Sets × {ex.reps} Reps • Rest: {ex.restSec}s • {ex.targetMuscle}</p>
+                        <p className="font-bold text-slate-900 text-xs sm:text-sm font-display">{ex.name}</p>
+                        <p className="text-[10px] sm:text-[11px] text-slate-500 font-mono mt-0.5">{ex.sets} Sets × {ex.reps} Reps • Rest: {ex.restSec}s • {ex.targetMuscle}</p>
                       </div>
                     </div>
-                    <button type="button" onClick={() => handleRemoveExercise(i)} className="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 cursor-pointer">
+                    <button type="button" onClick={() => handleRemoveExercise(i)} className="text-slate-400 hover:text-rose-600 p-2 rounded-xl hover:bg-rose-50 cursor-pointer transition active:scale-95">
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
@@ -391,78 +425,81 @@ export const TrainerDashboard = () => {
               </div>
 
               {/* Add New Exercise Inline Form */}
-              <div className="p-5 rounded-2xl bg-[#FAF9F5] border border-[#EAE6DF] space-y-3">
-                <p className="font-bold text-slate-800 text-xs font-display">+ Add Movement to Routine</p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="p-4 sm:p-5 rounded-2xl bg-white/60 backdrop-blur-md border border-white/90 space-y-3 shadow-2xs">
+                <p className="font-bold text-slate-800 text-xs font-display flex items-center gap-1.5">
+                  <Zap className="h-3.5 w-3.5 text-indigo-600" />
+                  <span>+ Add Movement to Routine</span>
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
                   <input
                     type="text"
                     placeholder="Exercise Name (e.g. Incline DB Flyes)"
                     value={newExercise.name}
                     onChange={(e) => setNewExercise({ ...newExercise, name: e.target.value })}
-                    className="sm:col-span-2 bg-white border border-[#EAE6DF] rounded-xl px-3 py-2 text-slate-800 focus:outline-none"
+                    className="sm:col-span-2 bg-white/80 border border-white rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none shadow-2xs"
                   />
                   <input
                     type="text"
                     placeholder="Target Muscle"
                     value={newExercise.targetMuscle}
                     onChange={(e) => setNewExercise({ ...newExercise, targetMuscle: e.target.value })}
-                    className="bg-white border border-[#EAE6DF] rounded-xl px-3 py-2 text-slate-800 focus:outline-none"
+                    className="bg-white/80 border border-white rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none shadow-2xs"
                   />
                 </div>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-3 gap-2.5">
                   <div>
-                    <span className="text-[10px] text-slate-500 block mb-1 font-bold">Sets</span>
+                    <span className="text-[9px] text-slate-500 block mb-1 font-bold uppercase tracking-wider">Sets</span>
                     <input
                       type="number"
                       value={newExercise.sets}
                       onChange={(e) => setNewExercise({ ...newExercise, sets: Number(e.target.value) })}
-                      className="w-full bg-white border border-[#EAE6DF] rounded-xl px-3 py-1.5 text-slate-800"
+                      className="w-full bg-white/80 border border-white rounded-xl px-3 py-1.5 text-xs text-slate-800 shadow-2xs"
                     />
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-500 block mb-1 font-bold">Reps</span>
+                    <span className="text-[9px] text-slate-500 block mb-1 font-bold uppercase tracking-wider">Reps</span>
                     <input
                       type="text"
                       value={newExercise.reps}
                       onChange={(e) => setNewExercise({ ...newExercise, reps: e.target.value })}
-                      className="w-full bg-white border border-[#EAE6DF] rounded-xl px-3 py-1.5 text-slate-800"
+                      className="w-full bg-white/80 border border-white rounded-xl px-3 py-1.5 text-xs text-slate-800 shadow-2xs"
                     />
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-500 block mb-1 font-bold">Rest (Sec)</span>
+                    <span className="text-[9px] text-slate-500 block mb-1 font-bold uppercase tracking-wider">Rest (Sec)</span>
                     <input
                       type="number"
                       value={newExercise.restSec}
                       onChange={(e) => setNewExercise({ ...newExercise, restSec: Number(e.target.value) })}
-                      className="w-full bg-white border border-[#EAE6DF] rounded-xl px-3 py-1.5 text-slate-800"
+                      className="w-full bg-white/80 border border-white rounded-xl px-3 py-1.5 text-xs text-slate-800 shadow-2xs"
                     />
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={handleAddExerciseToRoutine}
-                  className="w-full py-2.5 rounded-xl font-bold text-xs bg-white hover:bg-indigo-50 text-indigo-700 border border-[#EAE6DF] hover:border-indigo-200 transition cursor-pointer shadow-xs"
+                  className="w-full py-2.5 rounded-xl font-bold text-xs bg-white hover:bg-indigo-50 text-indigo-700 border border-white/90 hover:border-indigo-200 transition cursor-pointer shadow-2xs active:scale-98"
                 >
                   + Add Exercise to Protocol
                 </button>
               </div>
 
-              <button type="submit" className="btn-shiny w-full py-3 rounded-xl font-bold text-xs bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/25 cursor-pointer">
+              <button type="submit" className="btn-shiny w-full py-3 rounded-2xl font-bold text-xs bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/25 cursor-pointer active:scale-98">
                 Save & Publish Protocol to Clients
               </button>
             </form>
           </div>
 
-          <div className="warm-card p-6 space-y-4">
+          <div className="liquid-glass p-4 sm:p-6 space-y-4">
             <h3 className="font-bold text-sm text-slate-900 font-display">Existing Gym Protocols</h3>
             <div className="space-y-3">
               {data.workoutTemplates.map((tpl) => (
-                <div key={tpl.id} className="p-4 rounded-2xl bg-[#FAF9F5] border border-[#EAE6DF] space-y-1">
+                <div key={tpl.id} className="p-3.5 sm:p-4 rounded-2xl bg-white/70 backdrop-blur-md border border-white/90 space-y-1.5 shadow-2xs">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-xs text-slate-900 font-display">{tpl.name}</h4>
-                    <span className="text-[10px] font-mono warm-badge-purple px-2 py-0.5 rounded font-bold">{tpl.targetGoal}</span>
+                    <h4 className="font-bold text-xs sm:text-sm text-slate-900 font-display">{tpl.name}</h4>
+                    <span className="text-[10px] font-mono warm-badge-purple px-2 py-0.5 rounded-md font-bold">{tpl.targetGoal}</span>
                   </div>
-                  <p className="text-[11px] text-slate-500">{tpl.exercises.length} Movements • Difficulty: {tpl.difficulty}</p>
+                  <p className="text-[11px] text-slate-500 font-mono">{tpl.exercises.length} Movements • Difficulty: {tpl.difficulty}</p>
                 </div>
               ))}
             </div>
@@ -470,47 +507,47 @@ export const TrainerDashboard = () => {
         </motion.div>
       )}
 
-      {/* VIEW: Diet Builder */}
+      {/* VIEW: Diet Builder (Macro Diet Charts) */}
       {currentTab === 'diet-builder' && (
-        <motion.div variants={itemVariants} className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <motion.div variants={itemVariants} className="space-y-4 sm:space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6">
             {data.dietPlans.map((dp) => (
-              <div key={dp.id} className="warm-card p-6 space-y-4 flex flex-col justify-between">
-                <div className="space-y-3">
+              <div key={dp.id} className="liquid-glass p-4 sm:p-6 space-y-4 flex flex-col justify-between border border-white/90 shadow-sm">
+                <div className="space-y-3.5">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-slate-900 text-sm font-display">{dp.name}</h4>
-                    <span className="text-xs font-mono font-bold text-emerald-700 warm-badge-emerald px-3 py-0.5 rounded-full">
+                    <h4 className="font-bold text-slate-900 text-sm sm:text-base font-display">{dp.name}</h4>
+                    <span className="text-xs font-mono font-bold text-emerald-700 warm-badge-emerald px-3 py-1 rounded-full shadow-2xs">
                       {dp.calorieTarget} kcal
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2 p-3 rounded-2xl bg-[#FAF9F5] border border-[#EAE6DF] text-center text-xs font-mono">
+                  <div className="grid grid-cols-3 gap-2 p-3 rounded-2xl bg-white/70 backdrop-blur-md border border-white/90 text-center text-xs font-mono shadow-2xs">
                     <div>
-                      <span className="text-[10px] text-slate-400 block font-bold">Protein</span>
-                      <span className="text-emerald-700 font-bold">{dp.macros.proteinG}g</span>
+                      <span className="text-[9px] text-slate-400 block font-bold uppercase">Protein</span>
+                      <span className="text-emerald-700 font-black text-sm font-display tabular-numbers">{dp.macros.proteinG}g</span>
+                    </div>
+                    <div className="border-x border-white">
+                      <span className="text-[9px] text-slate-400 block font-bold uppercase">Carbs</span>
+                      <span className="text-indigo-700 font-black text-sm font-display tabular-numbers">{dp.macros.carbsG}g</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 block font-bold">Carbs</span>
-                      <span className="text-indigo-700 font-bold">{dp.macros.carbsG}g</span>
-                    </div>
-                    <div>
-                      <span className="text-[10px] text-slate-400 block font-bold">Fats</span>
-                      <span className="text-amber-700 font-bold">{dp.macros.fatG}g</span>
+                      <span className="text-[9px] text-slate-400 block font-bold uppercase">Fats</span>
+                      <span className="text-amber-700 font-black text-sm font-display tabular-numbers">{dp.macros.fatG}g</span>
                     </div>
                   </div>
 
                   <div className="space-y-2 pt-1">
                     <p className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold">Assigned Daily Meals</p>
                     {dp.meals.slice(0, 3).map((meal, idx) => (
-                      <div key={idx} className="p-3 rounded-xl bg-[#FAF9F5] border border-[#EAE6DF] flex items-center justify-between text-xs">
+                      <div key={idx} className="p-3 rounded-xl bg-white/60 border border-white/90 flex items-center justify-between text-xs shadow-2xs">
                         <span className="font-medium text-slate-800 truncate pr-2">{meal.mealName}</span>
-                        <span className="font-mono text-[11px] text-slate-500 shrink-0">{meal.calories} kcal</span>
+                        <span className="font-mono text-[11px] text-slate-500 shrink-0 font-bold">{meal.calories} kcal</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <button className="w-full py-2.5 rounded-xl text-xs font-bold bg-[#FAF9F5] hover:bg-indigo-50 text-indigo-700 border border-[#EAE6DF] hover:border-indigo-200 transition cursor-pointer shadow-xs">
+                <button className="btn-shiny w-full py-2.5 rounded-xl text-xs font-bold bg-white hover:bg-indigo-50 text-indigo-700 border border-white/90 hover:border-indigo-200 transition cursor-pointer shadow-2xs active:scale-98">
                   Assign to Trainee →
                 </button>
               </div>
@@ -519,27 +556,27 @@ export const TrainerDashboard = () => {
         </motion.div>
       )}
 
-      {/* VIEW: Trainee Transformations */}
+      {/* VIEW: Trainee Transformations (Progress Reviews) */}
       {currentTab === 'transformations' && (
-        <motion.div variants={itemVariants} className="warm-card p-6 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#EAE6DF] pb-4">
+        <motion.div variants={itemVariants} className="liquid-glass p-4 sm:p-6 space-y-5 sm:space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/80 pb-4">
             <div>
-              <h3 className="font-bold text-base text-slate-900 font-display">Trainee Progress Review: {selectedTransformation.memberName}</h3>
-              <p className="text-xs text-slate-500 font-mono">Target: {selectedTransformation.currentPhase} • Coach: Marcus Vance</p>
+              <h3 className="font-bold text-sm sm:text-base text-slate-900 font-display">Trainee Progress Review: {selectedTransformation.memberName}</h3>
+              <p className="text-[11px] sm:text-xs text-slate-500 font-mono">Target: {selectedTransformation.currentPhase} • Coach: Marcus Vance</p>
             </div>
-            <div className="flex items-center space-x-3 text-xs font-mono font-medium">
+            <div className="flex items-center space-x-3 text-[11px] sm:text-xs font-mono font-medium">
               <span className="text-emerald-700 font-bold">● Body Weight (kg)</span>
               <span className="text-purple-700 font-bold">● Body Fat (%)</span>
             </div>
           </div>
 
-          <div className="h-64 w-full pt-2">
+          <div className="h-56 sm:h-64 w-full pt-2">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={selectedTransformation.weeklyLogs}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#EAE6DF" />
-                <XAxis dataKey="week" stroke="#94A3B8" tick={{ fontSize: 11 }} />
-                <YAxis stroke="#94A3B8" domain={['dataMin - 2', 'dataMax + 2']} tick={{ fontSize: 11 }} />
-                <Tooltip contentStyle={{ backgroundColor: '#FFFFFF', borderColor: '#EAE6DF', borderRadius: '16px', fontSize: '12px' }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.7)" />
+                <XAxis dataKey="week" stroke="#94A3B8" tick={{ fontSize: 10 }} />
+                <YAxis stroke="#94A3B8" domain={['dataMin - 2', 'dataMax + 2']} tick={{ fontSize: 10 }} />
+                <Tooltip contentStyle={{ backgroundColor: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(10px)', borderColor: 'rgba(255,255,255,0.9)', borderRadius: '16px', fontSize: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.06)' }} />
                 <Line type="monotone" dataKey="weight" stroke="#059669" strokeWidth={3} dot={{ r: 4, fill: '#059669' }} name="Weight (kg)" animationDuration={1200} />
                 <Line type="monotone" dataKey="bodyFat" stroke="#7C3AED" strokeWidth={2.5} dot={{ r: 4, fill: '#7C3AED' }} name="Body Fat %" animationDuration={1200} />
               </LineChart>
@@ -547,20 +584,20 @@ export const TrainerDashboard = () => {
           </div>
 
           {/* Coach Feedback Box */}
-          <div className="p-5 rounded-2xl bg-[#FAF9F5] border border-[#EAE6DF] space-y-3">
+          <div className="p-4 sm:p-5 rounded-2xl bg-white/60 backdrop-blur-md border border-white/90 space-y-3 shadow-2xs">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5 font-display">
                 <MessageSquare className="h-4 w-4 text-indigo-600" />
                 <span>Coach Weekly Feedback & Diet Adjustment</span>
               </span>
-              <span className="text-[10px] text-slate-400 font-mono">Sent directly to trainee portal</span>
+              <span className="text-[10px] text-slate-400 font-mono hidden sm:inline">Sent directly to trainee portal</span>
             </div>
             <textarea
               rows={2}
               placeholder="e.g. Great progress on the bench press! Increase carbs by 30g on leg day..."
               value={feedbackNote}
               onChange={(e) => setFeedbackNote(e.target.value)}
-              className="w-full bg-white border border-[#EAE6DF] rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-indigo-500"
+              className="w-full bg-white/80 border border-white/90 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 shadow-2xs"
             />
             <div className="flex justify-end">
               <button
@@ -570,7 +607,7 @@ export const TrainerDashboard = () => {
                   addTrainerFeedback(selectedTransformation.memberId, feedbackNote);
                   setFeedbackNote('');
                 }}
-                className="btn-shiny px-5 py-2 rounded-xl font-bold text-xs bg-indigo-600 text-white cursor-pointer shadow-md"
+                className="btn-shiny px-5 py-2 rounded-xl font-bold text-xs bg-indigo-600 hover:bg-indigo-500 text-white cursor-pointer shadow-md active:scale-98"
               >
                 Send Feedback
               </button>
@@ -581,13 +618,13 @@ export const TrainerDashboard = () => {
 
       {/* VIEW: Schedule */}
       {currentTab === 'schedule' && (
-        <motion.div variants={itemVariants} className="warm-card p-6 space-y-5">
-          <div className="flex items-center justify-between border-b border-[#EAE6DF] pb-3">
+        <motion.div variants={itemVariants} className="liquid-glass p-4 sm:p-6 space-y-4 sm:space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/80 pb-3">
             <div>
-              <h3 className="font-bold text-sm text-slate-900 font-display">1-on-1 Personal Training Daily Schedule</h3>
-              <p className="text-xs text-slate-500">Manage time slots, client check-ins, and session completions</p>
+              <h3 className="font-bold text-sm sm:text-base text-slate-900 font-display">1-on-1 Personal Training Daily Schedule</h3>
+              <p className="text-[11px] sm:text-xs text-slate-500">Manage time slots, client check-ins, and session completions</p>
             </div>
-            <span className="text-xs font-mono warm-badge-emerald px-3 py-1 rounded-full font-bold">
+            <span className="text-[10px] sm:text-xs font-mono warm-badge-emerald px-3 py-1 rounded-full font-bold self-start sm:self-auto shadow-2xs">
               Today: 4 Sessions Booked
             </span>
           </div>
