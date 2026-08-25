@@ -523,24 +523,25 @@ export const AdminDashboard = () => {
         </motion.div>
       )}
 
-      {/* 👥 TAB 2: Members Directory */}
+      {/* 👥 TAB 2: Members Directory (Mobile Card Flow + Responsive Table) */}
       {currentTab === 'members' && (
-        <motion.div variants={itemVariants} className="liquid-glass p-6 space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <motion.div variants={itemVariants} className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/60 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-white/80 shadow-2xs">
             <div>
-              <h3 className="font-bold text-base text-slate-900 font-display">Member Directory & Subscription Lifecycle</h3>
-              <p className="text-xs text-slate-500">Manage memberships, generate digital invoices, and track payment dues.</p>
+              <h3 className="font-bold text-xs sm:text-base text-slate-900 font-display">Member Directory & Subscription Lifecycle</h3>
+              <p className="text-[11px] text-slate-500 font-medium">{data.members.length} Registered Members • Auto-Tax Invoicing Ready</p>
             </div>
             <button
               onClick={() => setShowAddMemberModal(true)}
-              className="btn-shiny px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-500 flex items-center gap-1.5 cursor-pointer shadow-md shadow-indigo-600/20"
+              className="btn-shiny px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-500 flex items-center justify-center gap-1.5 cursor-pointer shadow-md shadow-indigo-600/20 active:scale-98"
             >
               <UserPlus className="h-4 w-4" />
-              <span>Enroll New Member</span>
+              <span>Enroll Member</span>
             </button>
           </div>
 
-          <div className="overflow-x-auto">
+          {/* Desktop Table View */}
+          <div className="hidden md:block liquid-glass p-6 overflow-x-auto">
             <table className="w-full text-left text-xs text-slate-700">
               <thead className="bg-white/60 text-slate-500 uppercase text-[10px] tracking-wider border-b border-white">
                 <tr>
@@ -588,7 +589,7 @@ export const AdminDashboard = () => {
                     <td className="py-3.5 px-4 text-right space-x-2">
                       <button
                         onClick={() => setSelectedInvoiceMember(member)}
-                        className="px-3 py-1.5 rounded-lg bg-white/80 hover:bg-white text-slate-700 font-bold text-[11px] inline-flex items-center gap-1 cursor-pointer transition border border-white shadow-2xs"
+                        className="btn-shiny px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white text-indigo-700 font-bold text-[11px] inline-flex items-center gap-1 cursor-pointer transition border border-white shadow-2xs"
                       >
                         <span>Invoice</span>
                       </button>
@@ -598,25 +599,71 @@ export const AdminDashboard = () => {
               </tbody>
             </table>
           </div>
+
+          {/* Mobile Card View (Optimized for Small Screens) */}
+          <div className="grid grid-cols-1 gap-3 md:hidden">
+            {data.members.map((member) => (
+              <div key={member.id} className="liquid-glass p-4 space-y-3 border border-white/90 shadow-2xs">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <img src={member.avatar} alt={member.name} className="w-10 h-10 rounded-2xl object-cover ring-2 ring-indigo-600/30 shadow-2xs" />
+                    <div>
+                      <h4 className="font-bold text-slate-900 text-xs sm:text-sm font-display leading-tight">{member.name}</h4>
+                      <p className="text-[10px] text-slate-500">{member.email}</p>
+                    </div>
+                  </div>
+                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold font-mono ${
+                    member.status === 'ACTIVE' ? 'warm-badge-emerald' : member.status === 'DUE' ? 'warm-badge-amber' : 'warm-badge-coral'
+                  }`}>
+                    {member.status}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 p-2.5 rounded-2xl bg-white/70 backdrop-blur-md border border-white/90 text-xs font-mono">
+                  <div>
+                    <span className="text-slate-400 text-[9px] block uppercase font-bold">Plan</span>
+                    <span className="text-slate-800 font-bold text-[11px] truncate block">{member.planName}</span>
+                  </div>
+                  <div className="border-l border-white pl-2">
+                    <span className="text-slate-400 text-[9px] block uppercase font-bold">Paid / Due</span>
+                    <span className="text-emerald-700 font-black text-xs">₹{member.totalPaid.toLocaleString()}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-1">
+                  <p className="text-[10px] text-slate-500 font-mono">Coach: <strong className="text-slate-700">{member.trainerName || 'Unassigned'}</strong> • {member.lockerNo}</p>
+                  <button
+                    onClick={() => setSelectedInvoiceMember(member)}
+                    className="btn-shiny px-3 py-1.5 rounded-xl bg-white hover:bg-indigo-50 text-indigo-700 font-bold text-[11px] border border-white/90 shadow-2xs"
+                  >
+                    View Invoice
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </motion.div>
       )}
 
       {/* 💰 TAB 3: Finance & P&L */}
       {currentTab === 'finance' && (
-        <motion.div variants={itemVariants} className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="liquid-glass p-6 space-y-4">
+        <motion.div variants={itemVariants} className="space-y-4 sm:space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+            <div className="liquid-glass p-4 sm:p-6 space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="font-bold text-sm text-slate-900 font-display">Operating Expense Outflows</h3>
-                <button onClick={() => setShowExpenseModal(true)} className="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 cursor-pointer shadow-2xs">
-                  + Add Expense
+                <div>
+                  <h3 className="font-bold text-xs sm:text-sm text-slate-900 font-display">Operating Expense Outflows</h3>
+                  <p className="text-[10px] text-slate-500 font-mono">Fixed & Variable Monthly Overhead</p>
+                </div>
+                <button onClick={() => setShowExpenseModal(true)} className="btn-shiny px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 cursor-pointer shadow-2xs active:scale-95">
+                  + Expense
                 </button>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {data.financials.expenseBreakdown.map((exp, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3.5 rounded-2xl bg-white/60 border border-white shadow-2xs">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-3.5 h-3.5 rounded-full" style={{ backgroundColor: exp.color }} />
+                  <div key={idx} className="flex items-center justify-between p-3 rounded-2xl bg-white/70 backdrop-blur-md border border-white/90 shadow-2xs">
+                    <div className="flex items-center space-x-2.5">
+                      <div className="w-3 h-3 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: exp.color }} />
                       <span className="text-xs font-bold text-slate-800">{exp.name}</span>
                     </div>
                     <span className="text-xs font-mono font-bold text-rose-600">₹{exp.amount.toLocaleString()}</span>
@@ -625,13 +672,16 @@ export const AdminDashboard = () => {
               </div>
             </div>
 
-            <div className="liquid-glass p-6 space-y-4">
-              <h3 className="font-bold text-sm text-slate-900 font-display">Trainer Payroll & PT Commissions</h3>
-              <div className="space-y-3">
+            <div className="liquid-glass p-4 sm:p-6 space-y-4">
+              <div>
+                <h3 className="font-bold text-xs sm:text-sm text-slate-900 font-display">Trainer Payroll & PT Commissions</h3>
+                <p className="text-[10px] text-slate-500 font-mono">Base Salary + 35% PT Revenue Share</p>
+              </div>
+              <div className="space-y-2.5">
                 {data.trainers.map((trainer) => (
-                  <div key={trainer.id} className="p-4 rounded-2xl bg-white/60 border border-white flex items-center justify-between shadow-2xs">
+                  <div key={trainer.id} className="p-3 rounded-2xl bg-white/70 backdrop-blur-md border border-white/90 flex items-center justify-between shadow-2xs">
                     <div className="flex items-center space-x-3">
-                      <img src={trainer.avatar} alt={trainer.name} className="w-10 h-10 rounded-full object-cover ring-1 ring-white" />
+                      <img src={trainer.avatar} alt={trainer.name} className="w-9 h-9 rounded-2xl object-cover ring-1 ring-white" />
                       <div>
                         <p className="text-xs font-bold text-slate-900">{trainer.name}</p>
                         <p className="text-[10px] text-slate-500">{trainer.specialization}</p>
@@ -650,13 +700,22 @@ export const AdminDashboard = () => {
 
       {/* 🚪 TAB 4: Attendance & Heatmap */}
       {currentTab === 'attendance' && (
-        <motion.div variants={itemVariants} className="liquid-glass p-6 space-y-4">
-          <h3 className="font-bold text-sm text-slate-900 font-display">Gym Floor Peak-Hour Density Heatmap</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+        <motion.div variants={itemVariants} className="liquid-glass p-4 sm:p-6 space-y-4">
+          <div className="flex items-center justify-between border-b border-white/80 pb-3">
+            <div>
+              <h3 className="font-bold text-xs sm:text-sm text-slate-900 font-display">Gym Floor Peak-Hour Density Heatmap</h3>
+              <p className="text-[10px] text-slate-500 font-mono">Real-time attendance & gate sensor telemetry</p>
+            </div>
+            <span className="text-[10px] font-mono px-2.5 py-1 rounded-full warm-badge-emerald font-bold">
+              Floor Capacity: 80 Max
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5 sm:gap-3">
             {data.peakHoursHeatmap.map((slot, i) => (
               <div
                 key={i}
-                className={`p-4 rounded-2xl border text-center transition shadow-2xs ${
+                className={`p-3.5 rounded-2xl border text-center transition shadow-2xs ${
                   slot.crowd >= 80
                     ? 'warm-badge-coral'
                     : slot.crowd >= 60
@@ -664,9 +723,9 @@ export const AdminDashboard = () => {
                     : 'warm-badge-emerald'
                 }`}
               >
-                <p className="text-xs font-mono font-bold">{slot.slot}</p>
-                <div className="my-1.5"><span className="text-2xl font-black font-display">{slot.crowd}%</span></div>
-                <p className="text-[11px] opacity-80">{slot.label}</p>
+                <p className="text-[11px] font-mono font-bold">{slot.slot}</p>
+                <div className="my-1"><span className="text-xl sm:text-2xl font-black font-display">{slot.crowd}%</span></div>
+                <p className="text-[10px] opacity-80 truncate">{slot.label}</p>
               </div>
             ))}
           </div>
@@ -675,17 +734,17 @@ export const AdminDashboard = () => {
 
       {/* 📦 TAB 5: Assets & Mini POS */}
       {currentTab === 'assets' && (
-        <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="liquid-glass p-6 space-y-4">
-            <h3 className="font-bold text-sm text-slate-900 font-display">Equipment Maintenance Log</h3>
-            <div className="space-y-3">
+        <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+          <div className="liquid-glass p-4 sm:p-6 space-y-4">
+            <h3 className="font-bold text-xs sm:text-sm text-slate-900 font-display">Equipment Maintenance Log</h3>
+            <div className="space-y-2.5">
               {data.equipmentList.map((eq) => (
-                <div key={eq.id} className="p-4 rounded-2xl bg-white/60 border border-white flex items-center justify-between shadow-2xs">
+                <div key={eq.id} className="p-3.5 rounded-2xl bg-white/70 backdrop-blur-md border border-white/90 flex items-center justify-between shadow-2xs">
                   <div>
                     <p className="text-xs font-bold text-slate-900">{eq.name}</p>
-                    <p className="text-[10px] text-slate-500">Next Due: {eq.nextDue}</p>
+                    <p className="text-[10px] text-slate-500 font-mono">Next Due: {eq.nextDue}</p>
                   </div>
-                  <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
+                  <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full font-mono ${
                     eq.status === 'OPERATIONAL' ? 'warm-badge-emerald' : 'warm-badge-amber'
                   }`}>
                     {eq.status}
@@ -695,18 +754,18 @@ export const AdminDashboard = () => {
             </div>
           </div>
 
-          <div className="liquid-glass p-6 space-y-4">
-            <h3 className="font-bold text-sm text-slate-900 font-display">Supplement Store & Mini POS</h3>
-            <div className="space-y-3">
+          <div className="liquid-glass p-4 sm:p-6 space-y-4">
+            <h3 className="font-bold text-xs sm:text-sm text-slate-900 font-display">Supplement Store & Mini POS</h3>
+            <div className="space-y-2.5">
               {data.inventoryStore.map((item) => (
-                <div key={item.id} className="p-4 rounded-2xl bg-white/60 border border-white flex items-center justify-between shadow-2xs">
+                <div key={item.id} className="p-3.5 rounded-2xl bg-white/70 backdrop-blur-md border border-white/90 flex items-center justify-between shadow-2xs">
                   <div>
                     <p className="text-xs font-bold text-slate-900">{item.name}</p>
-                    <p className="text-[10px] text-slate-500 font-mono">Stock: {item.stock} • ₹{item.price}</p>
+                    <p className="text-[10px] text-slate-500 font-mono">Stock: <strong className="text-slate-800">{item.stock}</strong> • ₹{item.price}</p>
                   </div>
                   <button
                     onClick={() => sellInventoryItem(item.id, 1)}
-                    className="btn-shiny px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white cursor-pointer shadow-xs"
+                    className="btn-shiny px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white cursor-pointer shadow-xs active:scale-95"
                   >
                     Sell 1x
                   </button>
@@ -719,9 +778,17 @@ export const AdminDashboard = () => {
 
       {/* 🔐 TAB 6: Lockers Grid */}
       {currentTab === 'lockers' && (
-        <motion.div variants={itemVariants} className="liquid-glass p-6 space-y-4">
-          <h3 className="font-bold text-sm text-slate-900 font-display">Gym Locker Allocation Grid</h3>
-          <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3 pt-2">
+        <motion.div variants={itemVariants} className="liquid-glass p-4 sm:p-6 space-y-4">
+          <div className="flex items-center justify-between border-b border-white/80 pb-3">
+            <div>
+              <h3 className="font-bold text-xs sm:text-sm text-slate-900 font-display">Gym Locker Allocation Grid</h3>
+              <p className="text-[10px] text-slate-500 font-mono">Tap any locker to toggle status (Available / Assigned / Maintenance)</p>
+            </div>
+            <span className="text-[10px] font-mono warm-badge-emerald px-2.5 py-1 rounded-full font-bold">
+              18 Free
+            </span>
+          </div>
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2.5 pt-1">
             {data.lockers.map((locker) => (
               <button
                 key={locker.id}
@@ -729,16 +796,16 @@ export const AdminDashboard = () => {
                   const next = locker.status === 'AVAILABLE' ? 'OCCUPIED' : locker.status === 'OCCUPIED' ? 'MAINTENANCE' : 'AVAILABLE';
                   toggleLockerStatus(locker.id, next, next === 'OCCUPIED' ? 'Assigned' : null);
                 }}
-                className={`p-3.5 rounded-2xl border text-center transition cursor-pointer active:scale-95 shadow-2xs ${
+                className={`p-3 rounded-2xl border text-center transition cursor-pointer active:scale-95 shadow-2xs ${
                   locker.status === 'AVAILABLE'
-                    ? 'bg-emerald-50/80 border-emerald-200 text-emerald-800'
+                    ? 'bg-emerald-50/90 border-emerald-200 text-emerald-800'
                     : locker.status === 'OCCUPIED'
-                    ? 'bg-rose-50/80 border-rose-200 text-rose-800'
-                    : 'bg-amber-50/80 border-amber-200 text-amber-800'
+                    ? 'bg-rose-50/90 border-rose-200 text-rose-800'
+                    : 'bg-amber-50/90 border-amber-200 text-amber-800'
                 }`}
               >
-                <p className="font-mono font-bold text-sm">{locker.number}</p>
-                <p className="text-[10px] mt-1 truncate font-medium">{locker.assignedTo || locker.status}</p>
+                <p className="font-mono font-bold text-xs">{locker.number}</p>
+                <p className="text-[9px] mt-0.5 truncate font-medium">{locker.assignedTo || locker.status}</p>
               </button>
             ))}
           </div>
