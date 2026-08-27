@@ -118,6 +118,66 @@ export const AdminDashboard = () => {
     setExpenseForm({ name: '', amount: '' });
   };
 
+  // 📊 CSV / Excel Export Utilities
+  const downloadCSV = (filename, csvContent) => {
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const exportMembersToCSV = () => {
+    const headers = ['Member ID', 'Full Name', 'Email', 'Phone', 'Plan Name', 'Status', 'Start Date', 'Expiry Date', 'Total Paid (INR)', 'Pending Due (INR)', 'Assigned Coach', 'Locker No'];
+    const rows = data.members.map((m) => [
+      m.id,
+      `"${m.name}"`,
+      m.email,
+      `"${m.phone || ''}"`,
+      `"${m.planName}"`,
+      m.status,
+      m.startDate,
+      m.expiryDate,
+      m.totalPaid,
+      m.pendingDue,
+      `"${m.trainerName || 'Unassigned'}"`,
+      m.lockerNo
+    ]);
+
+    const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    downloadCSV(`FitPulse_Members_Roster_${new Date().toISOString().split('T')[0]}.csv`, csvContent);
+  };
+
+  const exportFinancialsToCSV = () => {
+    const headers = ['Category', 'Item / Payee', 'Amount (INR)', 'Type', 'Date'];
+    const rows = [
+      ['Revenue', 'Membership Subscriptions & POS', data.financials.monthlyRevenue, 'INFLOW', new Date().toISOString().split('T')[0]],
+      ...data.financials.expenseBreakdown.map((exp) => ['Expense', `"${exp.name}"`, exp.amount, 'OUTFLOW', new Date().toISOString().split('T')[0]]),
+      ...data.trainers.map((t) => ['Payroll', `"${t.name} (Base + PT Commission)"`, t.baseSalary + t.monthlyCommission, 'OUTFLOW', new Date().toISOString().split('T')[0]])
+    ];
+
+    const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    downloadCSV(`FitPulse_Financial_PL_Report_${new Date().toISOString().split('T')[0]}.csv`, csvContent);
+  };
+
+  const exportAttendanceToCSV = () => {
+    const headers = ['Log ID', 'Member / Athlete', 'Check-In Time', 'Gate / Method', 'Access Status'];
+    const rows = data.recentAttendance.map((log) => [
+      log.id,
+      `"${log.memberName}"`,
+      log.time,
+      `"${log.method}"`,
+      `"${log.status}"`
+    ]);
+
+    const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    downloadCSV(`FitPulse_Attendance_AccessLogs_${new Date().toISOString().split('T')[0]}.csv`, csvContent);
+  };
+
   const activeMembers = data.members.filter((m) => m.status === 'ACTIVE').length;
 
   const containerVariants = {
@@ -531,13 +591,23 @@ export const AdminDashboard = () => {
               <h3 className="font-bold text-xs sm:text-base text-slate-900 font-display">Member Directory & Subscription Lifecycle</h3>
               <p className="text-[11px] text-slate-500 font-medium">{data.members.length} Registered Members • Auto-Tax Invoicing Ready</p>
             </div>
-            <button
-              onClick={() => setShowAddMemberModal(true)}
-              className="btn-shiny px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-500 flex items-center justify-center gap-1.5 cursor-pointer shadow-md shadow-indigo-600/20 active:scale-98"
-            >
-              <UserPlus className="h-4 w-4" />
-              <span>Enroll Member</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={exportMembersToCSV}
+                className="btn-shiny px-3.5 py-2 rounded-xl text-xs font-bold bg-white/90 hover:bg-white text-emerald-800 border border-emerald-200/80 flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs active:scale-98"
+                title="Export Members Roster to CSV/Excel"
+              >
+                <Download className="h-4 w-4 text-emerald-600" />
+                <span>Export CSV</span>
+              </button>
+              <button
+                onClick={() => setShowAddMemberModal(true)}
+                className="btn-shiny px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-500 flex items-center justify-center gap-1.5 cursor-pointer shadow-md shadow-indigo-600/20 active:scale-98"
+              >
+                <UserPlus className="h-4 w-4" />
+                <span>Enroll Member</span>
+              </button>
+            </div>
           </div>
 
           {/* Desktop Table View */}
@@ -648,6 +718,29 @@ export const AdminDashboard = () => {
       {/* 💰 TAB 3: Finance & P&L */}
       {currentTab === 'finance' && (
         <motion.div variants={itemVariants} className="space-y-4 sm:space-y-6">
+          <div className="flex items-center justify-between bg-white/60 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-white/80 shadow-2xs">
+            <div>
+              <h3 className="font-bold text-xs sm:text-base text-slate-900 font-display">Financial Statements & Profit & Loss Statement</h3>
+              <p className="text-[11px] text-slate-500 font-medium">Auto-calculated Net Margins • Operational Cashflow Telemetry</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={exportFinancialsToCSV}
+                className="btn-shiny px-3.5 py-2 rounded-xl text-xs font-bold bg-white/90 hover:bg-white text-emerald-800 border border-emerald-200/80 flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs active:scale-98"
+                title="Export P&L Statement to CSV/Excel"
+              >
+                <Download className="h-4 w-4 text-emerald-600" />
+                <span>Export P&L (CSV)</span>
+              </button>
+              <button
+                onClick={() => setShowExpenseModal(true)}
+                className="btn-shiny px-4 py-2 rounded-xl text-xs font-bold bg-rose-600 text-white hover:bg-rose-500 flex items-center justify-center gap-1.5 cursor-pointer shadow-md shadow-rose-600/20 active:scale-98"
+              >
+                <span>+ Expense</span>
+              </button>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             <div className="liquid-glass p-4 sm:p-6 space-y-4">
               <div className="flex items-center justify-between">
@@ -701,14 +794,24 @@ export const AdminDashboard = () => {
       {/* 🚪 TAB 4: Attendance & Heatmap */}
       {currentTab === 'attendance' && (
         <motion.div variants={itemVariants} className="liquid-glass p-4 sm:p-6 space-y-4">
-          <div className="flex items-center justify-between border-b border-white/80 pb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/80 pb-3">
             <div>
-              <h3 className="font-bold text-xs sm:text-sm text-slate-900 font-display">Gym Floor Peak-Hour Density Heatmap</h3>
+              <h3 className="font-bold text-xs sm:text-sm text-slate-900 font-display">Gym Floor Peak-Hour Density Heatmap & Gate Logs</h3>
               <p className="text-[10px] text-slate-500 font-mono">Real-time attendance & gate sensor telemetry</p>
             </div>
-            <span className="text-[10px] font-mono px-2.5 py-1 rounded-full warm-badge-emerald font-bold">
-              Floor Capacity: 80 Max
-            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={exportAttendanceToCSV}
+                className="btn-shiny px-3 py-1.5 rounded-xl text-xs font-bold bg-white/90 hover:bg-white text-emerald-800 border border-emerald-200/80 flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs active:scale-98"
+                title="Export Gate Attendance to CSV/Excel"
+              >
+                <Download className="h-3.5 w-3.5 text-emerald-600" />
+                <span>Export Logs (CSV)</span>
+              </button>
+              <span className="text-[10px] font-mono px-2.5 py-1 rounded-full warm-badge-emerald font-bold">
+                Floor Capacity: 80 Max
+              </span>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5 sm:gap-3">
