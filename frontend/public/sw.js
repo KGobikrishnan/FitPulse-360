@@ -35,6 +35,11 @@ self.addEventListener('activate', (event) => {
 
 // Fetch Event: Network-First for APIs, Cache-First for Static Assets
 self.addEventListener('fetch', (event) => {
+  // Only handle standard http / https GET requests (Ignore chrome-extension:// and non-GET)
+  if (!event.request.url.startsWith('http') || event.request.method !== 'GET') {
+    return;
+  }
+
   const url = new URL(event.request.url);
 
   // Do not cache API endpoints via SW (Axios and IndexedDB handle API data)
@@ -52,11 +57,12 @@ self.addEventListener('fetch', (event) => {
           if (
             networkResponse &&
             networkResponse.status === 200 &&
-            networkResponse.type === 'basic'
+            networkResponse.type === 'basic' &&
+            event.request.url.startsWith('http')
           ) {
             const responseToCache = networkResponse.clone();
             caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseToCache);
+              cache.put(event.request, responseToCache).catch(() => {});
             });
           }
           return networkResponse;
