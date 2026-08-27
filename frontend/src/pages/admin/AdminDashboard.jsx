@@ -903,6 +903,139 @@ export const AdminDashboard = () => {
           </div>
         </div>
       )}
+      {/* MODAL: GST Tax Invoice & Download */}
+      {selectedInvoiceMember && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-3 sm:p-4 overflow-y-auto">
+          <div className="liquid-glass w-full max-w-xl p-5 sm:p-7 space-y-4 shadow-2xl bg-white/95 border border-white/90 text-slate-900 max-h-[90vh] overflow-y-auto print:m-0 print:p-0 print:border-none print:shadow-none">
+            
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3.5 print:hidden">
+              <div className="flex items-center space-x-2">
+                <span className="text-base sm:text-lg font-black font-display text-indigo-600">FITPULSE 360</span>
+                <span className="text-[10px] font-mono font-bold bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full">GST INVOICE</span>
+              </div>
+              <button 
+                onClick={() => setSelectedInvoiceMember(null)} 
+                className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 cursor-pointer transition font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Invoice Document Body (Ready for Print / PDF) */}
+            <div id="tax-invoice-printable" className="space-y-4 text-xs font-mono">
+              {/* Gym & Tax Details Header */}
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 border-b border-slate-200 pb-3">
+                <div>
+                  <h2 className="text-base sm:text-lg font-black text-slate-900 font-display">FITPULSE 360 FITNESS & ATHLETICS CLUB</h2>
+                  <p className="text-[11px] text-slate-600">No. 42, Olympic Avenue, 100ft Road, Anna Nagar</p>
+                  <p className="text-[11px] text-slate-600">Chennai, Tamil Nadu - 600040</p>
+                  <p className="text-[10px] text-indigo-600 font-bold mt-1">GSTIN: 33AAACF1234F1Z8 • SAC Code: 999723</p>
+                </div>
+                <div className="sm:text-right bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                  <p className="text-[10px] text-slate-400 font-bold">INVOICE NO.</p>
+                  <p className="font-bold text-slate-900 text-xs">FP-INV-2026-{String(selectedInvoiceMember.id).replace('m-', '').padStart(4, '0')}</p>
+                  <p className="text-[10px] text-slate-400 font-bold mt-1">DATE</p>
+                  <p className="font-bold text-slate-800 text-xs">{selectedInvoiceMember.startDate || new Date().toISOString().split('T')[0]}</p>
+                </div>
+              </div>
+
+              {/* Billed To / Member Info */}
+              <div className="grid grid-cols-2 gap-3 bg-slate-50/80 p-3 rounded-xl border border-slate-200/80">
+                <div>
+                  <p className="text-[10px] text-slate-400 font-bold uppercase">Billed To (Member)</p>
+                  <p className="font-bold text-slate-900 text-xs font-display">{selectedInvoiceMember.name}</p>
+                  <p className="text-[11px] text-slate-600">{selectedInvoiceMember.email}</p>
+                  <p className="text-[11px] text-slate-600">{selectedInvoiceMember.phone}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-slate-400 font-bold uppercase">Plan & Access Pass</p>
+                  <p className="font-bold text-slate-900 text-xs">{selectedInvoiceMember.planName}</p>
+                  <p className="text-[10px] text-slate-600">Valid: {selectedInvoiceMember.startDate} to {selectedInvoiceMember.expiryDate}</p>
+                  <p className="text-[10px] text-emerald-700 font-bold">Locker: {selectedInvoiceMember.lockerNo} • Status: {selectedInvoiceMember.status}</p>
+                </div>
+              </div>
+
+              {/* Line Items Table */}
+              <div className="border border-slate-200 rounded-xl overflow-hidden">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-slate-100 text-slate-600 uppercase text-[10px] border-b border-slate-200">
+                    <tr>
+                      <th className="py-2.5 px-3">Description</th>
+                      <th className="py-2.5 px-3 text-center">SAC</th>
+                      <th className="py-2.5 px-3 text-right">Amount (₹)</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    <tr>
+                      <td className="py-3 px-3">
+                        <p className="font-bold text-slate-900">{selectedInvoiceMember.planName} Membership</p>
+                        <p className="text-[10px] text-slate-500">Includes Full Gym Access, Steam & Personal Locker</p>
+                      </td>
+                      <td className="py-3 px-3 text-center text-slate-600">999723</td>
+                      <td className="py-3 px-3 text-right font-bold text-slate-800">
+                        ₹{(Math.round(selectedInvoiceMember.totalPaid / 1.18)).toLocaleString()}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="py-2 px-3 text-slate-500 text-[11px]">CGST (9%)</td>
+                      <td className="py-2 px-3 text-center text-slate-400 text-[10px]">-</td>
+                      <td className="py-2 px-3 text-right text-slate-700 text-[11px]">
+                        ₹{(Math.round((selectedInvoiceMember.totalPaid / 1.18) * 0.09)).toLocaleString()}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="py-2 px-3 text-slate-500 text-[11px]">SGST (9%)</td>
+                      <td className="py-2 px-3 text-center text-slate-400 text-[10px]">-</td>
+                      <td className="py-2 px-3 text-right text-slate-700 text-[11px]">
+                        ₹{(Math.round((selectedInvoiceMember.totalPaid / 1.18) * 0.09)).toLocaleString()}
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tfoot className="bg-indigo-50/80 border-t border-indigo-100 font-bold text-xs">
+                    <tr>
+                      <td colSpan="2" className="py-2.5 px-3 text-indigo-900">Total Paid (Inclusive of 18% GST)</td>
+                      <td className="py-2.5 px-3 text-right text-indigo-700 font-black text-sm">₹{selectedInvoiceMember.totalPaid.toLocaleString()}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              {/* Tax & Authorization Footer */}
+              <div className="flex items-center justify-between pt-2 text-[10px] text-slate-500 border-t border-slate-200">
+                <div>
+                  <p>• Computer-generated Tax Invoice. No signature required.</p>
+                  <p>• Payments are non-refundable & non-transferable.</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-bold text-slate-700">FITPULSE 360 PVT LTD</p>
+                  <p className="text-[9px] text-emerald-600 font-bold">Authorized Signatory</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Bar */}
+            <div className="flex items-center justify-end space-x-2 pt-3 border-t border-slate-200 print:hidden">
+              <button
+                type="button"
+                onClick={() => setSelectedInvoiceMember(null)}
+                className="px-4 py-2 rounded-xl text-xs text-slate-500 hover:text-slate-700 cursor-pointer font-bold"
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="btn-shiny px-5 py-2.5 rounded-xl font-bold bg-indigo-600 hover:bg-indigo-500 text-white cursor-pointer shadow-md flex items-center gap-1.5 text-xs active:scale-98"
+              >
+                <Download className="h-4 w-4" />
+                <span>Print / Save as PDF</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 };
