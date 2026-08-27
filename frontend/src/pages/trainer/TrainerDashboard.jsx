@@ -224,7 +224,7 @@ export const TrainerDashboard = () => {
             </span>
           </div>
           <h3 className="text-xl sm:text-3xl font-black text-slate-900 font-display tabular-numbers tracking-tight">
-            <CounterNumber value={16800} prefix="₹" />
+            <CounterNumber value={Math.max(16800, Math.round(myTrainees.reduce((acc, curr) => acc + (curr.totalPaid || 0), 0) * 0.35))} prefix="₹" />
           </h3>
           <div className="flex items-center justify-between text-[10px] sm:text-xs font-mono pt-1">
             <span className="text-purple-700 font-bold truncate">35% Share</span>

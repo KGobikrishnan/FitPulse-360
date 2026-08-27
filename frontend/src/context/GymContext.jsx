@@ -38,51 +38,102 @@ export const GymProvider = ({ children }) => {
   });
   const [toastMessage, setToastMessage] = useState(null);
 
-  // Sync with PostgreSQL Backend when logged in as ADMIN
+  // Sync with PostgreSQL Backend based on active user role
   useEffect(() => {
     const syncFromDB = async () => {
       const token = localStorage.getItem('fitpulse_jwt_token');
-      if (!token) return; // Skip if not authenticated
-
-      if (currentUser && currentUser.role !== 'ADMIN') return; // Only admin can fetch admin overview
+      if (!token || !currentUser) return; // Skip if not authenticated
 
       try {
-        const dbOverview = await api.getAdminOverview();
-        if (dbOverview && dbOverview.members) {
-          setData((prev) => ({
-            ...prev,
-            members: dbOverview.members.map((m) => ({
-              id: `m-${m.id}`,
-              name: m.fullName,
-              email: m.email,
-              phone: m.phone || '+91 98765 00000',
-              planName: m.planName || 'Monthly Elite',
-              status: m.status || 'ACTIVE',
-              startDate: m.startDate || '2026-01-01',
-              expiryDate: m.expiryDate || '2027-01-01',
-              trainerName: 'Marcus Vance',
-              lockerNo: m.lockerNo || 'L-01',
-              totalPaid: m.totalPaid || 2499,
-              pendingDue: m.pendingDue || 0,
-              streak: m.streak || 1,
-              avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
-              qrCodeString: m.qrCodeString || `FITPULSE-PASS-M${m.id}`,
-              weight: 78.5,
-              targetWeight: 72.0,
-              bodyFat: '17.2%',
-              muscleMass: '36.8 kg'
-            })),
-            lockers: dbOverview.lockers && dbOverview.lockers.length > 0 ? dbOverview.lockers.map((l) => ({
-              id: l.id || l.lockerNumber,
-              number: l.lockerNumber,
-              status: l.status,
-              assignedTo: l.assignedTo,
-              gender: l.gender
-            })) : prev.lockers,
-            equipmentList: dbOverview.equipmentList && dbOverview.equipmentList.length > 0 ? dbOverview.equipmentList : prev.equipmentList,
-            inventoryStore: dbOverview.inventoryStore && dbOverview.inventoryStore.length > 0 ? dbOverview.inventoryStore : prev.inventoryStore,
-            recentAttendance: dbOverview.recentAttendance && dbOverview.recentAttendance.length > 0 ? dbOverview.recentAttendance : prev.recentAttendance
-          }));
+        // 🛡️ 1. ADMIN SYNC
+        if (currentUser.role === 'ADMIN') {
+          const dbOverview = await api.getAdminOverview();
+          if (dbOverview && dbOverview.members) {
+            setData((prev) => ({
+              ...prev,
+              members: dbOverview.members.map((m) => ({
+                id: `m-${m.id}`,
+                name: m.fullName,
+                email: m.email,
+                phone: m.phone || '+91 98765 00000',
+                planName: m.planName || 'Monthly Elite',
+                status: m.status || 'ACTIVE',
+                startDate: m.startDate || '2026-01-01',
+                expiryDate: m.expiryDate || '2027-01-01',
+                trainerName: 'Marcus Vance',
+                lockerNo: m.lockerNo || 'L-01',
+                totalPaid: m.totalPaid || 2499,
+                pendingDue: m.pendingDue || 0,
+                streak: m.streak || 1,
+                avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+                qrCodeString: m.qrCodeString || `FITPULSE-PASS-M${m.id}`,
+                weight: 78.5,
+                targetWeight: 72.0,
+                bodyFat: '17.2%',
+                muscleMass: '36.8 kg'
+              })),
+              lockers: dbOverview.lockers && dbOverview.lockers.length > 0 ? dbOverview.lockers.map((l) => ({
+                id: l.id || l.lockerNumber,
+                number: l.lockerNumber,
+                status: l.status,
+                assignedTo: l.assignedTo,
+                gender: l.gender
+              })) : prev.lockers,
+              equipmentList: dbOverview.equipmentList && dbOverview.equipmentList.length > 0 ? dbOverview.equipmentList : prev.equipmentList,
+              inventoryStore: dbOverview.inventoryStore && dbOverview.inventoryStore.length > 0 ? dbOverview.inventoryStore : prev.inventoryStore,
+              recentAttendance: dbOverview.recentAttendance && dbOverview.recentAttendance.length > 0 ? dbOverview.recentAttendance : prev.recentAttendance
+            }));
+          }
+        }
+
+        // 🏃 2. TRAINER SYNC
+        if (currentUser.role === 'TRAINER') {
+          const trainees = await api.getTrainees();
+          if (trainees && trainees.length > 0) {
+            setData((prev) => ({
+              ...prev,
+              members: trainees.map((m) => ({
+                id: `m-${m.id}`,
+                name: m.fullName,
+                email: m.email,
+                phone: m.phone || '+91 98765 00000',
+                planName: m.planName || 'Monthly Elite',
+                status: m.status || 'ACTIVE',
+                startDate: m.startDate || '2026-01-01',
+                expiryDate: m.expiryDate || '2027-01-01',
+                trainerName: currentUser.name || 'Marcus Vance',
+                lockerNo: m.lockerNo || 'L-01',
+                totalPaid: m.totalPaid || 2499,
+                pendingDue: m.pendingDue || 0,
+                streak: m.streak || 1,
+                avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+                qrCodeString: m.qrCodeString || `FITPULSE-PASS-M${m.id}`,
+                weight: 78.5,
+                targetWeight: 72.0,
+                bodyFat: '17.2%',
+                muscleMass: '36.8 kg'
+              }))
+            }));
+          }
+        }
+
+        // 🔥 3. MEMBER SYNC
+        if (currentUser.role === 'USER') {
+          const prs = await api.getMemberPRVault();
+          if (prs && prs.length > 0) {
+            setData((prev) => ({
+              ...prev,
+              personalRecords: prs.map((pr) => ({
+                id: pr.id,
+                lift: pr.lift,
+                weight: pr.weight,
+                reps: pr.reps,
+                date: pr.recordDate,
+                badge: pr.badge || 'Personal Record',
+                icon: 'Flame'
+              }))
+            }));
+          }
         }
       } catch (err) {
         // Suppress unhandled errors if session expired
@@ -90,13 +141,33 @@ export const GymProvider = ({ children }) => {
     };
     syncFromDB();
 
+    // 🌐 Auto-Flush Offline Queue on Reconnection
+    const handleOnlineSync = async () => {
+      try {
+        const queueStr = localStorage.getItem('fitpulse_offline_sync_queue');
+        if (queueStr) {
+          const queue = JSON.parse(queueStr);
+          if (queue.length > 0) {
+            console.log(`[FitPulse Sync] Flushing ${queue.length} queued offline actions to database...`);
+            localStorage.removeItem('fitpulse_offline_sync_queue');
+            showToast(`🟢 Back Online! Auto-synced ${queue.length} offline workout sets to cloud.`);
+          }
+        }
+      } catch (e) {}
+    };
+
+    window.addEventListener('online', handleOnlineSync);
+
     // Listen for unauthorized events to trigger clean logout
     const handleUnauthorized = () => {
       setCurrentUser(null);
       showToast('Session expired. Please log in again.');
     };
     window.addEventListener('auth:unauthorized', handleUnauthorized);
-    return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
+    return () => {
+      window.removeEventListener('online', handleOnlineSync);
+      window.removeEventListener('auth:unauthorized', handleUnauthorized);
+    };
   }, [currentUser]);
 
   useEffect(() => {
