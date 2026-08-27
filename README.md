@@ -9,7 +9,7 @@
   ╚═╝     ╚═╝   ╚═╝   ╚═╝      ╚═════╝ ╚══════╝╚══════╝╚═════╝  ╚═════╝  ╚═════╝ 
 ```
 
-### ⚡ Next-Generation Enterprise Gym Operating System & Biometric Telemetry
+### ⚡ Next-Generation Enterprise Gym Web App & Biometric Telemetry
 *An Ultra-Premium, Portfolio-Grade Full-Stack SaaS built with macOS Liquid Aurora Glassmorphism, WebGL 3D Hardware Acceleration, Spring Security 6 & Progressive Offline-First PWA Architecture.*
 
 ---
@@ -30,7 +30,7 @@
 
 ## 🌟 Executive Overview
 
-**FitPulse 360** redefines athletic facility management and performance coaching. Designed with Apple’s state-of-the-art **macOS Liquid Glass design tokens**, fluid multi-point **Aurora Mesh lighting**, and hardware-accelerated **Three.js WebGL 3D rendering**, it transforms mundane gym spreadsheets into a tactile, hyper-responsive command center for **Administrators**, **Elite Trainers**, and **Athletes**.
+**FitPulse 360** redefines athletic facility management and performance coaching. Designed with Apple’s state-of-the-art **macOS Liquid Glass design tokens**, fluid multi-point **Aurora Mesh lighting**, and hardware-accelerated **Three.js WebGL 3D rendering**, it transforms mundane gym spreadsheets into a tactile, hyper-responsive modern **Web App** for **Administrators**, **Elite Trainers**, and **Athletes**.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────────────┐

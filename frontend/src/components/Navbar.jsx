@@ -102,7 +102,7 @@ export const Navbar = ({ onToggleMobileDrawer, onOpenSearch }) => {
               </span>
             </div>
             <p className="text-[11px] text-slate-500 hidden sm:block font-medium">
-              Enterprise Gym Operating System
+              Enterprise Gym Web App
             </p>
           </div>
         </div>
