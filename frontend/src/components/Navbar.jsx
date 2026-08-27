@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useGym } from '../context/GymContext';
+import { Html5Qrcode } from 'html5-qrcode';
 import {
   Dumbbell,
   QrCode,
@@ -10,7 +11,10 @@ import {
   LogOut,
   Menu,
   CheckCircle2,
-  AlertTriangle
+  AlertTriangle,
+  Camera,
+  Keyboard,
+  ScanLine
 } from 'lucide-react';
 import { useNetworkStatus } from '../hooks/useNetworkStatus';
 
@@ -18,18 +22,66 @@ export const Navbar = ({ onToggleMobileDrawer, onOpenSearch }) => {
   const { currentUser, logoutUser, data, simulateQRCheckIn } = useGym();
   const { isOnline, pendingSyncCount } = useNetworkStatus();
   const [showQRScanModal, setShowQRScanModal] = useState(false);
+  const [scanMode, setScanMode] = useState('camera'); // 'camera' | 'manual'
   const [scannedCode, setScannedCode] = useState('');
   const [scanResult, setScanResult] = useState(null);
+  const [cameraError, setCameraError] = useState(null);
+  const html5QrCodeRef = useRef(null);
 
-  const handleScanSubmit = (e) => {
-    e.preventDefault();
-    if (!scannedCode) return;
-    const res = simulateQRCheckIn(scannedCode);
+  // Live Camera Scanner Lifecycle
+  useEffect(() => {
+    if (showQRScanModal && scanMode === 'camera') {
+      const qrRegionId = "qr-reader-live-view";
+      let qrCodeScanner = new Html5Qrcode(qrRegionId);
+      html5QrCodeRef.current = qrCodeScanner;
+
+      const config = { fps: 10, qrbox: { width: 220, height: 220 } };
+
+      qrCodeScanner.start(
+        { facingMode: "environment" },
+        config,
+        (decodedText) => {
+          // On Success
+          handleProcessCode(decodedText);
+          try {
+            qrCodeScanner.stop();
+          } catch (e) {}
+        },
+        (errorMessage) => {
+          // Scanning in progress...
+        }
+      ).catch((err) => {
+        console.warn("Camera access failed:", err);
+        setCameraError("Camera unavailable or permission denied. Use manual entry.");
+        setScanMode('manual');
+      });
+
+      return () => {
+        if (html5QrCodeRef.current) {
+          try {
+            html5QrCodeRef.current.stop().then(() => html5QrCodeRef.current.clear());
+          } catch (e) {}
+        }
+      };
+    }
+  }, [showQRScanModal, scanMode]);
+
+  const handleProcessCode = async (code) => {
+    if (!code) return;
+    const res = await simulateQRCheckIn(code);
     setScanResult(res);
     setTimeout(() => {
       setScanResult(null);
       setScannedCode('');
-    }, 3000);
+      if (res && res.success) {
+        setShowQRScanModal(false);
+      }
+    }, 3200);
+  };
+
+  const handleManualScanSubmit = (e) => {
+    e.preventDefault();
+    handleProcessCode(scannedCode);
   };
 
   return (
@@ -75,14 +127,6 @@ export const Navbar = ({ onToggleMobileDrawer, onOpenSearch }) => {
 
       {/* Top Right Badges, Metrics & Profile */}
       <div className="flex items-center space-x-2 sm:space-x-3">
-        {/* Plan & Occupancy Metric Pill */}
-        <div className="hidden xl:flex items-center space-x-2 bg-white/70 backdrop-blur-md border border-white px-3.5 py-1.5 rounded-2xl text-xs font-mono shadow-2xs">
-          <Crown className="h-3.5 w-3.5 text-amber-500" />
-          <span className="text-slate-600 font-medium">Studio Enterprise</span>
-          <span className="text-slate-300">•</span>
-          <span className="text-slate-900 font-bold">42,800 (63%)</span>
-        </div>
-
         {/* Offline Mode Indicator Badge */}
         {!isOnline && (
           <div className="flex items-center space-x-1.5 px-3 py-1 rounded-xl text-xs font-bold font-mono bg-amber-50/90 text-amber-800 border border-amber-300 animate-pulse shadow-2xs">
@@ -91,127 +135,159 @@ export const Navbar = ({ onToggleMobileDrawer, onOpenSearch }) => {
           </div>
         )}
 
-        {/* Growth Metric Badge */}
-        {isOnline && (
-          <div className="hidden lg:flex items-center space-x-1.5 warm-badge-emerald px-3 py-1.5 rounded-xl text-xs font-bold font-mono shadow-2xs">
-            <TrendingUp className="h-3.5 w-3.5 text-emerald-600" />
-            <span>Grow +12%</span>
-          </div>
-        )}
-
-        {/* Gate QR Trigger */}
+        {/* Gate QR Scanner Trigger Button */}
         <button
           onClick={() => setShowQRScanModal(true)}
-          className="p-2.5 rounded-2xl bg-white/70 hover:bg-white text-indigo-600 border border-white transition cursor-pointer shadow-2xs active:scale-95"
-          title="Gate QR Scanner"
+          className="btn-shiny px-3.5 py-2 rounded-2xl bg-white hover:bg-slate-50 border border-white/90 text-indigo-600 text-xs font-bold flex items-center space-x-1.5 cursor-pointer shadow-xs active:scale-95"
+          title="Open Turnstile Gate Camera Scanner"
         >
-          <QrCode className="h-4 w-4" />
+          <ScanLine className="h-4 w-4 text-indigo-600 animate-pulse" />
+          <span className="hidden sm:inline">Gate Scanner</span>
         </button>
 
-        {/* Notifications */}
-        <button className="relative p-2.5 rounded-2xl bg-white/70 hover:bg-white text-slate-600 border border-white transition cursor-pointer shadow-2xs active:scale-95">
-          <Bell className="h-4 w-4" />
-          <span className="w-2 h-2 rounded-full bg-indigo-600 absolute top-2 right-2 ring-2 ring-white" />
-        </button>
-
-        {/* User Profile Capsule - Clicking on mobile opens the Drawer */}
-        <button
-          onClick={() => {
-            if (window.innerWidth < 768) {
-              onToggleMobileDrawer();
-            }
-          }}
-          className="flex items-center space-x-2.5 pl-2 border-l border-white/60 cursor-pointer text-left active:scale-95 transition"
-          title="Profile Menu"
-        >
+        {/* User Profile Pill & Logout */}
+        <div className="flex items-center space-x-2.5 bg-white/70 backdrop-blur-md border border-white/90 p-1.5 pl-2.5 rounded-2xl shadow-2xs">
+          <div className="hidden sm:block text-right">
+            <p className="text-xs font-bold text-slate-800 leading-tight font-display">{currentUser.name}</p>
+            <p className="text-[10px] text-indigo-700 font-mono font-bold uppercase">{currentUser.role}</p>
+          </div>
           <img
             src={currentUser.avatar}
             alt={currentUser.name}
-            className="w-9 h-9 rounded-2xl object-cover ring-2 ring-indigo-600/30 shadow-2xs hover:ring-indigo-600 transition"
+            className="w-8 h-8 rounded-xl object-cover ring-2 ring-indigo-600/30 shadow-2xs"
           />
-          <div className="hidden sm:block text-left">
-            <p className="text-xs font-bold text-slate-800 leading-tight font-display">{currentUser.name}</p>
-            <p className="text-[10px] text-indigo-600 font-mono font-bold">{currentUser.role.toLowerCase() === 'user' ? 'Member' : currentUser.role}</p>
-          </div>
-        </button>
+          <button
+            onClick={logoutUser}
+            className="p-1.5 rounded-xl hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition cursor-pointer"
+            title="Log Out Session"
+          >
+            <LogOut className="h-4 w-4" />
+          </button>
+        </div>
 
-        {/* Sign Out Button (Desktop Only) */}
+        {/* Mobile Menu Toggle Button */}
         <button
-          onClick={logoutUser}
-          title="Sign Out"
-          className="hidden md:flex p-2.5 rounded-2xl bg-white/70 hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-white transition cursor-pointer shadow-2xs active:scale-95"
+          onClick={onToggleMobileDrawer}
+          className="p-2 rounded-2xl bg-white/80 hover:bg-white text-slate-700 md:hidden cursor-pointer shadow-2xs border border-white"
         >
-          <LogOut className="h-4 w-4" />
+          <Menu className="h-5 w-5" />
         </button>
       </div>
 
-      {/* Gate QR Scan Modal */}
+      {/* MODAL: Gate Camera & Kiosk Scanner */}
       {showQRScanModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-md p-4">
-          <div className="liquid-glass w-full max-w-md p-6 space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-white pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
+          <div className="liquid-glass w-full max-w-md p-6 space-y-4 shadow-2xl bg-white/95 border border-white/90">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
               <div className="flex items-center space-x-2">
-                <QrCode className="h-5 w-5 text-indigo-600" />
-                <h3 className="font-bold text-base text-slate-900 font-display">Entrance QR Gate Scanner</h3>
+                <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600">
+                  <ScanLine className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-base text-slate-900 font-display">Turnstile Gate Scanner</h3>
+                  <p className="text-[10px] text-slate-500 font-mono">Live Reception Kiosk Mode</p>
+                </div>
               </div>
-              <button onClick={() => setShowQRScanModal(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer">✕</button>
+              <button onClick={() => setShowQRScanModal(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer font-bold">✕</button>
             </div>
 
-            <p className="text-xs text-slate-500">
-              Type member code (e.g. <code className="text-indigo-700 bg-indigo-50/80 px-1 py-0.5 rounded">FITPULSE-PASS-M1-RAHUL</code>).
-            </p>
+            {/* Mode Switcher Pills */}
+            <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-slate-100/90 text-xs font-mono">
+              <button
+                type="button"
+                onClick={() => setScanMode('camera')}
+                className={`py-1.5 rounded-lg font-bold flex items-center justify-center gap-1.5 transition cursor-pointer ${
+                  scanMode === 'camera' ? 'bg-white text-indigo-600 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <Camera className="h-3.5 w-3.5" />
+                <span>Live Camera</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setScanMode('manual')}
+                className={`py-1.5 rounded-lg font-bold flex items-center justify-center gap-1.5 transition cursor-pointer ${
+                  scanMode === 'manual' ? 'bg-white text-indigo-600 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <Keyboard className="h-3.5 w-3.5" />
+                <span>Manual Code</span>
+              </button>
+            </div>
 
-            <form onSubmit={handleScanSubmit} className="space-y-3">
-              <input
-                type="text"
-                placeholder="Pass ID or Member Name..."
-                value={scannedCode}
-                onChange={(e) => setScannedCode(e.target.value)}
-                className="w-full bg-white/70 border border-white rounded-2xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 shadow-2xs"
-              />
-
-              <div className="flex flex-wrap gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => setScannedCode('FITPULSE-PASS-M1-RAHUL')}
-                  className="text-[10px] bg-white/80 text-slate-700 px-2.5 py-1 rounded-xl cursor-pointer hover:bg-white border border-white shadow-2xs"
-                >
-                  Rahul (Active)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setScannedCode('FITPULSE-PASS-M4-SNEHA')}
-                  className="text-[10px] bg-rose-50/80 text-rose-700 border border-rose-200/80 px-2.5 py-1 rounded-xl cursor-pointer hover:bg-rose-100 shadow-2xs"
-                >
-                  Sneha (Expired)
-                </button>
-              </div>
-
-              {scanResult && (
-                <div className={`p-3.5 rounded-2xl flex items-center space-x-2 text-xs shadow-2xs ${
-                  scanResult.success ? 'bg-emerald-50/90 text-emerald-800 border border-emerald-200' : 'bg-rose-50/90 text-rose-800 border border-rose-200'
-                }`}>
-                  {scanResult.success ? <CheckCircle2 className="h-4 w-4 text-emerald-600" /> : <AlertTriangle className="h-4 w-4 text-rose-600" />}
-                  <span>{scanResult.message}</span>
+            {/* Camera View Area */}
+            {scanMode === 'camera' && (
+              <div className="space-y-2">
+                <div className="relative rounded-2xl overflow-hidden border-2 border-indigo-500/30 bg-slate-900 flex items-center justify-center min-h-[240px]">
+                  <div id="qr-reader-live-view" className="w-full h-full" />
                 </div>
-              )}
-
-              <div className="flex justify-end space-x-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowQRScanModal(false)}
-                  className="px-3.5 py-2 text-xs text-slate-500 cursor-pointer font-medium"
-                >
-                  Close
-                </button>
-                <button
-                  type="submit"
-                  className="btn-shiny px-5 py-2 text-xs font-bold bg-indigo-600 text-white rounded-xl cursor-pointer shadow-md"
-                >
-                  Scan Pass
-                </button>
+                <p className="text-[10px] text-center text-slate-500 font-mono">
+                  Point member's digital QR pass towards camera
+                </p>
               </div>
-            </form>
+            )}
+
+            {/* Manual Code Entry Mode */}
+            {scanMode === 'manual' && (
+              <form onSubmit={handleManualScanSubmit} className="space-y-3">
+                <input
+                  type="text"
+                  placeholder="Type Pass ID or Member Name..."
+                  value={scannedCode}
+                  onChange={(e) => setScannedCode(e.target.value)}
+                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 shadow-2xs"
+                />
+
+                <div className="flex flex-wrap gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setScannedCode('FITPULSE-PASS-M1-RAHUL')}
+                    className="text-[10px] bg-slate-100 text-slate-700 px-2.5 py-1 rounded-xl cursor-pointer hover:bg-slate-200 border border-slate-200"
+                  >
+                    Rahul (Active Pass)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setScannedCode('FITPULSE-PASS-M4-SNEHA')}
+                    className="text-[10px] bg-rose-50 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-xl cursor-pointer hover:bg-rose-100"
+                  >
+                    Sneha (Expired Pass)
+                  </button>
+                </div>
+
+                <div className="flex justify-end space-x-2 pt-2">
+                  <button
+                    type="submit"
+                    className="btn-shiny px-5 py-2 text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl cursor-pointer shadow-md"
+                  >
+                    Verify Pass →
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {/* Scan Feedback Banner */}
+            {scanResult && (
+              <div className={`p-3.5 rounded-2xl flex items-center space-x-2.5 text-xs shadow-2xs font-mono font-bold animate-in fade-in ${
+                scanResult.success ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200'
+              }`}>
+                {scanResult.success ? <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" /> : <AlertTriangle className="h-5 w-5 text-rose-600 shrink-0" />}
+                <div>
+                  <p className="font-bold">{scanResult.success ? 'ACCESS GRANTED' : 'ACCESS DENIED'}</p>
+                  <p className="text-[10px] font-normal opacity-90">{scanResult.message}</p>
+                </div>
+              </div>
+            )}
+
+            <div className="flex justify-end pt-2 border-t border-slate-200">
+              <button
+                type="button"
+                onClick={() => setShowQRScanModal(false)}
+                className="px-4 py-2 text-xs text-slate-500 hover:text-slate-700 cursor-pointer font-bold"
+              >
+                Close Kiosk
+              </button>
+            </div>
           </div>
         </div>
       )}
