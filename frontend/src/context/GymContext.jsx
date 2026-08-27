@@ -416,15 +416,33 @@ export const GymProvider = ({ children }) => {
     }
   };
 
-  const logNewPR = (pr) => {
+  const logNewPR = async (pr) => {
+    // 1. Optimistic UI update
+    const newPrEntry = {
+      ...pr,
+      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      icon: 'Flame'
+    };
+
     setData((prev) => ({
       ...prev,
-      personalRecords: [
-        { ...pr, date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), icon: 'Flame' },
-        ...prev.personalRecords
-      ]
+      personalRecords: [newPrEntry, ...prev.personalRecords]
     }));
-    showToast(`🔥 NEW PR CELEBRATION! Logged ${pr.lift} @ ${pr.weight}!`);
+
+    // 2. Persist to PostgreSQL database
+    try {
+      await api.logMemberPR({
+        userId: 1,
+        lift: pr.lift,
+        weight: pr.weight,
+        reps: pr.reps || '1 Rep Max (PR)',
+        badge: pr.badge || 'Personal Record',
+        recordDate: new Date().toISOString().split('T')[0]
+      });
+      showToast(`🔥 NEW PR SAVED TO VAULT! ${pr.lift} @ ${pr.weight}!`);
+    } catch (e) {
+      showToast(`🔥 PR Logged locally! (${pr.lift} @ ${pr.weight})`);
+    }
   };
 
   return (

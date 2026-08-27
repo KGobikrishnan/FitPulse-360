@@ -224,4 +224,44 @@ export const api = {
       return null;
     }
   },
+
+  // Member Self-Service APIs
+  getMemberPRVault: async (userId = null) => {
+    try {
+      const url = userId ? `/member/pr/vault?userId=${userId}` : '/member/pr/vault';
+      const res = await apiClient.get(url);
+      return res.data.data || res.data;
+    } catch (e) {
+      return [];
+    }
+  },
+
+  logMemberPR: async (prData) => {
+    try {
+      const res = await apiClient.post('/member/pr/log', prData);
+      return res.data.data || res.data;
+    } catch (e) {
+      return null;
+    }
+  },
+
+  getMemberQRPass: async (email) => {
+    try {
+      const url = email ? `/member/pass/qr?email=${encodeURIComponent(email)}` : '/member/pass/qr';
+      const res = await apiClient.get(url);
+      return res.data.data || res.data;
+    } catch (e) {
+      return null;
+    }
+  },
+
+  getAssignedDiet: async (userId = null) => {
+    try {
+      const url = userId ? `/member/diet/assigned?userId=${userId}` : '/member/diet/assigned';
+      const res = await apiClient.get(url);
+      return res.data.data || res.data;
+    } catch (e) {
+      return null;
+    }
+  }
 };
